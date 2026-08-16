@@ -1,0 +1,140 @@
+<div align="center">
+
+# 💰 dsh-budget
+
+**Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.**
+
+*Know what every session costs — before it costs you.*
+
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![DSH plugin](https://img.shields.io/badge/dsh-plugin-✅-green)](https://github.com/topics/dsh-plugin)
+[![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24-brightgreen.svg)](#)
+[![CI](https://img.shields.io/github/actions/workflow/status/PerryLink/dsh-budget/ci.yml?branch=main&label=CI)](https://github.com/PerryLink/dsh-budget/actions)
+[![Version](https://img.shields.io/github/v/tag/PerryLink/dsh-budget?label=version)](https://github.com/PerryLink/dsh-budget/releases)
+[![npm version](https://img.shields.io/npm/v/dsh-budget)](https://www.npmjs.com/package/dsh-budget)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-budget)](https://www.npmjs.com/package/dsh-budget)
+
+[English](README.md) · [简体中文](README.zh.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
+
+</div>
+
+---
+
+## Compatibility
+
+| Surface | Status |
+|---|---|
+| Harness | DeepSeek Harness `0.1.0-rc.6` |
+| Node | `^22.19.0 \|\| >=24.0.0` |
+| Surfaces | Host + Web client (Settings budget tab); `/budget` command |
+
+## What you get
+
+`dsh-budget` turns the session event stream into a four-in-one cost governance loop:
+
+- **Aggregated metering** — tokens (uncached input / output / cache read / cache write), estimated USD cost, and carbon footprint per model, session, and day, priced through a built-in USD-per-1M table merged with your `config.prices`.
+- **Budget governance** — session/daily/monthly caps; a warn-ratio threshold alert (webhook POST + desktop-notification flag) and three over-limit policies: `alert` (notify only), `block` (short-circuit new model requests until the user lifts the block), `degrade` (block with corrective guidance naming the cheaper model from your `degradation` map).
+- **Carbon & latency** — token→carbon bridge (tokens × kWh/token × PUE × regional grid intensity, ported from AI-Carbon-Footprint-Calculator) and per-model latency percentiles.
+- **Surfaces** — the Settings budget tab (usage bars, model breakdown, alerts, cap editors, unblock buttons) and the `/budget` command (`/budget`, `/budget models`, `/budget unblock <scope>`).
+
+## Quick start
+
+```sh
+# 1. install the bundle into your profile
+dsh plugin --profile web add "github:PerryLink/dsh-budget#main"
+
+# or from npm (published releases)
+dsh plugin --profile web add dsh-budget
+
+# 2. restart and verify the row
+dsh --profile web --dump-config | grep -A2 'id: budget'
+```
+
+Then ask the agent: `/budget` — and watch the Settings tab fill in.
+
+## Install & uninstall
+
+- **git channel** (latest `main`): `dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` — the `prepare` script builds with production dependencies only.
+- **npm channel** (published releases): `dsh plugin --profile web add dsh-budget`.
+- **tarball channel**: `pnpm pack` in this repo, then `dsh plugin --profile web add ./dsh-budget-<version>.tgz`.
+- **uninstall**: `dsh plugin --profile web remove dsh-budget`.
+
+> If pnpm reports `ERR_PNPM_IGNORED_BUILDS` for this package (esbuild's harmless platform-binary validation), add `allowBuilds: { esbuild: true }` to your `pnpm-workspace.yaml` — the `dsh` CLI prints the exact snippet.
+
+## Configuration
+
+All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cordis.patch.yml` documents each key inline.
+
+| Key | Default | Meaning |
+|---|---|---|
+| `prices` | `{}` | Per-model USD prices per 1M tokens, merged over the built-in table |
+| `defaultPrice` | `{input: 1.0, output: 3.0}` | Fallback for models absent from both tables |
+| `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | Budget caps in USD per scope; omit for unlimited |
+| `warnRatio` | `0.8` | Alert once usage reaches this fraction of a cap (0..1) |
+| `overLimit` | `alert` | `alert` / `block` / `degrade` after a cap is crossed |
+| `degradation` | `{}` | Model id → cheaper model id of the same provider |
+| `webhookUrl` | *(none)* | Optional webhook URL for threshold alerts (POST JSON) |
+| `webhookTimeoutMs` | `5000` | Webhook request timeout |
+| `alertsEnabled` | `true` | Master switch for threshold alerts |
+| `alertCooldownMs` | `3600000` | Minimum ms between two alerts of the same scope |
+| `desktopNotifications` | `false` | Browser desktop notifications while the tab is open |
+| `refreshIntervalMs` | `5000` | Settings tab polling interval |
+| `carbon.enabled` / `region` / `pue` / `energyKwhPerToken` | `true` / `global` / `1.58` / `0.000007` | Carbon bridge (regions: global, us, eu, china, india, uk, france, iceland) |
+| `latency.enabled` / `windowSize` | `true` / `200` | Per-model latency percentiles and their window |
+| `currency` | `{code: USD, rate: 1.0, decimals: 2}` | Display currency (costs are computed in USD) |
+| `outputLanguage` | `en` | `/budget` output language: `en` / `zh` |
+| `historyDays` | `30` | Per-day usage history kept in the panel snapshot |
+
+## Tools & surfaces
+
+| Surface | Kind | Notes |
+|---|---|---|
+| `/budget` | Command | Per-scope overview (usage, ratio, carbon, blocked state) |
+| `/budget models` | Command | Per-model breakdown with latency percentiles |
+| `/budget unblock <scope>` | Command | Lift a blocked scope (`session` / `daily` / `monthly`) |
+| Settings → Plugins → Budget | Settings tab | Usage bars, model breakdown, alerts, cap editors, unblock buttons |
+| `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | The client channel (the tab consumes these) |
+
+## Permissions & data
+
+- **Permissions**: `network:outbound` (the optional alert webhook only), `session:append` (audit events), `native-code:none`.
+- **Data**: everything displayed comes from the session event stream; the only host-side network call is the configured webhook, whose URL is validated at load and credential-stripped before any log. No prompts or payloads ever leave the host.
+- **Session log**: `budget/alert` and `budget/block` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard).
+
+## Security boundaries
+
+- **No fabrication**: a budget block yields a corrective error finish on the `llm/stream` waterfall — the plugin never invents model output.
+- **No request rewriting**: loop-built requests are frozen; `degrade` therefore names the target model in the corrective message instead of swapping the request.
+- **Fail loud**: invalid prices, URLs, ratios, regions, and bounds fail the mount.
+- **Honest scope**: runtime edits from the panel are session-scoped; a reload restores the cordis.yml values.
+
+## Known limitations
+
+- Aggregation is process-local: usage resets when the harness restarts (per-day/per-month buckets rebuild from the current session log view).
+- `block`/`degrade` rely on the `llm/stream` waterfall; harness builds without that seam cannot block requests (alerts still work).
+- Built-in prices drift; override entries via `config.prices`.
+
+## Development
+
+```sh
+pnpm install        # node ^22.19 || >=24
+pnpm run typecheck  # tsc: src + tests against the local harness checkout
+pnpm run typecheck:ci  # tsc against the published 0.1.0-rc.6 types (no paths)
+pnpm test           # vitest: 45 tests
+pnpm run build      # tsc declarations + tsdown bundles (lib/)
+pnpm run verify:self-contained  # dependency specs resolve from the registry
+pnpm run verify:artifacts       # built ESM face + typert manifest + client bundle
+pnpm pack           # the published tarball
+```
+
+## Topics
+
+`dsh`, `dsh-plugin`, `deepseek-harness`, `deepseek`, `cordis`, `budget`, `cost-tracking`, `carbon-footprint`, `latency-benchmark`, `token-usage`
+
+## Contributors
+
+- [@PerryLink](https://github.com/PerryLink) — creator and maintainer: aggregation, budget governance, carbon and latency ports, the Settings tab, and the five-language docs.
+
+## License
+
+[Apache License 2.0](LICENSE) © 2026 dsh-budget contributors

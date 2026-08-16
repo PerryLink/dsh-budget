@@ -1,0 +1,73 @@
+# dsh-budget: cost governance for DeepSeek Harness.
+#
+# Aggregated token/cost metering (per model, session, day), session/daily/monthly
+# budget caps with threshold alerts (webhook + desktop notification) and
+# alert / block / degrade over-limit policies, carbon footprint estimation,
+# per-model latency statistics, a Settings budget tab, and the /budget command.
+#
+# Every key below is a Schemastery-validated config field; an invalid value
+# fails loudly at load time. Empty caps mean "unlimited" for that scope.
+- insert:
+    - id: budget
+      name: dsh-budget
+      inject: [sessions]
+      config:
+        # Per-model USD prices per 1M tokens, merged OVER the built-in table.
+        # Keys are model ids ("deepseek-chat", "gpt-4o", ...); each entry
+        # supports input/output and optional cacheRead/cacheWrite prices.
+        prices: {}
+        # Fallback price for models absent from both tables.
+        defaultPrice: { input: 1.0, output: 3.0 }
+        # Budget caps in USD per scope; omit a scope for unlimited.
+        budgets:
+          session: 10
+          daily: 50
+          monthly: 500
+        # Alert once usage reaches this fraction of a cap (0..1).
+        warnRatio: 0.8
+        # Behavior after a cap is crossed:
+        #   alert   - notify only (webhook/notification/session event)
+        #   block   - fail new model requests until unblocked by the user
+        #   degrade - rewrite the model to the configured cheaper tier
+        overLimit: alert
+        # Degradation map: model id -> cheaper model id of the SAME provider.
+        # Example: { "gpt-4o": "gpt-4o-mini" }
+        degradation: {}
+        # Optional webhook URL for threshold alerts (POST JSON). Credentials in
+        # the URL are never logged; use an https endpoint you control.
+        webhookUrl: ''
+        # Webhook request timeout in milliseconds.
+        webhookTimeoutMs: 5000
+        # Master switch for threshold alerts; the Settings tab can override
+        # this at runtime until the plugin reloads.
+        alertsEnabled: true
+        # Minimum milliseconds between two alerts of the same scope.
+        alertCooldownMs: 3600000
+        # Browser desktop notifications for new alerts while the Settings
+        # budget tab is open (requires browser permission).
+        desktopNotifications: false
+        # Settings budget tab polling interval in milliseconds.
+        refreshIntervalMs: 5000
+        # Carbon footprint estimation (token-based bridge over the upstream
+        # GPU-hours model).
+        carbon:
+          enabled: true
+          # Electricity region key: global us eu china india uk france iceland.
+          region: global
+          # Power usage effectiveness (datacenter overhead multiplier).
+          pue: 1.58
+          # IT energy per token in kWh; default derives from an A100 (400 W TDP)
+          # serving ~25 tokens/s: 400 W / 3600 s / 25 tok/s = 4.4e-6 kWh, rounded.
+          energyKwhPerToken: 0.000007
+        # Per-model latency statistics over the llm/stream wrapper.
+        latency:
+          enabled: true
+          # Samples kept per model for percentile computation.
+          windowSize: 200
+        # Display currency (code, units per USD, decimals). Costs are computed
+        # in USD; this only converts for display.
+        currency: { code: USD, rate: 1.0, decimals: 2 }
+        # /budget command output language: en | zh.
+        outputLanguage: en
+        # Days of per-day usage history kept in the panel snapshot.
+        historyDays: 30
