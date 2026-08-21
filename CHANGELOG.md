@@ -5,6 +5,10 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-08-21
+
+- Compatibility release for DeepSeek Harness `0.1.0-rc.8`: all `@deepseek-ai/dsh-*` peers and devDependencies moved to rc.8 (peers declared as `>=0.1.0-rc.8 <0.2.0`); verified against the rc.8 harness checkout and the npm-published rc.8 type faces. No source changes required — the session/llm/typert/commands/client seams used here are unchanged in rc.8.
+
 ## [0.1.0] - 2026-08-16
 
 - Initial release: aggregated token/cost metering, budget caps with threshold alerts and over-limit policies, carbon footprint estimation, per-model latency benchmarks, and the /budget command.
