@@ -10,7 +10,7 @@
  * Function plugin 鈥?no default export (the Loader unwraps
  * `exports.default ?? exports`).
  *
- * Seam notes (verified against 0.1.0-rc.8 and the local checkout):
+ * Seam notes (verified against 0.1.1-rc.2 and the local checkout):
  * - Usage arrives as `assistant/message` events (`usage?: TokenUsage`);
  *   provider/model attribution comes from the latest `request/header`
  *   (`header.config.provider` / `header.config.model`).
@@ -22,7 +22,7 @@
  *   waterfall listener short-circuit is a deliberate claim, not a passthrough
  *   bug: pass-through paths always call `next()`.
  * - Session audit appends use the two-argument `Session.append` form (the
- *   pinned rc.8 peers have no append-envelope option).
+ *   pinned rc.2 peers have no append-envelope option).
  *
  * @module dsh-budget
  */
