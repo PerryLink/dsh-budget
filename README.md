@@ -1,6 +1,7 @@
 <div align="center">
 
 # 💰 dsh-budget
+[![Gitee](https://img.shields.io/badge/Gitee-mirror-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-budget)
 
 **Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.**
 
