@@ -153,6 +153,42 @@ const BUDGET_CSS = `
 [data-dsh-budget] .dbud-alert[data-kind='over'] {
   color: var(--dsw-alias-state-error-primary);
 }
+[data-dsh-budget] .dbud-curve {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 96px;
+  padding: 8px 8px 0;
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+[data-dsh-budget] .dbud-curve-col {
+  flex: 1 1 0;
+  min-width: 6px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 4px;
+}
+[data-dsh-budget] .dbud-curve-bar {
+  background: var(--dsw-alias-brand-primary);
+  border-radius: 2px 2px 0 0;
+  min-height: 1px;
+}
+[data-dsh-budget] .dbud-curve-bar[data-empty] {
+  background: var(--dsw-alias-bg-layer-2);
+}
+[data-dsh-budget] .dbud-curve-label {
+  font-size: 0.7em;
+  text-align: center;
+  color: var(--dsw-alias-label-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 [data-dsh-budget] .dbud-form {
   display: flex;
   flex-direction: column;

@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- The Settings budget tab now honors `config.refreshIntervalMs` for its polling interval and `config.warnRatio` for its bar tone (both were previously hardcoded), and renders a per-day usage curve over `config.historyDays`, which is now actually consumed (it previously declared a limit no code read).
+
 ## [0.1.2] - 2026-08-22
 
 - Compatibility release for DeepSeek Harness `0.1.1-rc.2`: all `@deepseek-ai/dsh-*` devDependencies moved to rc.2 (peers unchanged at `>=0.1.0-rc.8 <0.2.0`); `dshWorkshop.compatibility.dshVersions` set to `0.1.1-rc.2`; the READMEs, AGENTS notes, and CI `compat`/`typecheck` pins synced to rc.2. No source changes required — the session/llm/typert/commands/client seams used here are unchanged in rc.2.

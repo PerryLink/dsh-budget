@@ -75,4 +75,20 @@ describe('BudgetAggregator', () => {
     expect(snapshot.alerts[0]?.at).toBe(FIXED_NOW - 59)
     expect(snapshot.alerts[49]?.at).toBe(FIXED_NOW - 10)
   })
+
+  it('returns a zero-filled per-day history, oldest first', () => {
+    const aggregator = makeAggregator()
+    aggregator.setAttribution('deepseek', 'deepseek-chat')
+    aggregator.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 0 })
+    const days = aggregator.dayHistory(3)
+    expect(days.map(day => day.day)).toEqual(['2026-08-14', '2026-08-15', '2026-08-16'])
+    expect(days[2]?.usage.costUsd).toBeCloseTo(0.27)
+    expect(days[0]?.usage.costUsd).toBe(0)
+    expect(days[1]?.usage.costUsd).toBe(0)
+  })
+
+  it('exposes historyDays entries in the snapshot', () => {
+    const aggregator = new BudgetAggregator(resolveConfig({ historyDays: 5 }), () => FIXED_NOW)
+    expect(aggregator.snapshotFor('s1').days.length).toBe(5)
+  })
 })

@@ -49,6 +49,15 @@ export interface AlertLine {
   capUsd: number
 }
 
+/** One day's usage in the per-day curve. */
+export interface DayLine {
+  /** UTC day key, `YYYY-MM-DD`. */
+  day: string
+  costUsd: number
+  tokens: number
+  carbonKg: number
+}
+
 /** The full panel snapshot served by `budget/status`. */
 export interface BudgetStatus {
   scopes: ScopeLine[]
@@ -60,6 +69,12 @@ export interface BudgetStatus {
   desktopNotifications: boolean
   /** Degradation target for the current model, when a cap blocked it. */
   degradedModel: string | null
+  /** Per-day usage over the last `historyDays` days, oldest first. */
+  days: DayLine[]
+  /** Warn ratio the host governance uses (0..1); the tab's bar tone follows it. */
+  warnRatio: number
+  /** Settings tab polling interval in ms (`config.refreshIntervalMs`). */
+  refreshIntervalMs: number
 }
 
 /** Strict wire schema for {@link BudgetStatus} (zod v4, both Typert faces). */
@@ -99,6 +114,14 @@ export const BUDGET_STATUS_SCHEMA = z.object({
   alertsEnabled: z.boolean(),
   desktopNotifications: z.boolean(),
   degradedModel: z.string().nullable(),
+  days: z.array(z.object({
+    day: z.string(),
+    costUsd: z.number(),
+    tokens: z.number().int(),
+    carbonKg: z.number(),
+  })),
+  warnRatio: z.number().min(0).max(1),
+  refreshIntervalMs: z.number().int().min(1000),
 })
 
 /**

@@ -22,6 +22,9 @@ const STATUS: BudgetStatus = {
   alertsEnabled: true,
   desktopNotifications: false,
   degradedModel: null,
+  days: [],
+  warnRatio: 0.8,
+  refreshIntervalMs: 5_000,
 }
 
 const EN = {

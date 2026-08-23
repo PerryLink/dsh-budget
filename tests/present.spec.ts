@@ -19,6 +19,9 @@ function status(over: Partial<BudgetStatus['currency']> = {}): BudgetStatus {
     alertsEnabled: true,
     desktopNotifications: false,
     degradedModel: null,
+    days: [],
+    warnRatio: 0.8,
+    refreshIntervalMs: 5_000,
   }
 }
 

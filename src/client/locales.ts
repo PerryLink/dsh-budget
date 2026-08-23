@@ -35,6 +35,7 @@ export const zh = {
   saved: '已保存（会话内生效，重载后恢复 cordis.yml 配置）',
   degraded: '已降级至',
   history: '最近告警',
+  usageCurve: '用量曲线',
 } as const
 
 /** English dictionary (source of truth for keys). */
@@ -72,6 +73,7 @@ export const en: Record<keyof typeof zh, string> = {
   saved: 'Saved (session-scoped; a reload restores the cordis.yml values)',
   degraded: 'Degraded to',
   history: 'Recent alerts',
+  usageCurve: 'Usage curve',
 } as const
 
 /** Every dictionary key. */

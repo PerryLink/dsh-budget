@@ -36,6 +36,7 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
   const [desktopOn, setDesktopOn] = useState(false)
   const [saved, setSaved] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [refreshMs, setRefreshMs] = useState(5_000)
 
   const load = async (): Promise<void> => {
     try {
@@ -46,16 +47,24 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
       setMonthlyCap(snapshot.scopes.find(scope => scope.scope === 'monthly')?.capUsd?.toString() ?? '')
       setAlertsOn(snapshot.alertsEnabled)
       setDesktopOn(snapshot.desktopNotifications)
+      setRefreshMs(snapshot.refreshIntervalMs)
     } catch (error) {
       setState({ status: 'error', message: error instanceof Error ? error.message : String(error) })
     }
   }
 
+  // Initial load, then poll at the host's configured refresh interval. The
+  // interval arrives with the first snapshot, so the timer reschedules once
+  // without an extra status round-trip.
   useEffect(() => {
     void load()
-    const timer = setInterval(() => { void load() }, 5_000)
-    return () => { clearInterval(timer) }
   }, [])
+
+  useEffect(() => {
+    if (refreshMs <= 0) return
+    const timer = setInterval(() => { void load() }, refreshMs)
+    return () => { clearInterval(timer) }
+  }, [refreshMs])
 
   const parseCap = (text: string): number | null => {
     if (text.trim() === '') return null
@@ -106,13 +115,14 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
   }
 
   const snapshot = state.snapshot
+  const maxDayCost = Math.max(0, ...snapshot.days.map(day => day.costUsd))
   return (
     <div className="dbud-section" data-dsh-budget>
       <div className="dbud-rows">
         <h3 className="dbud-heading">{t('scopes')}</h3>
         {snapshot.scopes.map(scope => {
           const blocked = snapshot.blockedScopes.includes(scope.scope)
-          const tone = scopeTone(scope, 0.8, blocked)
+          const tone = scopeTone(scope, snapshot.warnRatio, blocked)
           return (
             <div className="dbud-row" key={scope.scope}>
               <div className="dbud-row-head">
@@ -137,6 +147,30 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
             </div>
           )
         })}
+      </div>
+
+      <div className="dbud-rows">
+        <h3 className="dbud-heading">{t('usageCurve')}</h3>
+        {snapshot.days.length === 0
+          ? <p className="dbud-status">—</p>
+          : (
+            <div className="dbud-curve">
+              {snapshot.days.map(day => {
+                const height = maxDayCost === 0 ? 0 : Math.round((day.costUsd / maxDayCost) * 100)
+                return (
+                  <div
+                    className="dbud-curve-col"
+                    key={day.day}
+                    title={`${day.day}: ${formatMoney(snapshot, day.costUsd)}`}
+                  >
+                    <div className="dbud-curve-bar" style={{ height: `${height}%` }} data-empty={day.costUsd === 0 ? '' : undefined} />
+                    <span className="dbud-curve-label">{day.day.slice(5)}</span>
+                  </div>
+                )
+              })}
+            </div>
+          )
+          }
       </div>
 
       {snapshot.degradedModel !== null

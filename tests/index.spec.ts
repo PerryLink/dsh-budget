@@ -53,6 +53,10 @@ describe('dsh-budget assembly', () => {
     const sessionScope = status.scopes.find(scope => scope.scope === 'session')
     expect(sessionScope?.usedUsd).toBeCloseTo(0.27 + 0.11)
     expect(status.models[0]?.model).toBe('deepseek-chat')
+    expect(status.warnRatio).toBe(0.8)
+    expect(status.refreshIntervalMs).toBe(5_000)
+    expect(status.days).toHaveLength(30)
+    expect(status.days[status.days.length - 1]?.costUsd).toBeCloseTo(0.27 + 0.11)
   })
 
   it('registers the /budget command', async () => {

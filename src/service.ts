@@ -14,7 +14,7 @@ import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import type { ResolvedConfig } from './config.ts'
 import { BudgetAggregator } from './aggregate/usage.ts'
 import type { BudgetScope } from './wire.ts'
-import { BUDGET_SETTINGS_SCHEMA, type BudgetStatus, type ModelLine, type ScopeLine } from './wire.ts'
+import { BUDGET_SETTINGS_SCHEMA, type BudgetStatus, type DayLine, type ModelLine, type ScopeLine } from './wire.ts'
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
@@ -107,6 +107,12 @@ export class BudgetService extends TypertRemoteService {
     }))
 
     const degraded = this.bindings.degradation()
+    const days: DayLine[] = snapshot.days.map(entry => ({
+      day: entry.day,
+      costUsd: entry.usage.costUsd,
+      tokens: entry.usage.inputTokens + entry.usage.outputTokens + entry.usage.cacheReadTokens + entry.usage.cacheWriteTokens,
+      carbonKg: entry.usage.carbonKg,
+    }))
     return {
       scopes,
       models,
@@ -116,6 +122,9 @@ export class BudgetService extends TypertRemoteService {
       alertsEnabled: settings.alertsEnabled,
       desktopNotifications: settings.desktopNotifications,
       degradedModel: degraded === undefined ? null : degraded.to,
+      days,
+      warnRatio: config.warnRatio,
+      refreshIntervalMs: config.refreshIntervalMs,
     }
   }
 

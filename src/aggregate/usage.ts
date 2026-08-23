@@ -49,6 +49,13 @@ export interface AlertRecord {
   capUsd: number
 }
 
+/** One day's aggregated usage in the per-day history. */
+export interface DayUsage {
+  /** UTC day key, `YYYY-MM-DD`. */
+  day: string
+  usage: ScopeUsage
+}
+
 /** UTC day key, e.g. `2026-08-16`. */
 export function dayKey(timestamp: number): string {
   return new Date(timestamp).toISOString().slice(0, 10)
@@ -82,6 +89,8 @@ export interface BudgetSnapshot {
   /** Alerts in reverse chronological order. */
   alerts: readonly AlertRecord[]
   blockedScopes: readonly ('session' | 'daily' | 'monthly')[]
+  /** Per-day usage over the last `historyDays` days, oldest first. */
+  days: readonly DayUsage[]
 }
 
 /**
@@ -220,6 +229,23 @@ export class BudgetAggregator {
     return this.state.months.get(monthKey(this.now()))?.total ?? emptyUsage()
   }
 
+  /**
+   * Per-day usage over the last `limit` days, oldest first, zero-filled for
+   * days with no recorded usage. Days are UTC keys derived from the injected
+   * clock, so a fixed test clock yields a stable series.
+   *
+   * @param limit - number of trailing days to return.
+   */
+  dayHistory(limit: number): DayUsage[] {
+    const now = this.now()
+    const result: DayUsage[] = []
+    for (let offset = limit - 1; offset >= 0; offset -= 1) {
+      const key = dayKey(now - offset * 86_400_000)
+      result.push({ day: key, usage: this.state.days.get(key)?.total ?? emptyUsage() })
+    }
+    return result
+  }
+
   /** Per-model usage (today) with latency percentiles, sorted by cost. */
   modelUsage(): ModelUsage[] {
     const day = this.state.days.get(dayKey(this.now()))
@@ -275,6 +301,7 @@ export class BudgetAggregator {
       models: this.modelUsage(),
       alerts: [...this.state.alerts],
       blockedScopes: this.blockedScopes,
+      days: this.dayHistory(this.config.historyDays),
     }
   }
 }
