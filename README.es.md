@@ -35,7 +35,7 @@
 - **Medición agregada** — tokens (entrada sin caché / salida / lectura de caché / escritura de caché), costo USD estimado y huella de carbono por modelo, sesión y día, con una tabla integrada de USD por 1M tokens fusionada con tu `config.prices`.
 - **Gobernanza de presupuesto** — límites de sesión/diarios/mensuales; alerta de umbral `warnRatio` (webhook POST + indicador de notificación de escritorio) y tres políticas al superar el límite: `alert` (solo notificar), `block` (cortocircuitar nuevas solicitudes de modelo hasta que el usuario levante el bloqueo), `degrade` (bloqueo con guía correctiva que nombra el modelo más barato de tu mapa `degradation`).
 - **Carbono y latencia** — puente token→carbono (tokens × kWh/token × PUE × intensidad de la red regional, portado de AI-Carbon-Footprint-Calculator) y percentiles de latencia por modelo.
-- **Superficies** — pestaña Budget en Settings (barras de uso, desglose por modelo, alertas, editores de límites, botones de desbloqueo) y el comando `/budget` (`/budget`, `/budget models`, `/budget unblock <scope>`).
+- **Superficies** — pestaña Budget en Settings (barras de uso, curva de uso por día, desglose por modelo, alertas, editores de límites, botones de desbloqueo) y el comando `/budget` (`/budget`, `/budget models`, `/budget unblock <scope>`).
 
 ## Inicio rápido
 
@@ -92,7 +92,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 | `/budget` | Comando | Resumen por ámbito (uso, ratio, carbono, estado bloqueado) |
 | `/budget models` | Comando | Desglose por modelo con percentiles de latencia |
 | `/budget unblock <scope>` | Comando | Levantar un ámbito bloqueado (`session` / `daily` / `monthly`) |
-| Settings → Plugins → Budget | Pestaña de Settings | Barras de uso, desglose, alertas, editores de límites, desbloqueo |
+| Settings → Plugins → Budget | Pestaña de Settings | Barras de uso, curva de uso por día, desglose, alertas, editores de límites, desbloqueo |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | Canal del cliente (consumido por la pestaña) |
 
 ## Permisos y datos
@@ -120,7 +120,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests contra el checkout local del harness
 pnpm run typecheck:ci  # tsc contra los tipos publicados 0.1.1-rc.2 (sin paths)
-pnpm test           # vitest: 45 tests
+pnpm test           # vitest
 pnpm run build      # declaraciones tsc + bundles tsdown (lib/)
 pnpm run verify:self-contained  # las especificaciones de dependencias resuelven desde el registry
 pnpm run verify:artifacts       # cara ESM + manifiesto typert + bundle de cliente

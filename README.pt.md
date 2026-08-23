@@ -35,7 +35,7 @@ O `dsh-budget` transforma o fluxo de eventos da sessão em um ciclo de governan�
 - **Medição agregada** — tokens (entrada sem cache / saída / leitura de cache / escrita de cache), custo USD estimado e pegada de carbono por modelo, sessão e dia, precificados por uma tabela integrada de USD por 1M de tokens mesclada com `config.prices`.
 - **Governança de orçamento** — tetos de sessão/diários/mensais; alerta de limiar `warnRatio` (webhook POST + indicador de notificação de desktop) e três políticas ao estourar: `alert` (apenas notificar), `block` (curto-circuitar novas requisições até o usuário liberar), `degrade` (bloqueio com orientação corretiva nomeando o modelo mais barato do seu mapa `degradation`).
 - **Carbono e latência** — ponte token→carbono (tokens × kWh/token × PUE × intensidade da rede regional, portado do AI-Carbon-Footprint-Calculator) e percentis de latência por modelo.
-- **Superfícies** — a aba Budget em Settings (barras de uso, detalhamento por modelo, alertas, editores de teto, botões de desbloqueio) e o comando `/budget` (`/budget`, `/budget models`, `/budget unblock <scope>`).
+- **Superfícies** — a aba Budget em Settings (barras de uso, curva de uso por dia, detalhamento por modelo, alertas, editores de teto, botões de desbloqueio) e o comando `/budget` (`/budget`, `/budget models`, `/budget unblock <scope>`).
 
 ## Início rápido
 
@@ -92,7 +92,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 | `/budget` | Comando | Visão geral por escopo (uso, proporção, carbono, estado bloqueado) |
 | `/budget models` | Comando | Detalhamento por modelo com percentis de latência |
 | `/budget unblock <scope>` | Comando | Liberar um escopo bloqueado (`session` / `daily` / `monthly`) |
-| Settings → Plugins → Budget | Aba de Settings | Barras de uso, detalhamento, alertas, editores de teto, desbloqueio |
+| Settings → Plugins → Budget | Aba de Settings | Barras de uso, curva de uso por dia, detalhamento, alertas, editores de teto, desbloqueio |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | Canal do cliente (consumido pela aba) |
 
 ## Permissões e dados
@@ -120,7 +120,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests contra o checkout local do harness
 pnpm run typecheck:ci  # tsc contra os tipos publicados 0.1.1-rc.2 (sem paths)
-pnpm test           # vitest: 45 testes
+pnpm test           # vitest
 pnpm run build      # declarações tsc + bundles tsdown (lib/)
 pnpm run verify:self-contained  # especificações de dependências resolvem pelo registry
 pnpm run verify:artifacts       # face ESM + manifesto typert + bundle de cliente

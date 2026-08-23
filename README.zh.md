@@ -35,7 +35,7 @@
 - **聚合计量** —— token（未缓存输入 / 输出 / 缓存读 / 缓存写）、估算 USD 成本与碳足迹，按模型/会话/天聚合；内置 USD/百万 token 价目表与 `config.prices` 合并定价。
 - **预算治理** —— 会话/日/月三档封顶；warnRatio 阈值告警（webhook POST + 桌面通知开关）与三种超限策略：`alert`（仅告警）、`block`（在用户解除前短路新模型请求）、`degrade`（阻断并给出指向 `degradation` 映射中更便宜模型的修正提示）。
 - **碳足迹与延迟** —— token→碳桥接（tokens × kWh/token × PUE × 区域电网强度，移植自 AI-Carbon-Footprint-Calculator）与按模型延迟百分位。
-- **界面** —— 设置页预算页签（用量条、模型明细、告警、上限编辑、解除阻断按钮）与 `/budget` 命令（`/budget`、`/budget models`、`/budget unblock <scope>`）。
+- **界面** —— 设置页预算页签（用量条、按天用量曲线、模型明细、告警、上限编辑、解除阻断按钮）与 `/budget` 命令（`/budget`、`/budget models`、`/budget unblock <scope>`）。
 
 ## 快速开始
 
@@ -92,7 +92,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 | `/budget` | 命令 | 各作用域概览（用量、比例、碳足迹、阻断状态） |
 | `/budget models` | 命令 | 按模型明细 + 延迟百分位 |
 | `/budget unblock <scope>` | 命令 | 解除某作用域阻断（`session` / `daily` / `monthly`） |
-| 设置 → 插件 → 预算 | 设置页签 | 用量条、模型明细、告警、上限编辑、解除阻断按钮 |
+| 设置 → 插件 → 预算 | 设置页签 | 用量条、按天用量曲线、模型明细、告警、上限编辑、解除阻断按钮 |
 | `budget/status`、`budget/setSettings`、`budget/unblock` | Typert Remote | 客户端通道（页签消费这些方法） |
 
 ## 权限与数据
@@ -120,7 +120,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc：src + tests，对照本地 harness checkout
 pnpm run typecheck:ci  # tsc：对照已发布的 0.1.1-rc.2 类型（无 paths）
-pnpm test           # vitest：45 个测试
+pnpm test           # vitest
 pnpm run build      # tsc 声明 + tsdown bundles（lib/）
 pnpm run verify:self-contained  # 依赖声明全部来自 registry
 pnpm run verify:artifacts       # 构建产物 ESM 面 + typert manifest + 客户端 bundle

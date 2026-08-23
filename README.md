@@ -36,7 +36,7 @@
 - **Aggregated metering** — tokens (uncached input / output / cache read / cache write), estimated USD cost, and carbon footprint per model, session, and day, priced through a built-in USD-per-1M table merged with your `config.prices`.
 - **Budget governance** — session/daily/monthly caps; a warn-ratio threshold alert (webhook POST + desktop-notification flag) and three over-limit policies: `alert` (notify only), `block` (short-circuit new model requests until the user lifts the block), `degrade` (block with corrective guidance naming the cheaper model from your `degradation` map).
 - **Carbon & latency** — token→carbon bridge (tokens × kWh/token × PUE × regional grid intensity, ported from AI-Carbon-Footprint-Calculator) and per-model latency percentiles.
-- **Surfaces** — the Settings budget tab (usage bars, model breakdown, alerts, cap editors, unblock buttons) and the `/budget` command (`/budget`, `/budget models`, `/budget unblock <scope>`).
+- **Surfaces** — the Settings budget tab (usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons) and the `/budget` command (`/budget`, `/budget models`, `/budget unblock <scope>`).
 
 ## Quick start
 
@@ -93,7 +93,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | `/budget` | Command | Per-scope overview (usage, ratio, carbon, blocked state) |
 | `/budget models` | Command | Per-model breakdown with latency percentiles |
 | `/budget unblock <scope>` | Command | Lift a blocked scope (`session` / `daily` / `monthly`) |
-| Settings → Plugins → Budget | Settings tab | Usage bars, model breakdown, alerts, cap editors, unblock buttons |
+| Settings → Plugins → Budget | Settings tab | Usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | The client channel (the tab consumes these) |
 
 ## Permissions & data
@@ -121,7 +121,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests against the local harness checkout
 pnpm run typecheck:ci  # tsc against the published 0.1.1-rc.2 types (no paths)
-pnpm test           # vitest: 45 tests
+pnpm test           # vitest
 pnpm run build      # tsc declarations + tsdown bundles (lib/)
 pnpm run verify:self-contained  # dependency specs resolve from the registry
 pnpm run verify:artifacts       # built ESM face + typert manifest + client bundle

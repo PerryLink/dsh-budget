@@ -35,7 +35,7 @@
 - **समग्र मीटरिंग** — टोकन (बिना-कैश इनपुट / आउटपुट / कैश-रीड / कैश-राइट), अनुमानित USD लागत और कार्बन पदचिह्न प्रति मॉडल, सत्र और दिन; बिल्ट-इन USD-प्रति-1M तालिका आपके `config.prices` से मर्ज होती है।
 - **बजट प्रशासन** — सत्र/दैनिक/मासिक सीमाएँ; `warnRatio` थ्रेशोल्ड अलर्ट (वेबहुक POST + डेस्कटॉप-सूचना फ़्लैग) और सीमा पार होने पर तीन नीतियाँ: `alert` (केवल सूचित), `block` (उपयोगकर्ता द्वारा अनब्लॉक तक नए मॉडल अनुरोध रोकना), `degrade` (आपके `degradation` मैप के सस्ते मॉडल का नाम लेकर सुधारात्मक मार्गदर्शन सहित ब्लॉक)।
 - **कार्बन और लेटेंसी** — टोकन→कार्बन पुल (टोकन × kWh/टोकन × PUE × क्षेत्रीय ग्रिड तीव्रता, AI-Carbon-Footprint-Calculator से पोर्टेड) और प्रति-मॉडल लेटेंसी प्रतिशतक।
-- **सतहें** — Settings का Budget टैब (उपयोग बार, मॉडल विवरण, अलर्ट, सीमा संपादक, अनब्लॉक बटन) और `/budget` कमांड (`/budget`, `/budget models`, `/budget unblock <scope>`)।
+- **सतहें** — Settings का Budget टैब (उपयोग बार, दैनिक उपयोग वक्र, मॉडल विवरण, अलर्ट, सीमा संपादक, अनब्लॉक बटन) और `/budget` कमांड (`/budget`, `/budget models`, `/budget unblock <scope>`)।
 
 ## त्वरित शुरुआत
 
@@ -92,7 +92,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 | `/budget` | कमांड | प्रति-स्कोप अवलोकन (उपयोग, अनुपात, कार्बन, ब्लॉक स्थिति) |
 | `/budget models` | कमांड | लेटेंसी प्रतिशतक सहित प्रति-मॉडल विवरण |
 | `/budget unblock <scope>` | कमांड | ब्लॉक किए गए स्कोप को हटाना (`session` / `daily` / `monthly`) |
-| Settings → Plugins → Budget | Settings टैब | उपयोग बार, मॉडल विवरण, अलर्ट, सीमा संपादक, अनब्लॉक बटन |
+| Settings → Plugins → Budget | Settings टैब | उपयोग बार, दैनिक उपयोग वक्र, मॉडल विवरण, अलर्ट, सीमा संपादक, अनब्लॉक बटन |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | क्लाइंट चैनल (टैब इन्हें उपभोग करता है) |
 
 ## अनुमतियाँ और डेटा
@@ -120,7 +120,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests स्थानीय हार्नेस चेकआउट के विरुद्ध
 pnpm run typecheck:ci  # tsc प्रकाशित 0.1.1-rc.2 प्रकारों के विरुद्ध (बिना paths)
-pnpm test           # vitest: 45 टेस्ट
+pnpm test           # vitest
 pnpm run build      # tsc घोषणाएँ + tsdown बंडल (lib/)
 pnpm run verify:self-contained  # निर्भरता स्पेक registry से हल होती हैं
 pnpm run verify:artifacts       # ESM फ़ेस + typert मैनिफ़ेस्ट + क्लाइंट बंडल
