@@ -84,6 +84,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 | `currency` | `{code: USD, rate: 1.0, decimals: 2}` | प्रदर्शन मुद्रा (लागत USD में गणित) |
 | `outputLanguage` | `en` | `/budget` आउटपुट भाषा: `en` / `zh` |
 | `historyDays` | `30` | स्नैपशॉट में रखे प्रति-दिन उपयोग इतिहास के दिन |
+| `persistence.enabled` / `intervalMs` | `true` / `10000` | पुनरारंभ के बीच टिकाऊ दैनिक/मासिक संग्रहण (स्टोरेज डोमेन); डोमेन अनुपस्थित होने पर इन-मेमोरी में पतन |
 
 ## टूल और सतहें
 

@@ -40,6 +40,30 @@ export interface ModelUsage extends ScopeUsage {
   latencyMs: readonly number[]
 }
 
+/** One persisted model usage entry (latency windows stay process-local, so they are excluded). */
+export interface PersistedModelUsage {
+  provider: string
+  model: string
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  costUsd: number
+  carbonKg: number
+}
+
+/** One persisted day/month bucket. */
+export interface PersistedBucket {
+  total: ScopeUsage
+  models: Record<string, PersistedModelUsage>
+}
+
+/** The durable cross-restart subset of aggregator state (day + month buckets). */
+export interface PersistedBudgetState {
+  days: Record<string, PersistedBucket>
+  months: Record<string, PersistedBucket>
+}
+
 /** One recorded threshold alert. */
 export interface AlertRecord {
   scope: 'session' | 'daily' | 'monthly'
@@ -303,5 +327,86 @@ export class BudgetAggregator {
       blockedScopes: this.blockedScopes,
       days: this.dayHistory(this.config.historyDays),
     }
+  }
+
+  /** Serialize the day/month buckets (the durable cross-restart subset). */
+  exportState(): PersistedBudgetState {
+    return {
+      days: this.serializeBuckets(this.state.days),
+      months: this.serializeBuckets(this.state.months),
+    }
+  }
+
+  /** Merge a persisted state back into the live day/month buckets (restore on mount). */
+  restoreState(state: PersistedBudgetState): void {
+    this.restoreBuckets(this.state.days, state.days)
+    this.restoreBuckets(this.state.months, state.months)
+  }
+
+  /** Serialize one day/month bucket map into plain JSON. */
+  private serializeBuckets(
+    buckets: Map<string, { total: ScopeUsage; models: Map<string, ModelUsage> }>,
+  ): Record<string, PersistedBucket> {
+    const out: Record<string, PersistedBucket> = {}
+    for (const [key, bucket] of buckets) {
+      const models: Record<string, PersistedModelUsage> = {}
+      for (const [model, usage] of bucket.models) {
+        models[model] = {
+          provider: usage.provider,
+          model: usage.model,
+          inputTokens: usage.inputTokens,
+          outputTokens: usage.outputTokens,
+          cacheReadTokens: usage.cacheReadTokens,
+          cacheWriteTokens: usage.cacheWriteTokens,
+          costUsd: usage.costUsd,
+          carbonKg: usage.carbonKg,
+        }
+      }
+      out[key] = { total: { ...bucket.total }, models }
+    }
+    return out
+  }
+
+  /** Merge one persisted bucket map into a live bucket map (accumulating, not replacing). */
+  private restoreBuckets(
+    target: Map<string, { total: ScopeUsage; models: Map<string, ModelUsage> }>,
+    persisted: Record<string, PersistedBucket>,
+  ): void {
+    for (const [key, bucket] of Object.entries(persisted)) {
+      const existing = target.get(key) ?? { total: emptyUsage(), models: new Map() }
+      this.addToScope(existing.total, bucket.total)
+      for (const [model, usage] of Object.entries(bucket.models)) {
+        const entry = existing.models.get(model) ?? {
+          provider: usage.provider,
+          model,
+          inputTokens: 0,
+          outputTokens: 0,
+          cacheReadTokens: 0,
+          cacheWriteTokens: 0,
+          costUsd: 0,
+          carbonKg: 0,
+          latencyMs: [],
+        }
+        entry.provider = usage.provider
+        entry.inputTokens += usage.inputTokens
+        entry.outputTokens += usage.outputTokens
+        entry.cacheReadTokens += usage.cacheReadTokens
+        entry.cacheWriteTokens += usage.cacheWriteTokens
+        entry.costUsd += usage.costUsd
+        entry.carbonKg += usage.carbonKg
+        existing.models.set(model, entry)
+      }
+      target.set(key, existing)
+    }
+  }
+
+  /** Add one scope usage into another (accumulate every field). */
+  private addToScope(target: ScopeUsage, source: ScopeUsage): void {
+    target.inputTokens += source.inputTokens
+    target.outputTokens += source.outputTokens
+    target.cacheReadTokens += source.cacheReadTokens
+    target.cacheWriteTokens += source.cacheWriteTokens
+    target.costUsd += source.costUsd
+    target.carbonKg += source.carbonKg
   }
 }

@@ -84,6 +84,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 | `currency` | `{code: USD, rate: 1.0, decimals: 2}` | 展示货币（成本以 USD 计算，仅展示换算） |
 | `outputLanguage` | `en` | `/budget` 输出语言：`en` / `zh` |
 | `historyDays` | `30` | 面板快照保留的按天用量历史天数 |
+| `persistence.enabled` / `intervalMs` | `true` / `10000` | 日/月用量跨重启持久化（storage 域）；域缺失时降级为进程内聚合 |
 
 ## 工具与界面
 

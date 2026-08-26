@@ -71,3 +71,10 @@
         outputLanguage: en
         # Days of per-day usage history kept in the panel snapshot.
         historyDays: 30
+        # Durable day/month persistence across restarts (storage domain).
+        # When the storage domain is absent the plugin degrades to in-memory
+        # aggregation (the pre-persistence behavior).
+        persistence:
+          enabled: true
+          # Milliseconds between persistence snapshots (1000..300000).
+          intervalMs: 10000

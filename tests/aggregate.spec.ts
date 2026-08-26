@@ -91,4 +91,35 @@ describe('BudgetAggregator', () => {
     const aggregator = new BudgetAggregator(resolveConfig({ historyDays: 5 }), () => FIXED_NOW)
     expect(aggregator.snapshotFor('s1').days.length).toBe(5)
   })
+
+  it('round-trips day/month buckets through export/restore (cross-restart accumulation)', () => {
+    const source = makeAggregator()
+    source.setAttribution('deepseek', 'deepseek-chat')
+    source.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 100_000 })
+    const persisted = source.exportState()
+
+    const restored = makeAggregator()
+    restored.restoreState(persisted)
+    // The restored aggregator reflects the persisted day/month usage.
+    expect(restored.todayUsage().inputTokens).toBe(1_000_000)
+    expect(restored.monthUsage().outputTokens).toBe(100_000)
+
+    // Accumulating a new record on top keeps the restored totals.
+    restored.setAttribution('deepseek', 'deepseek-chat')
+    restored.recordUsage('s2', { inputTokens: 500_000, outputTokens: 0 })
+    expect(restored.todayUsage().inputTokens).toBe(1_500_000)
+  })
+
+  it('restore accumulates over an already-populated bucket instead of replacing it', () => {
+    const target = makeAggregator()
+    target.setAttribution('deepseek', 'deepseek-chat')
+    target.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 0 })
+
+    const extra = makeAggregator()
+    extra.setAttribution('deepseek', 'deepseek-chat')
+    extra.recordUsage('s2', { inputTokens: 500_000, outputTokens: 0 })
+
+    target.restoreState(extra.exportState())
+    expect(target.todayUsage().inputTokens).toBe(1_500_000)
+  })
 })

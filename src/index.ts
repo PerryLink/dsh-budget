@@ -34,10 +34,12 @@ import type {} from '@deepseek-ai/dsh-commands'
 import type {} from '@deepseek-ai/dsh-tools'
 import { Config, resolveConfig } from './config.ts'
 import { BudgetAggregator } from './aggregate/usage.ts'
+import type { PersistedBudgetState } from './aggregate/usage.ts'
 import { checkBudgets, sendWebhook, type Degradation, type GovernanceHooks, type ScopeDecision } from './governance.ts'
 import { ALERT_EVENT, BLOCK_EVENT, type BudgetAlertEvent, type BudgetBlockEvent } from './events.ts'
 import { BudgetService, effectiveCap, type RuntimeSettings } from './service.ts'
 import { budgetCommand } from './command.ts'
+import { budgetDomainSpec } from './store.ts'
 
 export const name = 'dsh-budget'
 
@@ -47,10 +49,12 @@ export const inject = ['sessions']
 export { Config, resolveConfig } from './config.ts'
 export type { ResolvedConfig } from './config.ts'
 export { BudgetAggregator } from './aggregate/usage.ts'
+export type { PersistedBudgetState, PersistedBucket, PersistedModelUsage } from './aggregate/usage.ts'
 export { checkBudgets, degradationFor } from './governance.ts'
 export { BudgetService, effectiveCap } from './service.ts'
 export { budgetCommand, parseBudgetArgs, renderBudgetModels, renderBudgetOverview } from './command.ts'
 export { ALERT_EVENT, BLOCK_EVENT } from './events.ts'
+export { budgetDomainSpec, budgetStateSchema } from './store.ts'
 
 /** The short-circuit stream the blocker yields when a scope is blocked. */
 function blockedStream(message: string, code: string): AsyncIterable<StreamChunk> {
@@ -63,10 +67,20 @@ function blockedStream(message: string, code: string): AsyncIterable<StreamChunk
   })()
 }
 
+/** The structural surface of the optional `ctx.storageDomain` service (persistence). */
+interface StorageDomainService {
+  open(spec: unknown): Promise<{
+    table(name: string): { get(key: string): PersistedBudgetState | undefined; put(key: string, value: PersistedBudgetState): Promise<unknown> }
+    close(): Promise<void>
+  }>
+}
+
 /**
- * Mount the plugin: resolve config, build the aggregator, wire the session
- * event feed, the budget checks, the `llm/stream` blocker, the webhook
- * alerts, the `budget` Remote service, and the `/budget` command.
+ * Mount the plugin: resolve config, build the aggregator, restore any durable
+ * day/month buckets, wire the session event feed, the budget checks, the
+ * `llm/stream` blocker, the webhook alerts, the `budget` Remote service, and
+ * the `/budget` command. Persistence is optional and degrades to in-memory
+ * when the storage domain is absent.
  *
  * @param ctx - the plugin context (host).
  * @param config - raw plugin config.
@@ -75,6 +89,40 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   const resolved = resolveConfig(config)
   const logger = ctx.logger('budget')
   const aggregator = new BudgetAggregator(resolved)
+
+  // Durable day/month persistence: restore once at mount and snapshot on a
+  // timer. The storage domain is optional — when absent, aggregation stays
+  // process-local (the pre-persistence behavior) and the plugin keeps working.
+  if (resolved.persistence.enabled) {
+    const storageDomain = ctx.get('storageDomain') as StorageDomainService | undefined
+    if (storageDomain !== undefined) {
+      try {
+        const domain = await storageDomain.open(budgetDomainSpec)
+        const table = domain.table('state')
+        const persisted = table.get('usage')
+        if (persisted !== undefined) aggregator.restoreState(persisted)
+        ctx.effect(() => {
+          const timer = setInterval(() => {
+            void table.put('usage', aggregator.exportState()).catch(error => {
+              logger.warn(`budget persistence write failed: ${error instanceof Error ? error.message : String(error)}`)
+            })
+          }, resolved.persistence.intervalMs)
+          return async () => {
+            clearInterval(timer)
+            try {
+              await table.put('usage', aggregator.exportState())
+            } catch (error) {
+              logger.warn(`final budget persistence write failed: ${error instanceof Error ? error.message : String(error)}`)
+            }
+            await domain.close()
+          }
+        })
+      } catch (error) {
+        logger.warn(`budget persistence unavailable (degrading to in-memory): ${error instanceof Error ? error.message : String(error)}`)
+      }
+    }
+  }
+
   const settings: RuntimeSettings = {
     sessionCapUsd: resolved.budgets.session ?? null,
     dailyCapUsd: resolved.budgets.daily ?? null,

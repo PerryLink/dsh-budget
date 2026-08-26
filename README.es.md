@@ -84,6 +84,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 | `currency` | `{code: USD, rate: 1.0, decimals: 2}` | Moneda de visualización (los costos se calculan en USD) |
 | `outputLanguage` | `en` | Idioma de salida de `/budget`: `en` / `zh` |
 | `historyDays` | `30` | Días de historial de uso diario en la instantánea |
+| `persistence.enabled` / `intervalMs` | `true` / `10000` | Persistencia duradera diaria/mensual entre reinicios (dominio de almacenamiento); degrada a en-memoria si falta el dominio |
 
 ## Herramientas y superficies
 

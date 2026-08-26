@@ -85,6 +85,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | `currency` | `{code: USD, rate: 1.0, decimals: 2}` | Display currency (costs are computed in USD) |
 | `outputLanguage` | `en` | `/budget` output language: `en` / `zh` |
 | `historyDays` | `30` | Per-day usage history kept in the panel snapshot |
+| `persistence.enabled` / `intervalMs` | `true` / `10000` | Durable day/month persistence across restarts (storage domain); degrades to in-memory when the domain is absent |
 
 ## Tools & surfaces
 

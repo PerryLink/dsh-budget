@@ -84,6 +84,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 | `currency` | `{code: USD, rate: 1.0, decimals: 2}` | Moeda de exibição (custos calculados em USD) |
 | `outputLanguage` | `en` | Idioma de saída do `/budget`: `en` / `zh` |
 | `historyDays` | `30` | Dias de histórico de uso diário no snapshot |
+| `persistence.enabled` / `intervalMs` | `true` / `10000` | Persistência durável diária/mensal entre reinícios (domínio de armazenamento); degrada para em-memória se o domínio estiver ausente |
 
 ## Ferramentas e superfícies
 

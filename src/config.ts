@@ -37,6 +37,14 @@ export interface BudgetsConfig {
   monthly?: number
 }
 
+/** Durable persistence of the daily/monthly buckets across restarts. */
+export interface PersistenceConfig {
+  /** Persist day/month usage to the storage domain (default true). */
+  enabled?: boolean
+  /** Milliseconds between persistence snapshots (default 10000). */
+  intervalMs?: number
+}
+
 /** Raw plugin config — every field optional; {@link resolveConfig} supplies the defaults. */
 export interface Config {
   /** Per-model USD prices per 1M tokens, merged over the built-in table. */
@@ -73,6 +81,8 @@ export interface Config {
   outputLanguage?: 'en' | 'zh'
   /** Days of per-day usage history kept in the panel snapshot. */
   historyDays?: number
+  /** Durable daily/monthly persistence across restarts. */
+  persistence?: PersistenceConfig
 }
 
 /** Fully resolved config. */
@@ -94,6 +104,7 @@ export interface ResolvedConfig {
   readonly currency: { code: string; rate: number; decimals: number }
   readonly outputLanguage: 'en' | 'zh'
   readonly historyDays: number
+  readonly persistence: { enabled: boolean; intervalMs: number }
 }
 
 /** Known electricity region keys (upstream carbon table). */
@@ -144,6 +155,10 @@ export const Config: z<Config> = z.object({
   }).default({ code: 'USD', rate: 1.0, decimals: 2 }),
   outputLanguage: z.union(['en', 'zh']).default('en'),
   historyDays: z.number().min(1).max(365).default(30),
+  persistence: z.object({
+    enabled: z.boolean().default(true),
+    intervalMs: z.number().min(1_000).max(300_000).default(10_000),
+  }).default({ enabled: true, intervalMs: 10_000 }),
 })
 
 /** Throw the standard fail-loud config error for one invalid field. */
@@ -234,6 +249,13 @@ export function resolveConfig(config: Config | undefined): ResolvedConfig {
   const historyDays = config?.historyDays ?? 30
   if (!Number.isInteger(historyDays) || historyDays < 1 || historyDays > 365) invalid('historyDays', 'must be an integer in [1, 365]')
 
+  const persistenceEnabled = config?.persistence?.enabled ?? true
+  if (typeof persistenceEnabled !== 'boolean') invalid('persistence.enabled', 'must be a boolean')
+  const persistenceIntervalMs = config?.persistence?.intervalMs ?? 10_000
+  if (!Number.isInteger(persistenceIntervalMs) || persistenceIntervalMs < 1_000 || persistenceIntervalMs > 300_000) {
+    invalid('persistence.intervalMs', 'must be an integer in [1000, 300000]')
+  }
+
   return Object.freeze({
     prices: Object.freeze(prices),
     defaultPrice: Object.freeze(defaultPrice),
@@ -252,5 +274,6 @@ export function resolveConfig(config: Config | undefined): ResolvedConfig {
     currency: Object.freeze({ code: currencyCode, rate: currencyRate, decimals: currencyDecimals }),
     outputLanguage,
     historyDays,
+    persistence: Object.freeze({ enabled: persistenceEnabled, intervalMs: persistenceIntervalMs }),
   })
 }
