@@ -8,7 +8,13 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { BUDGET_STATUS_SCHEMA, type BudgetStatus } from '../src/wire.ts'
+import {
+  BUDGET_SET_SETTINGS_DESCRIPTOR,
+  BUDGET_STATUS_DESCRIPTOR,
+  BUDGET_STATUS_SCHEMA,
+  BUDGET_UNBLOCK_DESCRIPTOR,
+  type BudgetStatus,
+} from '../src/wire.ts'
 
 function fullStatus(): BudgetStatus {
   return {
@@ -48,5 +54,30 @@ describe('BUDGET_STATUS_SCHEMA', () => {
 
   it('rejects a non-integer token count in the per-day curve', () => {
     expect(() => BUDGET_STATUS_SCHEMA.parse({ ...fullStatus(), days: [{ day: '2026-08-14', costUsd: 0, tokens: 1.5, carbonKg: 0 }] })).toThrow()
+  })
+})
+
+describe('budget invocation descriptors', () => {
+  it('declares the optional sessionId parameter on budget/status', () => {
+    expect(BUDGET_STATUS_DESCRIPTOR.parameters).toHaveLength(1)
+    const parameter = BUDGET_STATUS_DESCRIPTOR.parameters[0]
+    expect(parameter).toBeDefined()
+    if (parameter === undefined) return
+    expect(parameter.name).toBe('sessionId')
+    expect(parameter.wire).toBe('sessionId')
+    expect(parameter.acceptsUndefined).toBe(true)
+    // A missing/undefined session id and a real id both decode; a non-string is rejected.
+    expect(() => parameter.codec.schema.parse(undefined)).not.toThrow()
+    expect(parameter.codec.schema.parse('s1')).toBe('s1')
+    expect(() => parameter.codec.schema.parse(7)).toThrow()
+  })
+
+  it('keeps budget/setSettings and budget/unblock single-parameter and required', () => {
+    expect(BUDGET_SET_SETTINGS_DESCRIPTOR.parameters).toHaveLength(1)
+    expect(BUDGET_SET_SETTINGS_DESCRIPTOR.parameters[0]?.name).toBe('settingsJson')
+    expect(() => BUDGET_SET_SETTINGS_DESCRIPTOR.parameters[0]?.codec.schema.parse(undefined)).toThrow()
+    expect(BUDGET_UNBLOCK_DESCRIPTOR.parameters).toHaveLength(1)
+    expect(BUDGET_UNBLOCK_DESCRIPTOR.parameters[0]?.name).toBe('scope')
+    expect(() => BUDGET_UNBLOCK_DESCRIPTOR.parameters[0]?.codec.schema.parse(undefined)).toThrow()
   })
 })

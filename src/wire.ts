@@ -124,11 +124,17 @@ export const BUDGET_STATUS_SCHEMA = z.object({
   refreshIntervalMs: z.number().int().min(1000),
 })
 
+/** Strict wire schema for the optional status session id. */
+export const BUDGET_SESSION_ID_SCHEMA = z.string().optional()
+
 /**
  * The `budget/status` invocation descriptor, shared verbatim by the host
  * `TYPERT` manifest and the client `TypertRemoteContribution`. Hand-written
  * in the exact shape the Typert generator emits; validated by the typert
- * loader and the client registry at mount time.
+ * loader and the client registry at mount time. The optional `sessionId`
+ * parameter matches `BudgetService.status(sessionId?)` and the client
+ * `remote.budget.status(sessionId?)` — it attributes the snapshot to one
+ * session and may be omitted (missing wire fields decode to `undefined`).
  */
 export const BUDGET_STATUS_DESCRIPTOR = Object.freeze({
   id: 'dsh-budget#budget/status',
@@ -136,7 +142,17 @@ export const BUDGET_STATUS_DESCRIPTOR = Object.freeze({
   namespace: 'budget',
   method: 'status',
   invocation: Object.freeze({ kind: 'direct' }),
-  parameters: Object.freeze([]),
+  parameters: Object.freeze([Object.freeze({
+    name: 'sessionId',
+    wire: 'sessionId',
+    source: 'json',
+    codec: Object.freeze({
+      mode: 'strict',
+      typeSymbol: 'dsh-budget/types#SessionId',
+      schema: BUDGET_SESSION_ID_SCHEMA,
+    }),
+    acceptsUndefined: true,
+  } satisfies InvocationDescriptor['parameters'][number])]),
   result: Object.freeze({
     mode: 'strict',
     typeSymbol: 'dsh-budget/types#BudgetStatus',
