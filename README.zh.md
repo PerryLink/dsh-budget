@@ -1,6 +1,7 @@
 <div align="center">
 
 # 💰 dsh-budget
+- **1024 商店渠道**：先 `npm i -g dsh1024`，再 `dsh1024 plugin --profile web add dsh-budget`（计入 [deepseek1024.com](https://deepseek1024.com) 安装排行）。
 
 **DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全览。**
 

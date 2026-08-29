@@ -1,6 +1,7 @@
 <div align="center">
 
 # 💰 dsh-budget
+- **Canal 1024 store**: `npm i -g dsh1024` uma vez, depois `dsh1024 plugin --profile web add dsh-budget` (conta para o ranking de instalações do [deepseek1024.com](https://deepseek1024.com)).
 
 **Governança de custos para o DeepSeek Harness: orçamentos, carbono e latência em um só painel.**
 
