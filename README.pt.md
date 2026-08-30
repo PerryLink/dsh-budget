@@ -26,7 +26,8 @@
 | Superfície | Status |
 |---|---|
 | Harness | DeepSeek Harness `0.1.1-rc.2` |
-| Node | `^22.19.0 \|\| >=24.0.0` |
+
+| Eventos de auditoria | Gravados em harness anteriores a `0.1.2-alpha.1`; suprimidos com uma razão de degradação registrada em `0.1.2-alpha.1` e posteriores (vocabulário de eventos de sessão fail-closed, sem superfície de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Superfícies | Host + cliente Web (aba Budget em Settings); comando `/budget` |
 
 ## O que você ganha
@@ -101,7 +102,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 
 - **Permissões**: `network:outbound` (apenas o webhook de alerta opcional), `session:append` (eventos de auditoria), `native-code:none`.
 - **Dados**: tudo exibido vem do fluxo de eventos da sessão; a única chamada de rede é o webhook configurado, validado ao carregar e sem credenciais nos registros. Nenhum prompt ou payload sai do host.
-- **Registro de sessão**: `budget/alert` e `budget/block` são eventos de auditoria somente-registro com nomes de escopo e valores USD (adiados por microtarefa ante o guard de reentrância do append).
+- **Registro de sessão**: `budget/alert` e `budget/block` são eventos de auditoria somente-registro com nomes de escopo e valores USD (adiados por microtarefa ante o guard de reentrância do append). Em harness `0.1.2-alpha.1` e posteriores eles não são gravados — o vocabulário de eventos fail-closed rejeita logs com tipos de evento não registrados e não oferece superfície de registro externa — então o rastro de auditoria degrada apenas para o logger de orçamento e o webhook.
 
 ## Limites de segurança
 

@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- On DeepSeek Harness `0.1.2-alpha.1` and later, `budget/alert` and `budget/block` audit events are no longer appended to the session log: the fail-closed session event vocabulary rejects logs containing event types it does not know, and the host exposes no external registration surface. Harnesses before `0.1.2-alpha.1` keep the previous behavior; the suppression is logged once at mount with the degradation reason.
+
+### Changed
+
+- The browser half types its root context as the `@deepseek-ai/cordis` `Context` (matching current harness client plugins); the removed `@deepseek-ai/dsh-client-runtime` entry was dropped from `dsh.client.inject`, the peer/optional-peer and dev dependencies, the tsconfig paths, and the tsdown platform-externals list.
+
 ## [0.3.1] - 2026-08-27
 
 ### Fixed
