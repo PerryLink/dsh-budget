@@ -1,18 +1,26 @@
-/**
+﻿/**
  * `dsh-budget`, browser half: mounts the `budget` Remote contribution, then
  * registers the budget tab into the Plugins settings section
  * (`settings.plugins.tab`, id `budget`). All data arrives through the
- * `remote.budget` namespace — the tab issues no other RPC and holds no state
+ * `remote.budget` namespace 鈥?the tab issues no other RPC and holds no state
  * of its own beyond the edit form and the last loaded snapshot.
  *
  * @module dsh-budget/client
  */
 
-import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 // Type-only: pulls the 'settings.plugins.tab' SlotMap declaration into this
 // program so the tab registration typechecks against the real declaration.
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+
+// The slots service face is read structurally: the published rc.2 client
+// faces type Context.slots, the current checkout does not (the deleted
+// dsh-client-runtime face used to carry that merge).
+interface BudgetSlotsService {
+  inject(slot: 'settings.plugins.tab', factory: () => void): void
+  register(entry: object, component: unknown): void
+}
 import { BudgetTab, type BudgetTabInjected } from './BudgetTab.tsx'
 import { en, zh, type BudgetLocaleKey } from './locales.ts'
 import { BUDGET_REMOTE } from './remote.ts'
@@ -69,7 +77,8 @@ export async function apply(ctx: ClientContext): Promise<void> {
       unwrap<BudgetStatus>(await scope.remote.budget.setSettings(settingsJson), 'setSettings')
     const unblock: BudgetTabInjected['unblock'] = async (scopeName) =>
       unwrap<BudgetStatus>(await scope.remote.budget.unblock(scopeName), 'unblock')
-    scope.slots.inject('settings.plugins.tab', () => scope.slots.register({
+    const slots = scope.get('slots') as unknown as BudgetSlotsService
+    slots.inject('settings.plugins.tab', () => slots.register({
       name: 'settings.plugins.tab',
       id: 'budget',
       order: 40,
