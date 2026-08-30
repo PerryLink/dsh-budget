@@ -18,10 +18,11 @@ Standalone DeepSeek Harness plugin repository (`dsh-budget`). Development follow
 
 - **Seam-verified behavior** (rc.2 + local checkout): usage arrives as `assistant/message` events (`usage?: TokenUsage`, disjoint cache buckets); attribution comes from the latest `request/header` (`header.config.provider`/`model`); blocking happens on the `llm/stream` waterfall — loop-built requests are deep-frozen and MAY NOT be rewritten, so `degrade` cannot swap the model mid-request; it short-circuits with a corrective error finish naming the degraded model. Pass-through paths always call `next()`; the short-circuit is a deliberate claim.
 - **Session appends are reentrancy-guarded** ("cannot reenter while another append is being published"): the budget checks run inside the `session/event` callback, so the audit append is microtask-deferred. Two-argument append (rc.2 has no append-envelope option).
-- **Model-visible ⟺ logged**: the only model-visible content is the `/budget` output and the corrective block text; both are reconstructable from `command/run` + `budget/alert` + `budget/block` events.
+- **Model-visible ⟺ logged**: the only model-visible content is the `/budget` output and the corrective block text; both are reconstructable from `command/run` + `budget/alert` + `budget/block` events on harnesses before `0.1.2-alpha.1`. From `0.1.2-alpha.1` the audit events are suppressed (fail-closed session event vocabulary, no external registration surface) and the trail degrades to the budget logger and webhook.
 - **No fabrication**: a block never invents model output; it yields an error finish with the budget message.
 - **Fail loud**: invalid prices, webhook URLs, ratios, regions, and bounds throw at mount.
 - **Sanitized surfaces**: webhook URLs are credential-stripped before any log; amounts are plain numbers; nothing else leaves the host.
+- **Audit event gate**: `budget/alert` + `budget/block` appends are gated by the installed `@deepseek-ai/dsh-session` line version (`auditAppendsAllowed` in `src/events.ts`): pre-0.1.2-alpha.1 lines keep writing; 0.1.2-alpha.1+ suppress and log the degradation reason.
 
 ## Config
 

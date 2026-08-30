@@ -5,7 +5,8 @@
  * alert/block/degrade over-limit policies; per-model latency statistics; the
  * `budget` Typert Remote (`budget/status`, `budget/setSettings`,
  * `budget/unblock`) that the browser half's Settings tab consumes; the
- * `/budget` command; and `budget/alert` + `budget/block` session audit events.
+ * `/budget` command; and `budget/alert` + `budget/block` session audit events
+ * (suppressed on hosts whose fail-closed event vocabulary rejects them).
  *
  * Function plugin 鈥?no default export (the Loader unwraps
  * `exports.default ?? exports`).
@@ -32,14 +33,48 @@ import type { FinishReason, StreamChunk } from '@deepseek-ai/dsh-llm'
 import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-commands'
 import type {} from '@deepseek-ai/dsh-tools'
+import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 import { Config, resolveConfig } from './config.ts'
 import { BudgetAggregator } from './aggregate/usage.ts'
 import type { PersistedBudgetState } from './aggregate/usage.ts'
 import { checkBudgets, sendWebhook, type Degradation, type GovernanceHooks, type ScopeDecision } from './governance.ts'
-import { ALERT_EVENT, BLOCK_EVENT, type BudgetAlertEvent, type BudgetBlockEvent } from './events.ts'
+import { ALERT_EVENT, auditAppendsAllowed, BLOCK_EVENT, type BudgetAlertEvent, type BudgetBlockEvent } from './events.ts'
 import { BudgetService, effectiveCap, type RuntimeSettings } from './service.ts'
 import { budgetCommand } from './command.ts'
 import { budgetDomainSpec } from './store.ts'
+
+/**
+ * The installed `@deepseek-ai/dsh-session` version: the session package
+ * ships with the harness, so its version names the harness line. Read from
+ * the package manifest next to the resolved entry.
+ *
+ * @returns the harness-line version, or undefined when the peer cannot be
+ * resolved or the manifest cannot be read.
+ */
+function installedSessionVersion(): string | undefined {
+  try {
+    const entry = createRequire(import.meta.url).resolve('@deepseek-ai/dsh-session')
+    let dir = dirname(entry)
+    for (let depth = 0; depth < 6; depth++) {
+      try {
+        const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as { name?: unknown; version?: unknown }
+        if (manifest.name === '@deepseek-ai/dsh-session' && typeof manifest.version === 'string') return manifest.version
+      } catch (error) {
+        // No manifest at this level (or unreadable): walk toward the root.
+      }
+      const parent = dirname(dir)
+      if (parent === dir) return undefined
+      dir = parent
+    }
+    return undefined
+  } catch (error) {
+    // The peer failed to resolve: treat the line as unknown (legacy write
+    // behavior); the append guard below still surfaces write failures.
+    return undefined
+  }
+}
 
 export const name = 'dsh-budget'
 
@@ -53,7 +88,7 @@ export type { PersistedBudgetState, PersistedBucket, PersistedModelUsage } from 
 export { checkBudgets, degradationFor } from './governance.ts'
 export { BudgetService, effectiveCap } from './service.ts'
 export { budgetCommand, parseBudgetArgs, renderBudgetModels, renderBudgetOverview } from './command.ts'
-export { ALERT_EVENT, BLOCK_EVENT } from './events.ts'
+export { ALERT_EVENT, auditAppendsAllowed, BLOCK_EVENT } from './events.ts'
 export { budgetDomainSpec, budgetStateSchema } from './store.ts'
 
 /** The short-circuit stream the blocker yields when a scope is blocked. */
@@ -132,7 +167,20 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   }
   let degradation: Degradation | undefined
 
+  // Host event-vocabulary gate: from 0.1.2-alpha.1 the session read path
+  // refuses logs containing event types outside the harness-known vocabulary
+  // and no external registration surface exists, so appending
+  // budget/alert + budget/block would poison the log. The installed
+  // @deepseek-ai/dsh-session package carries the harness line version, so
+  // this probe distinguishes legacy lines (keep writing) from fail-closed
+  // lines (suppress and log the degradation reason).
+  const auditWritable = auditAppendsAllowed(installedSessionVersion())
+  if (!auditWritable) {
+    logger.warn('budget audit events suppressed on this harness (>= 0.1.2-alpha.1): the fail-closed session event vocabulary rejects logs containing unregistered event types and exposes no external registration surface; the alert/block trail degrades to the budget logger and webhook only')
+  }
+
   const append = (session: Session, type: 'budget/alert' | 'budget/block', event: BudgetAlertEvent | BudgetBlockEvent): void => {
+    if (!auditWritable) return
     // Session appends are reentrancy-guarded: the budget checks run inside the
     // `session/event` callback (during the publish of the triggering event),
     // so the audit append is deferred to a microtask that lands after publish.
