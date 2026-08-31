@@ -1,4 +1,4 @@
-﻿/**
+/**
  * `dsh-budget`, browser half: mounts the `budget` Remote contribution, then
  * registers the budget tab into the Plugins settings section
  * (`settings.plugins.tab`, id `budget`). All data arrives through the
@@ -9,6 +9,7 @@
  */
 
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
+import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 // Type-only: pulls the 'settings.plugins.tab' SlotMap declaration into this
 // program so the tab registration typechecks against the real declaration.
