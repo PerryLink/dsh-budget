@@ -94,14 +94,18 @@ describe('dsh-budget assembly', () => {
     expect(chunks.some(chunk => chunk.type === 'finish' && chunk.reason.kind === 'stop')).toBe(true)
   })
 
-  it('audits alerts and blocks into the session log', async () => {
+  it('keeps the session log free of budget audit events on fail-closed host lines', async () => {
     const { session } = await mount({ budgets: { session: 0.1, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 })
     session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-chat' } }, reason: 'initial' })
     appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 })
     // The audit append is microtask-deferred past the reentrancy guard.
     await new Promise(resolve => setTimeout(resolve, 0))
     const types = session.events.map(event => event.type)
-    expect(types).toContain('budget/alert')
-    expect(types).toContain('budget/block')
+    // The pinned 0.1.2-alpha.2 peer line fails closed on unknown event types
+    // and exposes no external registration surface, so budget/alert and
+    // budget/block appends are suppressed and the alert/block trail stays in
+    // the budget logger and webhook channel.
+    expect(types).not.toContain('budget/alert')
+    expect(types).not.toContain('budget/block')
   })
 })
