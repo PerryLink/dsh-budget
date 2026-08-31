@@ -22,7 +22,7 @@ Standalone DeepSeek Harness plugin repository (`dsh-budget`). Development follow
 - **No fabrication**: a block never invents model output; it yields an error finish with the budget message.
 - **Fail loud**: invalid prices, webhook URLs, ratios, regions, and bounds throw at mount.
 - **Sanitized surfaces**: webhook URLs are credential-stripped before any log; amounts are plain numbers; nothing else leaves the host.
-- **Audit event gate**: `budget/alert` + `budget/block` appends are gated by the installed `@deepseek-ai/dsh-session` line version (`auditAppendsAllowed` in `src/events.ts`): pre-0.1.2-alpha.1 lines keep writing; 0.1.2-alpha.1+ suppress and log the degradation reason.
+- **Audit event gate**: `budget/alert` + `budget/block` appends are gated by the installed `@deepseek-ai/dsh-session` line version (`auditAppendsAllowed` in `src/events.ts`): pre-0.1.2-alpha.1 lines keep writing; 0.1.2-alpha.1+ suppress and log the degradation reason. 0.1.2-alpha.2 keeps the suppression: its envelope field is restored for stored-log read compatibility only and `Session.append` still cannot stamp the marker.
 
 ## Config
 
