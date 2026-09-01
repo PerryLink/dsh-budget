@@ -38,3 +38,4 @@ minimumReleaseAgeExclude:
   - '@deepseek-ai/dsh-storage@0.1.2-alpha.3'
   - '@deepseek-ai/dsh-system-prompt@0.1.2-alpha.3'
   - '@deepseek-ai/dsh-user-approval@0.1.2-alpha.3'
+verifyDepsBeforeRun: false
