@@ -28,9 +28,9 @@
 
 | Surface | Status |
 |---|---|
-| Harness | DeepSeek Harness `0.1.1-rc.2` |
+| Harness | DeepSeek Harness `0.1.1-rc.2` 0.1.2-alpha.2 (adapted 2026-08-31): the session envelope keeps its ignorable field for stored-log read compatibility only - Session.append still cannot stamp it, so audit-gate behavior is unchanged. |
 
-| Audit events | Written on harnesses before `0.1.2-alpha.1`; suppressed with a logged degradation reason on `0.1.2-alpha.1` and later (fail-closed session event vocabulary, no external registration surface) || Node | `^22.19.0 \|\| >=24.0.0` |
+| Audit events | Written on harnesses before `0.1.2-alpha.2`; suppressed with a logged degradation reason on `0.1.2-alpha.2` and later (fail-closed session event vocabulary, no external registration surface) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Surfaces | Host + Web client (Settings budget tab); `/budget` command |
 
 ## What you get
@@ -105,7 +105,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 
 - **Permissions**: `network:outbound` (the optional alert webhook only), `session:append` (audit events), `native-code:none`.
 - **Data**: everything displayed comes from the session event stream; the only host-side network call is the configured webhook, whose URL is validated at load and credential-stripped before any log. No prompts or payloads ever leave the host.
-- **Session log**: `budget/alert` and `budget/block` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard). On harnesses `0.1.2-alpha.1` and later they are not written — the fail-closed event vocabulary rejects logs with unregistered event types and offers no external registration surface — so the audit trail degrades to the budget logger and webhook only.
+- **Session log**: `budget/alert` and `budget/block` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard). On harnesses `0.1.2-alpha.2` and later they are not written — the fail-closed event vocabulary rejects logs with unregistered event types and offers no external registration surface — so the audit trail degrades to the budget logger and webhook only.
 
 ## Security boundaries
 
