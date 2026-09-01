@@ -170,8 +170,8 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   // Host event-vocabulary gate: from 0.1.2-alpha.1 the session read path
   // refuses logs containing event types outside the harness-known vocabulary
   // and no external registration surface exists, so appending
-  // budget/alert + budget/block would poison the log. 0.1.2-alpha.2 keeps
-  // the suppression: its envelope field is restored for stored-log read
+  // budget/alert + budget/block would poison the log. 0.1.2-alpha.3 keeps
+  // the suppression: its envelope field is retained for stored-log read
   // compatibility only and Session.append still cannot stamp the marker.
   // The installed
   // @deepseek-ai/dsh-session package carries the harness line version, so

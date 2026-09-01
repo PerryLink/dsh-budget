@@ -45,7 +45,7 @@ export const BLOCK_EVENT = 'budget/block' as const
  * host line. From 0.1.2-alpha.1 the session read path refuses logs
  * containing event types outside the harness-known vocabulary and exposes no
  * external registration surface, so appends would poison the log.
- * 0.1.2-alpha.2 retains the `ignorable?: true` envelope field, but only for
+ * 0.1.2-alpha.3 retains the `ignorable?: true` envelope field, but only for
  * stored-log read compatibility: its `Session.append` third argument is a
  * `SurfaceIntent` for surface events and still cannot stamp the marker, so
  * the same suppression applies there. Earlier lines accept any event type
