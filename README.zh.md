@@ -27,7 +27,7 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness `0.1.1-rc.2` 0.1.2-alpha.5（2026-09-02 已适配）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。 |
+| Harness | DeepSeek Harness `0.1.2-alpha.5`（2026-09-02 已适配）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。 |
 
 | 审计事件 | `0.1.2-alpha.5` 之前的宿主上写入；在 `0.1.2-alpha.5` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
 | 界面 | Host + Web 客户端（设置页预算页签）；`/budget` 命令 |
@@ -124,7 +124,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc：src + tests，对照本地 harness checkout
-pnpm run typecheck:ci  # tsc：对照已发布的 0.1.1-rc.2 类型（无 paths）
+pnpm run typecheck:ci  # tsc：对照已发布的 0.1.2-alpha.5 类型（无 paths）
 pnpm test           # vitest
 pnpm run build      # tsc 声明 + tsdown bundles（lib/）
 pnpm run verify:self-contained  # 依赖声明全部来自 registry

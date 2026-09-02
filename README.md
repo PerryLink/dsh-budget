@@ -28,7 +28,7 @@
 
 | Surface | Status |
 |---|---|
-| Harness | DeepSeek Harness `0.1.1-rc.2` 0.1.2-alpha.5 (adapted 2026-09-02): the session envelope keeps its ignorable field for stored-log read compatibility only - Session.append still cannot stamp it, so audit-gate behavior is unchanged. |
+| Harness | DeepSeek Harness `0.1.2-alpha.5` (adapted 2026-09-02): the session envelope keeps its ignorable field for stored-log read compatibility only - Session.append still cannot stamp it, so audit-gate behavior is unchanged. |
 
 | Audit events | Written on harnesses before `0.1.2-alpha.5`; suppressed with a logged degradation reason on `0.1.2-alpha.5` and later (fail-closed session event vocabulary, no external registration surface) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Surfaces | Host + Web client (Settings budget tab); `/budget` command |
@@ -125,7 +125,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests against the local harness checkout
-pnpm run typecheck:ci  # tsc against the published 0.1.1-rc.2 types (no paths)
+pnpm run typecheck:ci  # tsc against the published 0.1.2-alpha.5 types (no paths)
 pnpm test           # vitest
 pnpm run build      # tsc declarations + tsdown bundles (lib/)
 pnpm run verify:self-contained  # dependency specs resolve from the registry
