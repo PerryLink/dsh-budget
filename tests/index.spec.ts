@@ -100,7 +100,7 @@ describe('dsh-budget assembly', () => {
     appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 })
     // The audit append is microtask-deferred past the reentrancy guard.
     await new Promise(resolve => setTimeout(resolve, 0))
-    const types = session.events.map(event => event.type)
+    const types = session.snapshotEvents().map(event => event.type)
     // The pinned 0.1.2-alpha.2 peer line fails closed on unknown event types
     // and exposes no external registration surface, so budget/alert and
     // budget/block appends are suppressed and the alert/block trail stays in
