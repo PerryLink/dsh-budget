@@ -27,9 +27,9 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness `0.1.1-rc.2` 0.1.2-alpha.3（2026-09-01 已适配）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。 |
+| Harness | DeepSeek Harness `0.1.1-rc.2` 0.1.2-alpha.5（2026-09-02 已适配）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。 |
 
-| 审计事件 | `0.1.2-alpha.3` 之前的宿主上写入；在 `0.1.2-alpha.3` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
+| 审计事件 | `0.1.2-alpha.5` 之前的宿主上写入；在 `0.1.2-alpha.5` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
 | 界面 | Host + Web 客户端（设置页预算页签）；`/budget` 命令 |
 
 ## 你能得到什么
@@ -104,7 +104,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 
 - **权限**：`network:outbound`（仅可选告警 webhook）、`session:append`（审计事件）、`native-code:none`。
 - **数据**：展示内容全部来自会话事件流；主机侧唯一网络调用是配置的 webhook，URL 在加载时校验、入日志前剥离凭据。任何 prompt/载荷都不会离开主机。
-- **会话日志**：`budget/alert` 与 `budget/block` 是仅日志审计事件，只携带作用域名与 USD 金额（微任务延后以绕过会话 append 重入保护）。在 `0.1.2-alpha.3` 及以后的宿主上不再写入——fail-closed 事件词表会拒绝含未注册事件类型的日志，且没有外部注册面——审计轨迹因此仅降级到预算日志与 webhook。
+- **会话日志**：`budget/alert` 与 `budget/block` 是仅日志审计事件，只携带作用域名与 USD 金额（微任务延后以绕过会话 append 重入保护）。在 `0.1.2-alpha.5` 及以后的宿主上不再写入——fail-closed 事件词表会拒绝含未注册事件类型的日志，且没有外部注册面——审计轨迹因此仅降级到预算日志与 webhook。
 
 ## 安全边界
 
