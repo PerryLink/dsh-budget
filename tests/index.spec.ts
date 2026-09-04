@@ -9,7 +9,7 @@
  */
 
 import { Context } from '@deepseek-ai/cordis'
-import SessionStore, { SessionId, type Session } from '@deepseek-ai/dsh-session'
+import SessionStore, { SessionId, type Session, type SessionEventMap } from '@deepseek-ai/dsh-session'
 import type { AssistantMessage, StreamChunk, TokenUsage } from '@deepseek-ai/dsh-llm'
 import type { Plugin } from '@deepseek-ai/cordis'
 import { describe, expect, it } from 'vitest'
@@ -41,7 +41,11 @@ function appendMessage(session: Session, usage: TokenUsage): void {
     source: { kind: 'model', provider: 'deepseek', model: 'deepseek-chat' },
     id: 'test-message-id',
   } as unknown as AssistantMessage
-  session.append('assistant/message', { turn: 1, step: 1, message, usage }, { surfaceOp: 'append' })
+  session.append(
+    'assistant/message',
+    { turn: 1, step: 1, message, usage, stream: [] } as unknown as SessionEventMap['assistant/message'],
+    { surfaceOp: 'append' },
+  )
 }
 
 describe('dsh-budget assembly', () => {

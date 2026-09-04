@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Align the devDependency pins to the published dsh `0.1.2-rc.1` line (14 `@deepseek-ai/dsh-*` packages) and the `dshWorkshop` compatibility list; the compat CI probes and the `typecheck:ci` step label move from `0.1.1-rc.2` to `0.1.2-rc.1`. Peer ranges stay unchanged; the audit-event suppression keeps applying on `0.1.2-rc.1` (`Session.append` still cannot stamp the `ignorable` marker). No behavior change.
+- The assembly test fixture carries the v2 `assistant/message` `stream` field so the checkout-ruler `typecheck` (paths against dsh 0.1.3-alpha.1, where the field is mandatory) and the published-ruler `typecheck:ci` both pass; test-only, no behavior change.
 
 ## [0.4.3] - 2026-09-02
 
