@@ -1,135 +1,135 @@
-<div align="center">
+﻿<div align="center">
 
-# 💰 dsh-budget
-- **1024 商店渠道**：先 `npm i -g dsh1024`，再 `dsh1024 plugin --profile web add dsh-budget`（计入 [deepseek1024.com](https://deepseek1024.com) 安装排行）。
+# 馃挵 dsh-budget
+- **1024 鍟嗗簵娓犻亾**锛氬厛 `npm i -g dsh1024`锛屽啀 `dsh1024 plugin --profile web add dsh-budget`锛堣鍏?[deepseek1024.com](https://deepseek1024.com) 瀹夎鎺掕锛夈€?
 
-**DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全览。**
+**DeepSeek Harness 鐨勬垚鏈不鐞嗭細棰勭畻銆佺⒊瓒宠抗涓庡欢杩燂紝涓€涓潰鏉垮叏瑙堛€?*
 
-*让每次会话的成本在超支之前就被看清。*
+*璁╂瘡娆′細璇濈殑鎴愭湰鍦ㄨ秴鏀箣鍓嶅氨琚湅娓呫€?
 
-> **官方仓库。** 本仓库是 dsh-budget 的唯一官方仓库，由 PerryLink 维护。其他账号下的同名仓库与本项目无关。
+> **瀹樻柟浠撳簱銆?* 鏈粨搴撴槸 dsh-budget 鐨勫敮涓€瀹樻柟浠撳簱锛岀敱 PerryLink 缁存姢銆傚叾浠栬处鍙蜂笅鐨勫悓鍚嶄粨搴撲笌鏈」鐩棤鍏炽€?
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![DSH plugin](https://img.shields.io/badge/dsh-plugin-✅-green)](https://github.com/topics/dsh-plugin)
+[![DSH plugin](https://img.shields.io/badge/dsh-plugin-鉁?green)](https://github.com/topics/dsh-plugin)
 [![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24-brightgreen.svg)](#)
 [![CI](https://img.shields.io/github/actions/workflow/status/PerryLink/dsh-budget/ci.yml?branch=main&label=CI)](https://github.com/PerryLink/dsh-budget/actions)
 [![Version](https://img.shields.io/github/v/tag/PerryLink/dsh-budget?label=version)](https://github.com/PerryLink/dsh-budget/releases)
 [![npm version](https://img.shields.io/npm/v/dsh-budget)](https://www.npmjs.com/package/dsh-budget)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-budget)](https://www.npmjs.com/package/dsh-budget)
 
-[English](README.md) · [简体中文](README.zh.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
+[English](README.md) 路 [绠€浣撲腑鏂嘳(README.zh.md) 路 [Espa帽ol](README.es.md) 路 [Portugu锚s](README.pt.md) 路 [啶灌た啶ㄠ啶︵](README.hi.md)
 
 </div>
 
 ---
 
-## 兼容性
+## 鍏煎鎬?
 
-| 方面 | 状态 |
+| 鏂归潰 | 鐘舵€?|
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.3-alpha.1`（GitHub tag，2026-09-06 核验；npm 钉号 `0.1.2-rc.1`，2026-09-02 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0`）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。已于 2026-09-06 对照 dsh-v0.1.3-alpha.1 master 检出核验（完整门禁链 + profile 安装冒烟）。 |
+| Harness | DeepSeek Harness `dsh-v0.1.3-alpha.1`锛圙itHub tag锛?026-09-06 鏍搁獙锛沶pm 閽夊彿 `0.1.2-rc.1`锛?026-09-02 宸查€傞厤锛沺eer 鑼冨洿 `>=0.1.2-rc.1 <0.2.0`锛夛細浼氳瘽淇″皝淇濈暀 ignorable 瀛楁浣嗕粎鐢ㄤ簬瀛橀噺鏃ュ織璇诲彇鍏煎鈥斺€擲ession.append 浠嶆棤娉曠洊绔狅紝闂ㄦ帶琛屼负涓嶅彉銆傚凡浜?2026-09-06 瀵圭収 dsh-v0.1.3-alpha.1 master 妫€鍑烘牳楠岋紙瀹屾暣闂ㄧ閾?+ profile 瀹夎鍐掔儫锛夈€?|
 
-| 审计事件 | `0.1.2-rc.1` 之前的宿主上写入；在 `0.1.2-rc.1` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
-| 界面 | Host + Web 客户端（设置页预算页签）；`/budget` 命令 |
+| 瀹¤浜嬩欢 | `0.1.2-rc.1` 涔嬪墠鐨勫涓讳笂鍐欏叆锛涘湪 `0.1.2-rc.1` 鍙婁互鍚庢姂鍒跺苟璁板綍闄嶇骇鍘熷洜锛坒ail-closed 浼氳瘽浜嬩欢璇嶈〃锛屾棤澶栭儴娉ㄥ唽闈級 || Node | `^22.19.0 \|\| >=24.0.0` |
+| 鐣岄潰 | Host + Web 瀹㈡埛绔紙璁剧疆椤甸绠楅〉绛撅級锛沗/budget` 鍛戒护 |
 
-## 你能得到什么
+## 浣犺兘寰楀埌浠€涔?
 
-`dsh-budget` 把会话事件流变成四合一成本治理闭环：
+`dsh-budget` 鎶婁細璇濅簨浠舵祦鍙樻垚鍥涘悎涓€鎴愭湰娌荤悊闂幆锛?
 
-- **聚合计量** —— token（未缓存输入 / 输出 / 缓存读 / 缓存写）、估算 USD 成本与碳足迹，按模型/会话/天聚合；内置 USD/百万 token 价目表与 `config.prices` 合并定价。
-- **预算治理** —— 会话/日/月三档封顶；warnRatio 阈值告警（webhook POST + 桌面通知开关）与三种超限策略：`alert`（仅告警）、`block`（在用户解除前短路新模型请求）、`degrade`（阻断并给出指向 `degradation` 映射中更便宜模型的修正提示）。
-- **碳足迹与延迟** —— token→碳桥接（tokens × kWh/token × PUE × 区域电网强度，移植自 AI-Carbon-Footprint-Calculator）与按模型延迟百分位。
-- **界面** —— 设置页预算页签（用量条、按天用量曲线、模型明细、告警、上限编辑、解除阻断按钮）与 `/budget` 命令（`/budget`、`/budget models`、`/budget unblock <scope>`）。
+- **鑱氬悎璁￠噺** 鈥斺€?token锛堟湭缂撳瓨杈撳叆 / 杈撳嚭 / 缂撳瓨璇?/ 缂撳瓨鍐欙級銆佷及绠?USD 鎴愭湰涓庣⒊瓒宠抗锛屾寜妯″瀷/浼氳瘽/澶╄仛鍚堬紱鍐呯疆 USD/鐧句竾 token 浠风洰琛ㄤ笌 `config.prices` 鍚堝苟瀹氫环銆?
+- **棰勭畻娌荤悊** 鈥斺€?浼氳瘽/鏃?鏈堜笁妗ｅ皝椤讹紱warnRatio 闃堝€煎憡璀︼紙webhook POST + 妗岄潰閫氱煡寮€鍏筹級涓庝笁绉嶈秴闄愮瓥鐣ワ細`alert`锛堜粎鍛婅锛夈€乣block`锛堝湪鐢ㄦ埛瑙ｉ櫎鍓嶇煭璺柊妯″瀷璇锋眰锛夈€乣degrade`锛堥樆鏂苟缁欏嚭鎸囧悜 `degradation` 鏄犲皠涓洿渚垮疁妯″瀷鐨勪慨姝ｆ彁绀猴級銆?
+- **纰宠冻杩逛笌寤惰繜** 鈥斺€?token鈫掔⒊妗ユ帴锛坱okens 脳 kWh/token 脳 PUE 脳 鍖哄煙鐢电綉寮哄害锛岀Щ妞嶈嚜 AI-Carbon-Footprint-Calculator锛変笌鎸夋ā鍨嬪欢杩熺櫨鍒嗕綅銆?
+- **鐣岄潰** 鈥斺€?璁剧疆椤甸绠楅〉绛撅紙鐢ㄩ噺鏉°€佹寜澶╃敤閲忔洸绾裤€佹ā鍨嬫槑缁嗐€佸憡璀︺€佷笂闄愮紪杈戙€佽В闄ら樆鏂寜閽級涓?`/budget` 鍛戒护锛坄/budget`銆乣/budget models`銆乣/budget unblock <scope>`锛夈€?
 
-## 快速开始
+## 蹇€熷紑濮?
 
 ```sh
-# 1. 把 bundle 装进你的 profile
+# 1. 鎶?bundle 瑁呰繘浣犵殑 profile
 dsh plugin --profile web add "github:PerryLink/dsh-budget#main"
 
-# 或从 npm 安装（正式发布版）
+# 鎴栦粠 npm 瀹夎锛堟寮忓彂甯冪増锛?
 dsh plugin --profile web add dsh-budget
 
-# 2. 重启并核实行
+# 2. 閲嶅惎骞舵牳瀹炶
 dsh --profile web --dump-config | grep -A2 'id: budget'
 ```
 
-然后在会话里输入 `/budget`，并在设置页查看预算页签。
+鐒跺悗鍦ㄤ細璇濋噷杈撳叆 `/budget`锛屽苟鍦ㄨ缃〉鏌ョ湅棰勭畻椤电銆?
 
-## 安装与卸载
+## 瀹夎涓庡嵏杞?
 
-- **git 通道**（最新 `main`）：`dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` —— `prepare` 脚本仅用生产依赖构建。
-- **npm 通道**（正式发布版）：`dsh plugin --profile web add dsh-budget`。
-- **tarball 通道**：在本仓库执行 `pnpm pack`，然后 `dsh plugin --profile web add ./dsh-budget-<version>.tgz`。
-- **卸载**：`dsh plugin --profile web remove dsh-budget`。
+- **git 閫氶亾**锛堟渶鏂?`main`锛夛細`dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` 鈥斺€?`prepare` 鑴氭湰浠呯敤鐢熶骇渚濊禆鏋勫缓銆?
+- **npm 閫氶亾**锛堟寮忓彂甯冪増锛夛細`dsh plugin --profile web add dsh-budget`銆?
+- **tarball 閫氶亾**锛氬湪鏈粨搴撴墽琛?`pnpm pack`锛岀劧鍚?`dsh plugin --profile web add ./dsh-budget-<version>.tgz`銆?
+- **鍗歌浇**锛歚dsh plugin --profile web remove dsh-budget`銆?
 
-> 如果 pnpm 对本包报 `ERR_PNPM_IGNORED_BUILDS`（esbuild 的平台二进制无害校验），在你的 `pnpm-workspace.yaml` 中加入 `allowBuilds: { esbuild: true }` —— `dsh` CLI 会打印确切片段。
+> 濡傛灉 pnpm 瀵规湰鍖呮姤 `ERR_PNPM_IGNORED_BUILDS`锛坋sbuild 鐨勫钩鍙颁簩杩涘埗鏃犲鏍￠獙锛夛紝鍦ㄤ綘鐨?`pnpm-workspace.yaml` 涓姞鍏?`allowBuilds: { esbuild: true }` 鈥斺€?`dsh` CLI 浼氭墦鍗扮‘鍒囩墖娈点€?
 
-## 配置
+## 閰嶇疆
 
-所有可调项都是 Schemastery `Config` 字段（可在 cordis.yml 中修改）。`cordis.patch.yml` 内联说明每个键。
+鎵€鏈夊彲璋冮」閮芥槸 Schemastery `Config` 瀛楁锛堝彲鍦?cordis.yml 涓慨鏀癸級銆俙cordis.patch.yml` 鍐呰仈璇存槑姣忎釜閿€?
 
-| 键 | 默认值 | 含义 |
+| 閿?| 榛樿鍊?| 鍚箟 |
 |---|---|---|
-| `prices` | `{}` | 每模型 USD/百万 token 价格，合并覆盖内置价目表 |
-| `defaultPrice` | `{input: 1.0, output: 3.0}` | 两表均无该模型时的回退价格 |
-| `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | 各作用域 USD 预算上限；缺省表示不限 |
-| `warnRatio` | `0.8` | 用量达到上限该比例时告警（0..1） |
-| `overLimit` | `alert` | 超限后策略：`alert` / `block` / `degrade` |
-| `degradation` | `{}` | 模型 id → 同厂商更便宜模型 id 的映射 |
-| `webhookUrl` | *(无)* | 可选阈值告警 webhook URL（POST JSON） |
-| `webhookTimeoutMs` | `5000` | webhook 请求超时 |
-| `alertsEnabled` | `true` | 阈值告警总开关 |
-| `alertCooldownMs` | `3600000` | 同一作用域两次告警的最小间隔（ms） |
-| `desktopNotifications` | `false` | 页签打开时的浏览器桌面通知 |
-| `refreshIntervalMs` | `5000` | 设置页签轮询间隔 |
-| `carbon.enabled` / `region` / `pue` / `energyKwhPerToken` | `true` / `global` / `1.58` / `0.000007` | 碳桥接（区域：global, us, eu, china, india, uk, france, iceland） |
-| `latency.enabled` / `windowSize` | `true` / `200` | 按模型延迟百分位与其窗口 |
-| `currency` | `{code: USD, rate: 1.0, decimals: 2}` | 展示货币（成本以 USD 计算，仅展示换算） |
-| `outputLanguage` | `en` | `/budget` 输出语言：`en` / `zh` |
-| `historyDays` | `30` | 面板快照保留的按天用量历史天数 |
-| `persistence.enabled` / `intervalMs` | `true` / `10000` | 日/月用量跨重启持久化（storage 域）；域缺失时降级为进程内聚合 |
+| `prices` | `{}` | 姣忔ā鍨?USD/鐧句竾 token 浠锋牸锛屽悎骞惰鐩栧唴缃环鐩〃 |
+| `defaultPrice` | `{input: 1.0, output: 3.0}` | 涓よ〃鍧囨棤璇ユā鍨嬫椂鐨勫洖閫€浠锋牸 |
+| `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | 鍚勪綔鐢ㄥ煙 USD 棰勭畻涓婇檺锛涚己鐪佽〃绀轰笉闄?|
+| `warnRatio` | `0.8` | 鐢ㄩ噺杈惧埌涓婇檺璇ユ瘮渚嬫椂鍛婅锛?..1锛?|
+| `overLimit` | `alert` | 瓒呴檺鍚庣瓥鐣ワ細`alert` / `block` / `degrade` |
+| `degradation` | `{}` | 妯″瀷 id 鈫?鍚屽巶鍟嗘洿渚垮疁妯″瀷 id 鐨勬槧灏?|
+| `webhookUrl` | *(鏃?* | 鍙€夐槇鍊煎憡璀?webhook URL锛圥OST JSON锛?|
+| `webhookTimeoutMs` | `5000` | webhook 璇锋眰瓒呮椂 |
+| `alertsEnabled` | `true` | 闃堝€煎憡璀︽€诲紑鍏?|
+| `alertCooldownMs` | `3600000` | 鍚屼竴浣滅敤鍩熶袱娆″憡璀︾殑鏈€灏忛棿闅旓紙ms锛?|
+| `desktopNotifications` | `false` | 椤电鎵撳紑鏃剁殑娴忚鍣ㄦ闈㈤€氱煡 |
+| `refreshIntervalMs` | `5000` | 璁剧疆椤电杞闂撮殧 |
+| `carbon.enabled` / `region` / `pue` / `energyKwhPerToken` | `true` / `global` / `1.58` / `0.000007` | 纰虫ˉ鎺ワ紙鍖哄煙锛歡lobal, us, eu, china, india, uk, france, iceland锛?|
+| `latency.enabled` / `windowSize` | `true` / `200` | 鎸夋ā鍨嬪欢杩熺櫨鍒嗕綅涓庡叾绐楀彛 |
+| `currency` | `{code: USD, rate: 1.0, decimals: 2}` | 灞曠ず璐у竵锛堟垚鏈互 USD 璁＄畻锛屼粎灞曠ず鎹㈢畻锛?|
+| `outputLanguage` | `en` | `/budget` 杈撳嚭璇█锛歚en` / `zh` |
+| `historyDays` | `30` | 闈㈡澘蹇収淇濈暀鐨勬寜澶╃敤閲忓巻鍙插ぉ鏁?|
+| `persistence.enabled` / `intervalMs` | `true` / `10000` | 鏃?鏈堢敤閲忚法閲嶅惎鎸佷箙鍖栵紙storage 鍩燂級锛涘煙缂哄け鏃堕檷绾т负杩涚▼鍐呰仛鍚?|
 
-## 工具与界面
+## 宸ュ叿涓庣晫闈?
 
-| 界面 | 类型 | 说明 |
+| 鐣岄潰 | 绫诲瀷 | 璇存槑 |
 |---|---|---|
-| `/budget` | 命令 | 各作用域概览（用量、比例、碳足迹、阻断状态） |
-| `/budget models` | 命令 | 按模型明细 + 延迟百分位 |
-| `/budget unblock <scope>` | 命令 | 解除某作用域阻断（`session` / `daily` / `monthly`） |
-| 设置 → 插件 → 预算 | 设置页签 | 用量条、按天用量曲线、模型明细、告警、上限编辑、解除阻断按钮 |
-| `budget/status`、`budget/setSettings`、`budget/unblock` | Typert Remote | 客户端通道（页签消费这些方法） |
+| `/budget` | 鍛戒护 | 鍚勪綔鐢ㄥ煙姒傝锛堢敤閲忋€佹瘮渚嬨€佺⒊瓒宠抗銆侀樆鏂姸鎬侊級 |
+| `/budget models` | 鍛戒护 | 鎸夋ā鍨嬫槑缁?+ 寤惰繜鐧惧垎浣?|
+| `/budget unblock <scope>` | 鍛戒护 | 瑙ｉ櫎鏌愪綔鐢ㄥ煙闃绘柇锛坄session` / `daily` / `monthly`锛?|
+| 璁剧疆 鈫?鎻掍欢 鈫?棰勭畻 | 璁剧疆椤电 | 鐢ㄩ噺鏉°€佹寜澶╃敤閲忔洸绾裤€佹ā鍨嬫槑缁嗐€佸憡璀︺€佷笂闄愮紪杈戙€佽В闄ら樆鏂寜閽?|
+| `budget/status`銆乣budget/setSettings`銆乣budget/unblock` | Typert Remote | 瀹㈡埛绔€氶亾锛堥〉绛炬秷璐硅繖浜涙柟娉曪級 |
 
-## 权限与数据
+## 鏉冮檺涓庢暟鎹?
 
-- **权限**：`network:outbound`（仅可选告警 webhook）、`session:append`（审计事件）、`native-code:none`。
-- **数据**：展示内容全部来自会话事件流；主机侧唯一网络调用是配置的 webhook，URL 在加载时校验、入日志前剥离凭据。任何 prompt/载荷都不会离开主机。
-- **会话日志**：`budget/alert` 与 `budget/block` 是仅日志审计事件，只携带作用域名与 USD 金额（微任务延后以绕过会话 append 重入保护）。在 `0.1.2-rc.1` 及以后的宿主上不再写入——fail-closed 事件词表会拒绝含未注册事件类型的日志，且没有外部注册面——审计轨迹因此仅降级到预算日志与 webhook。
+- **鏉冮檺**锛歚network:outbound`锛堜粎鍙€夊憡璀?webhook锛夈€乣session:append`锛堝璁′簨浠讹級銆乣native-code:none`銆?
+- **鏁版嵁**锛氬睍绀哄唴瀹瑰叏閮ㄦ潵鑷細璇濅簨浠舵祦锛涗富鏈轰晶鍞竴缃戠粶璋冪敤鏄厤缃殑 webhook锛孶RL 鍦ㄥ姞杞芥椂鏍￠獙銆佸叆鏃ュ織鍓嶅墺绂诲嚟鎹€備换浣?prompt/杞借嵎閮戒笉浼氱寮€涓绘満銆?
+- **浼氳瘽鏃ュ織**锛歚budget/alert` 涓?`budget/block` 鏄粎鏃ュ織瀹¤浜嬩欢锛屽彧鎼哄甫浣滅敤鍩熷悕涓?USD 閲戦锛堝井浠诲姟寤跺悗浠ョ粫杩囦細璇?append 閲嶅叆淇濇姢锛夈€傚湪 `0.1.2-rc.1` 鍙婁互鍚庣殑瀹夸富涓婁笉鍐嶅啓鍏モ€斺€攆ail-closed 浜嬩欢璇嶈〃浼氭嫆缁濆惈鏈敞鍐屼簨浠剁被鍨嬬殑鏃ュ織锛屼笖娌℃湁澶栭儴娉ㄥ唽闈⑩€斺€斿璁¤建杩瑰洜姝や粎闄嶇骇鍒伴绠楁棩蹇椾笌 webhook銆?
 
-## 安全边界
+## 瀹夊叏杈圭晫
 
-- **不伪造数据**：预算阻断在 `llm/stream` 瀑布上产出修正性错误 finish —— 插件绝不编造模型输出。
-- **不改写请求**：loop 构建的请求被冻结；`degrade` 因此在修正消息中点名目标模型，而非替换请求。
-- **失败大声**：非法价格、URL、比例、区域与边界在挂载时即失败。
-- **如实作用域**：面板的运行时编辑仅会话级生效；重载后恢复 cordis.yml 配置。
+- **涓嶄吉閫犳暟鎹?*锛氶绠楅樆鏂湪 `llm/stream` 鐎戝竷涓婁骇鍑轰慨姝ｆ€ч敊璇?finish 鈥斺€?鎻掍欢缁濅笉缂栭€犳ā鍨嬭緭鍑恒€?
+- **涓嶆敼鍐欒姹?*锛歭oop 鏋勫缓鐨勮姹傝鍐荤粨锛沗degrade` 鍥犳鍦ㄤ慨姝ｆ秷鎭腑鐐瑰悕鐩爣妯″瀷锛岃€岄潪鏇挎崲璇锋眰銆?
+- **澶辫触澶у０**锛氶潪娉曚环鏍笺€乁RL銆佹瘮渚嬨€佸尯鍩熶笌杈圭晫鍦ㄦ寕杞芥椂鍗冲け璐ャ€?
+- **濡傚疄浣滅敤鍩?*锛氶潰鏉跨殑杩愯鏃剁紪杈戜粎浼氳瘽绾х敓鏁堬紱閲嶈浇鍚庢仮澶?cordis.yml 閰嶇疆銆?
 
-## 已知限制
+## 宸茬煡闄愬埗
 
-- 聚合为进程本地：harness 重启后用量清零（日/月桶从当前会话日志视图重建）。
-- `block`/`degrade` 依赖 `llm/stream` 瀑布；无此 seam 的构建无法阻断请求（告警仍有效）。
-- 内置价目会漂移；用 `config.prices` 覆盖条目。
+- 鑱氬悎涓鸿繘绋嬫湰鍦帮細harness 閲嶅惎鍚庣敤閲忔竻闆讹紙鏃?鏈堟《浠庡綋鍓嶄細璇濇棩蹇楄鍥鹃噸寤猴級銆?
+- `block`/`degrade` 渚濊禆 `llm/stream` 鐎戝竷锛涙棤姝?seam 鐨勬瀯寤烘棤娉曢樆鏂姹傦紙鍛婅浠嶆湁鏁堬級銆?
+- 鍐呯疆浠风洰浼氭紓绉伙紱鐢?`config.prices` 瑕嗙洊鏉＄洰銆?
 
-## 开发
+## 寮€鍙?
 
 ```sh
 pnpm install        # node ^22.19 || >=24
-pnpm run typecheck  # tsc：src + tests，对照本地 harness checkout
-pnpm run typecheck:ci  # tsc：对照已发布的 0.1.2-rc.1 类型（无 paths）
+pnpm run typecheck  # tsc锛歴rc + tests锛屽鐓ф湰鍦?harness checkout
+pnpm run typecheck:ci  # tsc锛氬鐓у凡鍙戝竷鐨?0.1.2-rc.1 绫诲瀷锛堟棤 paths锛?
 pnpm test           # vitest
-pnpm run build      # tsc 声明 + tsdown bundles（lib/）
-pnpm run verify:self-contained  # 依赖声明全部来自 registry
-pnpm run verify:artifacts       # 构建产物 ESM 面 + typert manifest + 客户端 bundle
-pnpm pack           # 发布用 tarball
+pnpm run build      # tsc 澹版槑 + tsdown bundles锛坙ib/锛?
+pnpm run verify:self-contained  # 渚濊禆澹版槑鍏ㄩ儴鏉ヨ嚜 registry
+pnpm run verify:artifacts       # 鏋勫缓浜х墿 ESM 闈?+ typert manifest + 瀹㈡埛绔?bundle
+pnpm pack           # 鍙戝竷鐢?tarball
 ```
 
 ## Topics
@@ -138,51 +138,55 @@ pnpm pack           # 发布用 tarball
 
 ## Contributors
 
-- [@PerryLink](https://github.com/PerryLink) —— 创建者与维护者：聚合、预算治理、碳足迹与延迟移植、设置页签与五语文档。
+- [@PerryLink](https://github.com/PerryLink) 鈥斺€?鍒涘缓鑰呬笌缁存姢鑰咃細鑱氬悎銆侀绠楁不鐞嗐€佺⒊瓒宠抗涓庡欢杩熺Щ妞嶃€佽缃〉绛句笌浜旇鏂囨。銆?
 
 ## PerryLink DSH Plugin Family
 
-这是 [PerryLink](https://github.com/PerryLink) 维护的 [33 个 DeepSeek Harness 插件](https://github.com/PerryLink) 之一。如果它能帮到你，其他的也会：
+杩欐槸 [PerryLink](https://github.com/PerryLink) 缁存姢鐨?[37 涓?DeepSeek Harness 鎻掍欢](https://github.com/PerryLink) 涔嬩竴銆傚鏋滃畠鑳藉府鍒颁綘锛屽叾浠栫殑涔熶細锛?
 
 | Plugin | One-liner |
 |---|---|
-| **[dsh-dsh-auto-review](https://github.com/PerryLink/dsh-dsh-auto-review)** | 审批链上的第二模型自动审查，默认失败关闭 | |
-| **[dsh-dsh-background-agents](https://github.com/PerryLink/dsh-dsh-background-agents)** | 带 Web UI 侧栏、消息与中断的持久后台子代理 | |
-| **[dsh-dsh-checkpoint-rewind](https://github.com/PerryLink/dsh-dsh-checkpoint-rewind)** | Claude Code /rewind 等价：快照、会话 fork、一次性恢复 | |
-| **[dsh-dsh-claude-move](https://github.com/PerryLink/dsh-dsh-claude-move)** | 把 Claude Code 会话、记忆、技能与 CLAUDE.md 迁入 DSH | |
-| **[dsh-dsh-click](https://github.com/PerryLink/dsh-dsh-click)** | 跨平台原生桌面控制（DeepSeek Harness），Windows 优先。 | |
-| **[dsh-dsh-composer-history](https://github.com/PerryLink/dsh-dsh-composer-history)** | Web 输入框的终端式历史：方向键、Ctrl+R 搜索 | |
-| **[dsh-dsh-data-quality](https://github.com/PerryLink/dsh-dsh-data-quality)** | 数据集质量检查与引文核查（本插件可选消费的数字核查桥） | |
-| **[dsh-dsh-defend](https://github.com/PerryLink/dsh-dsh-defend)** | DeepSeek Harness 的提示注入、越狱与密钥泄露防护。 | |
-| **[dsh-dsh-doublecheck](https://github.com/PerryLink/dsh-dsh-doublecheck)** | 工程纪律守卫：需求质询、测试门禁、对手评审 | |
-| **[dsh-dsh-draw](https://github.com/PerryLink/dsh-dsh-draw)** | DeepSeek Harness 的统一静态图像生成路由。 | |
-| **[dsh-dsh-fast](https://github.com/PerryLink/dsh-dsh-fast)** | DeepSeek Harness 只读性能诊断。 | |
-| **[dsh-dsh-fund-research](https://github.com/PerryLink/dsh-dsh-fund-research)** | 面向中国公募基金的确定性研究报告 | |
-| **[dsh-dsh-github](https://github.com/PerryLink/dsh-dsh-github)** | 面向 DSH 的 GitHub PR/issues 集成，每次写入经审批门控 | |
-| **[dsh-dsh-industry-research](https://github.com/PerryLink/dsh-dsh-industry-research)** | 行业研究编排，经本插件的 `ctx.researchReport.assemble` 封存交付物 | |
-| **[dsh-dsh-library](https://github.com/PerryLink/dsh-dsh-library)** | DeepSeek Harness 的本地文档知识库。 | |
-| **[dsh-dsh-local-ai](https://github.com/PerryLink/dsh-dsh-local-ai)** | DeepSeek Harness 的本地模型（Ollama）接入。 | |
-| **[dsh-dsh-lsp-actions](https://github.com/PerryLink/dsh-dsh-lsp-actions)** | 通过语言服务器的 LSP 诊断、格式化、补全、代码操作与重命名 | |
-| **[dsh-dsh-mask](https://github.com/PerryLink/dsh-dsh-mask)** | PII 脱敏中间件：模型边界匿名化、展示层还原 | |
-| **[dsh-dsh-mcp-panel](https://github.com/PerryLink/dsh-dsh-mcp-panel)** | 只读 MCP 运行时面板：/mcp 命令 + 带状态、工具与错误的 Settings 标签页 | |
-| **[dsh-dsh-memento](https://github.com/PerryLink/dsh-dsh-memento)** | 审批门控的跨会话记忆：ctx.memory 接缝 + SQLite + 记忆工具 | |
-| **[dsh-dsh-observe](https://github.com/PerryLink/dsh-dsh-observe)** | DeepSeek Harness 的 OpenTelemetry 与 Langfuse 可观测导出器。 | |
-| **[dsh-dsh-output-styles](https://github.com/PerryLink/dsh-dsh-output-styles)** | Claude Code outputStyles 等价的运行时风格切换 | |
-| **[dsh-dsh-permission-rules](https://github.com/PerryLink/dsh-dsh-permission-rules)** | Claude Code 风格声明式 allow/deny/ask 权限规则，带审计 | |
-| **[dsh-dsh-plugin-guide](https://github.com/PerryLink/dsh-dsh-plugin-guide)** | 作为按需代理技能的插件开发知识库 | |
-| **[dsh-dsh-research-report](https://github.com/PerryLink/dsh-dsh-research-report)** | 可验证研究报告引擎：内容寻址证据账本与封存版本 | |
-| **[dsh-dsh-score](https://github.com/PerryLink/dsh-dsh-score)** | DeepSeek Harness 插件的多维质量评分。 | |
-| **[dsh-dsh-session-pin](https://github.com/PerryLink/dsh-dsh-session-pin)** | 在 Web 侧栏置顶会话，带持久排序 | |
-| **[dsh-dsh-session-sync](https://github.com/PerryLink/dsh-dsh-session-sync)** | DeepSeek Harness 的跨设备会话同步——会话存储的专用 git 镜像。 | |
-| **[dsh-dsh-skill-pack-security](https://github.com/PerryLink/dsh-dsh-skill-pack-security)** | 安全审计技能包：密钥扫描、依赖与供应链审查 | |
-| **[dsh-dsh-talk](https://github.com/PerryLink/dsh-dsh-talk)** | DeepSeek Harness 的语音优先会话闭环：对它说，听它答。 | |
-| **[dsh-dsh-test-drive](https://github.com/PerryLink/dsh-dsh-test-drive)** | DeepSeek Harness 插件的隔离试装冒烟。 | |
-| **[dsh-dsh-translate](https://github.com/PerryLink/dsh-dsh-translate)** | DeepSeek Harness 的厂商参数翻译与确定性 JSON 修复。 | |
+| **[dsh-auto-review](https://github.com/PerryLink/dsh-auto-review)** | 瀹℃壒閾句笂鐨勭浜屾ā鍨嬭嚜鍔ㄥ鏌ワ紝榛樿澶辫触鍏抽棴 | |
+| **[dsh-background-agents](https://github.com/PerryLink/dsh-background-agents)** | 甯?Web UI 渚ф爮銆佹秷鎭笌涓柇鐨勬寔涔呭悗鍙板瓙浠ｇ悊 | |
+| **[dsh-checkpoint-rewind](https://github.com/PerryLink/dsh-checkpoint-rewind)** | Claude Code /rewind 绛変环锛氬揩鐓с€佷細璇?fork銆佷竴娆℃€ф仮澶?| |
+| **[dsh-claude-move](https://github.com/PerryLink/dsh-claude-move)** | 鎶?Claude Code 浼氳瘽銆佽蹇嗐€佹妧鑳戒笌 CLAUDE.md 杩佸叆 DSH | |
+| **[dsh-click](https://github.com/PerryLink/dsh-click)** | 璺ㄥ钩鍙板師鐢熸闈㈡帶鍒讹紙DeepSeek Harness锛夛紝Windows 浼樺厛銆?| |
+| **[dsh-composer-history](https://github.com/PerryLink/dsh-composer-history)** | Web 杈撳叆妗嗙殑缁堢寮忓巻鍙诧細鏂瑰悜閿€丆trl+R 鎼滅储 | |
+| **[dsh-data-quality](https://github.com/PerryLink/dsh-data-quality)** | 鏁版嵁闆嗚川閲忔鏌ヤ笌寮曟枃鏍告煡锛堟湰鎻掍欢鍙€夋秷璐圭殑鏁板瓧鏍告煡妗ワ級 | |
+| **[dsh-defend](https://github.com/PerryLink/dsh-defend)** | DeepSeek Harness 鐨勬彁绀烘敞鍏ャ€佽秺鐙变笌瀵嗛挜娉勯湶闃叉姢銆?| |
+| **[dsh-doublecheck](https://github.com/PerryLink/dsh-doublecheck)** | 宸ョ▼绾緥瀹堝崼锛氶渶姹傝川璇€佹祴璇曢棬绂併€佸鎵嬭瘎瀹?| |
+| **[dsh-draw](https://github.com/PerryLink/dsh-draw)** | DeepSeek Harness 鐨勭粺涓€闈欐€佸浘鍍忕敓鎴愯矾鐢便€?| |
+| **[dsh-fast](https://github.com/PerryLink/dsh-fast)** | DeepSeek Harness 鍙鎬ц兘璇婃柇銆?| |
+| **[dsh-fund-research](https://github.com/PerryLink/dsh-fund-research)** | 闈㈠悜涓浗鍏嫙鍩洪噾鐨勭‘瀹氭€х爺绌舵姤鍛?| |
+| **[dsh-github](https://github.com/PerryLink/dsh-github)** | 闈㈠悜 DSH 鐨?GitHub PR/issues 闆嗘垚锛屾瘡娆″啓鍏ョ粡瀹℃壒闂ㄦ帶 | |
+| **[dsh-industry-research](https://github.com/PerryLink/dsh-industry-research)** | 琛屼笟鐮旂┒缂栨帓锛岀粡鏈彃浠剁殑 `ctx.researchReport.assemble` 灏佸瓨浜や粯鐗?| |
+| **[dsh-library](https://github.com/PerryLink/dsh-library)** | DeepSeek Harness 鐨勬湰鍦版枃妗ｇ煡璇嗗簱銆?| |
+| **[dsh-local-ai](https://github.com/PerryLink/dsh-local-ai)** | DeepSeek Harness 鐨勬湰鍦版ā鍨嬶紙Ollama锛夋帴鍏ャ€?| |
+| **[dsh-lsp-actions](https://github.com/PerryLink/dsh-lsp-actions)** | 閫氳繃璇█鏈嶅姟鍣ㄧ殑 LSP 璇婃柇銆佹牸寮忓寲銆佽ˉ鍏ㄣ€佷唬鐮佹搷浣滀笌閲嶅懡鍚?| |
+| **[dsh-mask](https://github.com/PerryLink/dsh-mask)** | PII 鑴辨晱涓棿浠讹細妯″瀷杈圭晫鍖垮悕鍖栥€佸睍绀哄眰杩樺師 | |
+| **[dsh-mcp-panel](https://github.com/PerryLink/dsh-mcp-panel)** | 鍙 MCP 杩愯鏃堕潰鏉匡細/mcp 鍛戒护 + 甯︾姸鎬併€佸伐鍏蜂笌閿欒鐨?Settings 鏍囩椤?| |
+| **[dsh-memento](https://github.com/PerryLink/dsh-memento)** | 瀹℃壒闂ㄦ帶鐨勮法浼氳瘽璁板繂锛歝tx.memory 鎺ョ紳 + SQLite + 璁板繂宸ュ叿 | |
+| **[dsh-observe](https://github.com/PerryLink/dsh-observe)** | DeepSeek Harness 鐨?OpenTelemetry 涓?Langfuse 鍙娴嬪鍑哄櫒銆?| |
+| **[dsh-output-styles](https://github.com/PerryLink/dsh-output-styles)** | Claude Code outputStyles 绛変环鐨勮繍琛屾椂椋庢牸鍒囨崲 | |
+| **[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)** | Claude Code 椋庢牸澹版槑寮?allow/deny/ask 鏉冮檺瑙勫垯锛屽甫瀹¤ | |
+| **[dsh-personal-directive](https://github.com/PerryLink/dsh-personal-directive)** | 涓汉鎸囦护娉ㄥ叆鍣細椤舵爮寮€鍏筹紙妗嗘灦鐗堬級 |
+| **[dsh-plugin-guide](https://github.com/PerryLink/dsh-plugin-guide)** | 浣滀负鎸夐渶浠ｇ悊鎶€鑳界殑鎻掍欢寮€鍙戠煡璇嗗簱 | |
+| **[dsh-reach](https://github.com/PerryLink/dsh-reach)** | 澶氭笭閬撳鎵?鎻愰棶妗ユ帴锛氬井淇?Telegram/椋炰功锛屼細璇濇帶鍒跺彴 |
+| **[dsh-research-report](https://github.com/PerryLink/dsh-research-report)** | 鍙獙璇佺爺绌舵姤鍛婂紩鎿庯細鍐呭瀵诲潃璇佹嵁璐︽湰涓庡皝瀛樼増鏈?| |
+| **[dsh-score](https://github.com/PerryLink/dsh-score)** | DeepSeek Harness 鎻掍欢鐨勫缁磋川閲忚瘎鍒嗐€?| |
+| **[dsh-session-pin](https://github.com/PerryLink/dsh-session-pin)** | 鍦?Web 渚ф爮缃《浼氳瘽锛屽甫鎸佷箙鎺掑簭 | |
+| **[dsh-session-sync](https://github.com/PerryLink/dsh-session-sync)** | DeepSeek Harness 鐨勮法璁惧浼氳瘽鍚屾鈥斺€斾細璇濆瓨鍌ㄧ殑涓撶敤 git 闀滃儚銆?| |
+| **[dsh-skill-pack-security](https://github.com/PerryLink/dsh-skill-pack-security)** | 瀹夊叏瀹¤鎶€鑳藉寘锛氬瘑閽ユ壂鎻忋€佷緷璧栦笌渚涘簲閾惧鏌?| |
+| **[dsh-talk](https://github.com/PerryLink/dsh-talk)** | DeepSeek Harness 鐨勮闊充紭鍏堜細璇濋棴鐜細瀵瑰畠璇达紝鍚畠绛斻€?| |
+| **[dsh-test-drive](https://github.com/PerryLink/dsh-test-drive)** | DeepSeek Harness 鎻掍欢鐨勯殧绂昏瘯瑁呭啋鐑熴€?| |
+| **[dsh-ticktick](https://github.com/PerryLink/dsh-ticktick)** | TickTick/婊寸瓟娓呭崟浠诲姟妗ユ帴锛氫細璇濆ご闈㈡澘 + 11 涓伐鍏?|
+| **[dsh-translate](https://github.com/PerryLink/dsh-translate)** | DeepSeek Harness 鐨勫巶鍟嗗弬鏁扮炕璇戜笌纭畾鎬?JSON 淇銆?| |
+| **[dsh-wechat](https://github.com/PerryLink/dsh-wechat)** | 寰俊 鈫?DSH 妗ユ帴锛圱encent iLink 鏈哄櫒浜猴級锛氭枃鏈?鍥剧墖/鏂囦欢/璇煶锛岃亰澶╁唴瀹℃壒鍗＄墖 |
 
 ## License
 
-[Apache License 2.0](LICENSE) © 2026 dsh-budget contributors
+[Apache License 2.0](LICENSE) 漏 2026 dsh-budget contributors
 
-### 从 DSH Desktop 市场安装
+### 浠?DSH Desktop 甯傚満瀹夎
 
-所有 PerryLink 插件均可在 DSH Desktop 内置市场中浏览：**市场 → 来源 → 添加来源 → 粘贴** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **→ 选中**。安装仍需通过市场的 npm 身份校验与你的确认。
+鎵€鏈?PerryLink 鎻掍欢鍧囧彲鍦?DSH Desktop 鍐呯疆甯傚満涓祻瑙堬細**甯傚満 鈫?鏉ユ簮 鈫?娣诲姞鏉ユ簮 鈫?绮樿创** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **鈫?閫変腑**銆傚畨瑁呬粛闇€閫氳繃甯傚満鐨?npm 韬唤鏍￠獙涓庝綘鐨勭‘璁ゃ€?

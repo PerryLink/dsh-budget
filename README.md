@@ -1,24 +1,24 @@
-<div align="center">
+﻿<div align="center">
 
-# 💰 dsh-budget
+# 馃挵 dsh-budget
 - **1024 store channel**: `npm i -g dsh1024` once, then `dsh1024 plugin --profile web add dsh-budget` (counts toward the [deepseek1024.com](https://deepseek1024.com) install ranking).
 [![Gitee](https://img.shields.io/badge/Gitee-mirror-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-budget)
 
 **Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.**
 
-*Know what every session costs — before it costs you.*
+*Know what every session costs 鈥?before it costs you.*
 
 > **Official repository.** This is the only official repository of dsh-budget, maintained by PerryLink. Same-name repositories under other accounts are not affiliated.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![DSH plugin](https://img.shields.io/badge/dsh-plugin-✅-green)](https://github.com/topics/dsh-plugin)
+[![DSH plugin](https://img.shields.io/badge/dsh-plugin-鉁?green)](https://github.com/topics/dsh-plugin)
 [![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24-brightgreen.svg)](#)
 [![CI](https://img.shields.io/github/actions/workflow/status/PerryLink/dsh-budget/ci.yml?branch=main&label=CI)](https://github.com/PerryLink/dsh-budget/actions)
 [![Version](https://img.shields.io/github/v/tag/PerryLink/dsh-budget?label=version)](https://github.com/PerryLink/dsh-budget/releases)
 [![npm version](https://img.shields.io/npm/v/dsh-budget)](https://www.npmjs.com/package/dsh-budget)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-budget)](https://www.npmjs.com/package/dsh-budget)
 
-[English](README.md) · [简体中文](README.zh.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
+[English](README.md) 路 [绠€浣撲腑鏂嘳(README.zh.md) 路 [Espa帽ol](README.es.md) 路 [Portugu锚s](README.pt.md) 路 [啶灌た啶ㄠ啶︵](README.hi.md)
 
 </div>
 
@@ -37,10 +37,10 @@
 
 `dsh-budget` turns the session event stream into a four-in-one cost governance loop:
 
-- **Aggregated metering** — tokens (uncached input / output / cache read / cache write), estimated USD cost, and carbon footprint per model, session, and day, priced through a built-in USD-per-1M table merged with your `config.prices`.
-- **Budget governance** — session/daily/monthly caps; a warn-ratio threshold alert (webhook POST + desktop-notification flag) and three over-limit policies: `alert` (notify only), `block` (short-circuit new model requests until the user lifts the block), `degrade` (block with corrective guidance naming the cheaper model from your `degradation` map).
-- **Carbon & latency** — token→carbon bridge (tokens × kWh/token × PUE × regional grid intensity, ported from AI-Carbon-Footprint-Calculator) and per-model latency percentiles.
-- **Surfaces** — the Settings budget tab (usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons) and the `/budget` command (`/budget`, `/budget models`, `/budget unblock <scope>`).
+- **Aggregated metering** 鈥?tokens (uncached input / output / cache read / cache write), estimated USD cost, and carbon footprint per model, session, and day, priced through a built-in USD-per-1M table merged with your `config.prices`.
+- **Budget governance** 鈥?session/daily/monthly caps; a warn-ratio threshold alert (webhook POST + desktop-notification flag) and three over-limit policies: `alert` (notify only), `block` (short-circuit new model requests until the user lifts the block), `degrade` (block with corrective guidance naming the cheaper model from your `degradation` map).
+- **Carbon & latency** 鈥?token鈫抍arbon bridge (tokens 脳 kWh/token 脳 PUE 脳 regional grid intensity, ported from AI-Carbon-Footprint-Calculator) and per-model latency percentiles.
+- **Surfaces** 鈥?the Settings budget tab (usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons) and the `/budget` command (`/budget`, `/budget models`, `/budget unblock <scope>`).
 
 ## Quick start
 
@@ -55,16 +55,16 @@ dsh plugin --profile web add dsh-budget
 dsh --profile web --dump-config | grep -A2 'id: budget'
 ```
 
-Then ask the agent: `/budget` — and watch the Settings tab fill in.
+Then ask the agent: `/budget` 鈥?and watch the Settings tab fill in.
 
 ## Install & uninstall
 
-- **git channel** (latest `main`): `dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` — the `prepare` script builds with production dependencies only.
+- **git channel** (latest `main`): `dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` 鈥?the `prepare` script builds with production dependencies only.
 - **npm channel** (published releases): `dsh plugin --profile web add dsh-budget`.
 - **tarball channel**: `pnpm pack` in this repo, then `dsh plugin --profile web add ./dsh-budget-<version>.tgz`.
 - **uninstall**: `dsh plugin --profile web remove dsh-budget`.
 
-> If pnpm reports `ERR_PNPM_IGNORED_BUILDS` for this package (esbuild's harmless platform-binary validation), add `allowBuilds: { esbuild: true }` to your `pnpm-workspace.yaml` — the `dsh` CLI prints the exact snippet.
+> If pnpm reports `ERR_PNPM_IGNORED_BUILDS` for this package (esbuild's harmless platform-binary validation), add `allowBuilds: { esbuild: true }` to your `pnpm-workspace.yaml` 鈥?the `dsh` CLI prints the exact snippet.
 
 ## Configuration
 
@@ -77,7 +77,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | Budget caps in USD per scope; omit for unlimited |
 | `warnRatio` | `0.8` | Alert once usage reaches this fraction of a cap (0..1) |
 | `overLimit` | `alert` | `alert` / `block` / `degrade` after a cap is crossed |
-| `degradation` | `{}` | Model id → cheaper model id of the same provider |
+| `degradation` | `{}` | Model id 鈫?cheaper model id of the same provider |
 | `webhookUrl` | *(none)* | Optional webhook URL for threshold alerts (POST JSON) |
 | `webhookTimeoutMs` | `5000` | Webhook request timeout |
 | `alertsEnabled` | `true` | Master switch for threshold alerts |
@@ -98,18 +98,18 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | `/budget` | Command | Per-scope overview (usage, ratio, carbon, blocked state) |
 | `/budget models` | Command | Per-model breakdown with latency percentiles |
 | `/budget unblock <scope>` | Command | Lift a blocked scope (`session` / `daily` / `monthly`) |
-| Settings → Plugins → Budget | Settings tab | Usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons |
+| Settings 鈫?Plugins 鈫?Budget | Settings tab | Usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | The client channel (the tab consumes these) |
 
 ## Permissions & data
 
 - **Permissions**: `network:outbound` (the optional alert webhook only), `session:append` (audit events), `native-code:none`.
 - **Data**: everything displayed comes from the session event stream; the only host-side network call is the configured webhook, whose URL is validated at load and credential-stripped before any log. No prompts or payloads ever leave the host.
-- **Session log**: `budget/alert` and `budget/block` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard). On harnesses `0.1.2-rc.1` and later they are not written — the fail-closed event vocabulary rejects logs with unregistered event types and offers no external registration surface — so the audit trail degrades to the budget logger and webhook only.
+- **Session log**: `budget/alert` and `budget/block` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard). On harnesses `0.1.2-rc.1` and later they are not written 鈥?the fail-closed event vocabulary rejects logs with unregistered event types and offers no external registration surface 鈥?so the audit trail degrades to the budget logger and webhook only.
 
 ## Security boundaries
 
-- **No fabrication**: a budget block yields a corrective error finish on the `llm/stream` waterfall — the plugin never invents model output.
+- **No fabrication**: a budget block yields a corrective error finish on the `llm/stream` waterfall 鈥?the plugin never invents model output.
 - **No request rewriting**: loop-built requests are frozen; `degrade` therefore names the target model in the corrective message instead of swapping the request.
 - **Fail loud**: invalid prices, URLs, ratios, regions, and bounds fail the mount.
 - **Honest scope**: runtime edits from the panel are session-scoped; a reload restores the cordis.yml values.
@@ -139,51 +139,55 @@ pnpm pack           # the published tarball
 
 ## Contributors
 
-- [@PerryLink](https://github.com/PerryLink) — creator and maintainer: aggregation, budget governance, carbon and latency ports, the Settings tab, and the five-language docs.
+- [@PerryLink](https://github.com/PerryLink) 鈥?creator and maintainer: aggregation, budget governance, carbon and latency ports, the Settings tab, and the five-language docs.
 
 ## PerryLink DSH Plugin Family
 
-This project is one of the [33 DeepSeek Harness plugins](https://github.com/PerryLink) maintained by [PerryLink](https://github.com/PerryLink). If this one helps you, the others likely will too:
+This project is one of the [37 DeepSeek Harness plugins](https://github.com/PerryLink) maintained by [PerryLink](https://github.com/PerryLink). If this one helps you, the others likely will too:
 
 | Plugin | One-liner |
 |---|---|
-| **[dsh-dsh-auto-review](https://github.com/PerryLink/dsh-dsh-auto-review)** | Second-model auto-review on the approval chain, fail-closed by default | |
-| **[dsh-dsh-background-agents](https://github.com/PerryLink/dsh-dsh-background-agents)** | Durable background child agents with a Web UI sidebar, messaging and interrupt | |
-| **[dsh-dsh-checkpoint-rewind](https://github.com/PerryLink/dsh-dsh-checkpoint-rewind)** | Claude Code /rewind-equivalent: snapshots, session forks, one-shot restore | |
-| **[dsh-dsh-claude-move](https://github.com/PerryLink/dsh-dsh-claude-move)** | Migrate Claude Code sessions, memory, skills and CLAUDE.md into DSH | |
-| **[dsh-dsh-click](https://github.com/PerryLink/dsh-dsh-click)** | Cross-platform native desktop control for DeepSeek Harness — Windows first. | |
-| **[dsh-dsh-composer-history](https://github.com/PerryLink/dsh-dsh-composer-history)** | Terminal-style input history for the web composer: arrows, Ctrl+R search | |
-| **[dsh-dsh-data-quality](https://github.com/PerryLink/dsh-dsh-data-quality)** | Dataset quality checks and citation cross-checks (the optional numeric bridge consumed here) | |
-| **[dsh-dsh-defend](https://github.com/PerryLink/dsh-dsh-defend)** | Prompt-injection, jailbreak, and secret-leak defense for DeepSeek Harness. | |
-| **[dsh-dsh-doublecheck](https://github.com/PerryLink/dsh-dsh-doublecheck)** | Engineering-discipline guard: requirements grill, test gates, adversary review | |
-| **[dsh-dsh-draw](https://github.com/PerryLink/dsh-dsh-draw)** | Unified static-image generation routing for DeepSeek Harness. | |
-| **[dsh-dsh-fast](https://github.com/PerryLink/dsh-dsh-fast)** | Read-only performance diagnostics for DeepSeek Harness. | |
-| **[dsh-dsh-fund-research](https://github.com/PerryLink/dsh-dsh-fund-research)** | Deterministic research reports for Chinese public mutual funds | |
-| **[dsh-dsh-github](https://github.com/PerryLink/dsh-dsh-github)** | GitHub PR/issues integration for DSH, every write gated by approval | |
-| **[dsh-dsh-industry-research](https://github.com/PerryLink/dsh-dsh-industry-research)** | Industry research orchestration that seals its deliverables through this plugin's `ctx.researchReport.assemble` | |
-| **[dsh-dsh-library](https://github.com/PerryLink/dsh-dsh-library)** | Local document knowledge base for DeepSeek Harness. | |
-| **[dsh-dsh-local-ai](https://github.com/PerryLink/dsh-dsh-local-ai)** | Local-model (Ollama) integration for DeepSeek Harness. | |
-| **[dsh-dsh-lsp-actions](https://github.com/PerryLink/dsh-dsh-lsp-actions)** | LSP diagnostics, formatting, completion, code actions and rename over language servers | |
-| **[dsh-dsh-mask](https://github.com/PerryLink/dsh-dsh-mask)** | PII masking middleware: anonymize at the model boundary, restore at the display layer | |
-| **[dsh-dsh-mcp-panel](https://github.com/PerryLink/dsh-dsh-mcp-panel)** | Read-only MCP runtime panel: /mcp command + Settings tab with status, tools and errors | |
-| **[dsh-dsh-memento](https://github.com/PerryLink/dsh-dsh-memento)** | Approval-gated cross-session memory: ctx.memory seam + SQLite + memory tool | |
-| **[dsh-dsh-observe](https://github.com/PerryLink/dsh-dsh-observe)** | OpenTelemetry and Langfuse observability exporter for DeepSeek Harness. | |
-| **[dsh-dsh-output-styles](https://github.com/PerryLink/dsh-dsh-output-styles)** | Claude Code outputStyles-equivalent runtime style switching | |
-| **[dsh-dsh-permission-rules](https://github.com/PerryLink/dsh-dsh-permission-rules)** | Claude Code-style declarative allow/deny/ask permission rules with audit | |
-| **[dsh-dsh-plugin-guide](https://github.com/PerryLink/dsh-dsh-plugin-guide)** | Plugin-development knowledge base as an on-demand agent skill | |
-| **[dsh-dsh-research-report](https://github.com/PerryLink/dsh-dsh-research-report)** | Verifiable research-report engine: content-addressed evidence ledger and sealed versions | |
-| **[dsh-dsh-score](https://github.com/PerryLink/dsh-dsh-score)** | Multi-dimensional quality scoring for DeepSeek Harness plugins. | |
-| **[dsh-dsh-session-pin](https://github.com/PerryLink/dsh-dsh-session-pin)** | Pin sessions in the Web sidebar with durable ordering | |
-| **[dsh-dsh-session-sync](https://github.com/PerryLink/dsh-dsh-session-sync)** | Cross-device session sync for DeepSeek Harness — a dedicated git mirror of your session store. | |
-| **[dsh-dsh-skill-pack-security](https://github.com/PerryLink/dsh-dsh-skill-pack-security)** | Security-audit skill pack: secret scan, dependency and supply-chain review | |
-| **[dsh-dsh-talk](https://github.com/PerryLink/dsh-dsh-talk)** | Voice-first session loop for DeepSeek Harness: talk to it, hear it answer. | |
-| **[dsh-dsh-test-drive](https://github.com/PerryLink/dsh-dsh-test-drive)** | Isolated install-and-smoke test drives for DeepSeek Harness plugins. | |
-| **[dsh-dsh-translate](https://github.com/PerryLink/dsh-dsh-translate)** | Vendor parameter translation and deterministic JSON repair for DeepSeek Harness. | |
+| **[dsh-auto-review](https://github.com/PerryLink/dsh-auto-review)** | Second-model auto-review on the approval chain, fail-closed by default | |
+| **[dsh-background-agents](https://github.com/PerryLink/dsh-background-agents)** | Durable background child agents with a Web UI sidebar, messaging and interrupt | |
+| **[dsh-checkpoint-rewind](https://github.com/PerryLink/dsh-checkpoint-rewind)** | Claude Code /rewind-equivalent: snapshots, session forks, one-shot restore | |
+| **[dsh-claude-move](https://github.com/PerryLink/dsh-claude-move)** | Migrate Claude Code sessions, memory, skills and CLAUDE.md into DSH | |
+| **[dsh-click](https://github.com/PerryLink/dsh-click)** | Cross-platform native desktop control for DeepSeek Harness 鈥?Windows first. | |
+| **[dsh-composer-history](https://github.com/PerryLink/dsh-composer-history)** | Terminal-style input history for the web composer: arrows, Ctrl+R search | |
+| **[dsh-data-quality](https://github.com/PerryLink/dsh-data-quality)** | Dataset quality checks and citation cross-checks (the optional numeric bridge consumed here) | |
+| **[dsh-defend](https://github.com/PerryLink/dsh-defend)** | Prompt-injection, jailbreak, and secret-leak defense for DeepSeek Harness. | |
+| **[dsh-doublecheck](https://github.com/PerryLink/dsh-doublecheck)** | Engineering-discipline guard: requirements grill, test gates, adversary review | |
+| **[dsh-draw](https://github.com/PerryLink/dsh-draw)** | Unified static-image generation routing for DeepSeek Harness. | |
+| **[dsh-fast](https://github.com/PerryLink/dsh-fast)** | Read-only performance diagnostics for DeepSeek Harness. | |
+| **[dsh-fund-research](https://github.com/PerryLink/dsh-fund-research)** | Deterministic research reports for Chinese public mutual funds | |
+| **[dsh-github](https://github.com/PerryLink/dsh-github)** | GitHub PR/issues integration for DSH, every write gated by approval | |
+| **[dsh-industry-research](https://github.com/PerryLink/dsh-industry-research)** | Industry research orchestration that seals its deliverables through this plugin's `ctx.researchReport.assemble` | |
+| **[dsh-library](https://github.com/PerryLink/dsh-library)** | Local document knowledge base for DeepSeek Harness. | |
+| **[dsh-local-ai](https://github.com/PerryLink/dsh-local-ai)** | Local-model (Ollama) integration for DeepSeek Harness. | |
+| **[dsh-lsp-actions](https://github.com/PerryLink/dsh-lsp-actions)** | LSP diagnostics, formatting, completion, code actions and rename over language servers | |
+| **[dsh-mask](https://github.com/PerryLink/dsh-mask)** | PII masking middleware: anonymize at the model boundary, restore at the display layer | |
+| **[dsh-mcp-panel](https://github.com/PerryLink/dsh-mcp-panel)** | Read-only MCP runtime panel: /mcp command + Settings tab with status, tools and errors | |
+| **[dsh-memento](https://github.com/PerryLink/dsh-memento)** | Approval-gated cross-session memory: ctx.memory seam + SQLite + memory tool | |
+| **[dsh-observe](https://github.com/PerryLink/dsh-observe)** | OpenTelemetry and Langfuse observability exporter for DeepSeek Harness. | |
+| **[dsh-output-styles](https://github.com/PerryLink/dsh-output-styles)** | Claude Code outputStyles-equivalent runtime style switching | |
+| **[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)** | Claude Code-style declarative allow/deny/ask permission rules with audit | |
+| **[dsh-personal-directive](https://github.com/PerryLink/dsh-personal-directive)** | Personal directive injector with top-bar toggle (framework edition) |
+| **[dsh-plugin-guide](https://github.com/PerryLink/dsh-plugin-guide)** | Plugin-development knowledge base as an on-demand agent skill | |
+| **[dsh-reach](https://github.com/PerryLink/dsh-reach)** | Multi-channel approval/question bridge: WeChat/Telegram/Feishu, session console |
+| **[dsh-research-report](https://github.com/PerryLink/dsh-research-report)** | Verifiable research-report engine: content-addressed evidence ledger and sealed versions | |
+| **[dsh-score](https://github.com/PerryLink/dsh-score)** | Multi-dimensional quality scoring for DeepSeek Harness plugins. | |
+| **[dsh-session-pin](https://github.com/PerryLink/dsh-session-pin)** | Pin sessions in the Web sidebar with durable ordering | |
+| **[dsh-session-sync](https://github.com/PerryLink/dsh-session-sync)** | Cross-device session sync for DeepSeek Harness 鈥?a dedicated git mirror of your session store. | |
+| **[dsh-skill-pack-security](https://github.com/PerryLink/dsh-skill-pack-security)** | Security-audit skill pack: secret scan, dependency and supply-chain review | |
+| **[dsh-talk](https://github.com/PerryLink/dsh-talk)** | Voice-first session loop for DeepSeek Harness: talk to it, hear it answer. | |
+| **[dsh-test-drive](https://github.com/PerryLink/dsh-test-drive)** | Isolated install-and-smoke test drives for DeepSeek Harness plugins. | |
+| **[dsh-ticktick](https://github.com/PerryLink/dsh-ticktick)** | TickTick/Dida365 task bridge: session-header panel + 11 tools |
+| **[dsh-translate](https://github.com/PerryLink/dsh-translate)** | Vendor parameter translation and deterministic JSON repair for DeepSeek Harness. | |
+| **[dsh-wechat](https://github.com/PerryLink/dsh-wechat)** | WeChat 鈫?DSH bridge (Tencent iLink bot): text/image/file/voice, approvals in chat |
 
 ### Install from the DSH Desktop Market
 
-All PerryLink plugins are browsable in the built-in DSH Desktop Market: **Market → Sources → add source → paste** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **→ select it**. Installation still goes through the Market's npm-identity verification and your confirmation.
+All PerryLink plugins are browsable in the built-in DSH Desktop Market: **Market 鈫?Sources 鈫?add source 鈫?paste** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **鈫?select it**. Installation still goes through the Market's npm-identity verification and your confirmation.
 
 ## License
 
-[Apache License 2.0](LICENSE) © 2026 dsh-budget contributors
+[Apache License 2.0](LICENSE) 漏 2026 dsh-budget contributors
