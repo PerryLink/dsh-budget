@@ -76,8 +76,13 @@ function installedSessionVersion(): string | undefined {
   }
 }
 
+// Service Definition — the plugin contract: `name`/`inject` plus the re-exported
+// public surface below (Config schema, BudgetAggregator, BudgetService Remote,
+// /budget command) declare the whole service/tool surface.
 export const name = 'dsh-budget'
 
+// Consumer — the plugin consumes the session store (declared in `inject`), the
+// `llm/stream` waterfall, and the optional services (storageDomain, commands, llm).
 /** Hard services: the session store every aggregation keys off. */
 export const inject = ['sessions']
 
@@ -280,6 +285,8 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
     })
   }
 
+  // Service Provider — the `budget` Remote service is provided here via
+  // ctx.plugin(BudgetService, ...), and the /budget command via commands.register(...).
   // The Remote service (panel + client channel). The unblock audit hook keeps
   // the transition reconstructable from the session log.
   await ctx.plugin(BudgetService, {
