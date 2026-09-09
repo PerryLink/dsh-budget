@@ -27,7 +27,7 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.3-alpha.1`（GitHub tag，2026-09-06 核验；npm 钉号 `0.1.2-rc.1`，2026-09-02 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0`）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。已于 2026-09-06 对照 dsh-v0.1.3-alpha.1 master 检出核验（完整门禁链 + profile 安装冒烟）。 |
+| Harness | DeepSeek Harness `dsh-v0.1.5-alpha.1`（GitHub tag，2026-09-09 核验；npm 钉号 `0.1.5-alpha.1`，2026-09-09 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。已于 2026-09-09 对照 dsh-v0.1.5-alpha.1 master 检出核验（完整门禁链 + profile 安装冒烟）。 |
 
 | 审计事件 | `0.1.2-rc.1` 之前的宿主上写入；在 `0.1.2-rc.1` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
 | 界面 | Host + Web 客户端（设置页预算页签）；`/budget` 命令 |
