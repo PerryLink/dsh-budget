@@ -42,6 +42,6 @@ Schema in `src/config.ts`; `cordis.patch.yml` documents the same keys; the five-
 
 ## Docs
 
-- Five-language READMEs (`README.md`, `README.zh.md`, `README.es.md`, `README.pt.md`, `README.hi.md`) — keep all five in sync; the English file is the source of truth.
+- Five-language READMEs (`README.md`, `README-zh.md`, `README-es.md`, `README-pt.md`, `README-hi.md`) — keep all five in sync; the English file is the source of truth.
 - GitHub topics mirror `package.json` keywords: `dsh`, `dsh-plugin`, `deepseek-harness`, `deepseek`, `cordis`, `budget`, `cost-tracking`, `carbon-footprint`, `latency-benchmark`, `token-usage`.
 - `THIRD_PARTY_NOTICES.md` records the three ported upstream assets (Apache-2.0).
