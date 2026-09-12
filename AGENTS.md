@@ -12,7 +12,7 @@ Standalone DeepSeek Harness plugin repository (`dsh-budget`). Development follow
 - `src/wire.ts` — the snapshot vocabulary, its zod v4 wire schema, and the three invocation descriptors shared verbatim by `src/typert.host.ts` and `src/client/remote.ts`.
 - `src/command.ts` — the `/budget` command (standard `CommandResult`; `command/run` + `command/done` log the invocation).
 - `src/client/` — browser half: `$mount` the Remote contribution, register the `settings.plugins.tab` entry id `budget`, pure presenter in `present.ts`, inline scoped stylesheet in `styles.ts` (standalone bundles cannot use the in-repo CSS-module pipeline).
-- `tests/` — vitest; REAL `Context` + REAL `SessionStore`/`Session` from the `0.1.5-rc.1` peers; scripted `commands`/`llm` stand-ins (the plugin reads them as optional services); the estimate layer carries upstream fixture numbers as regressions.
+- `tests/` — vitest; REAL `Context` + REAL `SessionStore`/`Session` from the `0.1.5-rc.2` peers; scripted `commands`/`llm` stand-ins (the plugin reads them as optional services); the estimate layer carries upstream fixture numbers as regressions.
 
 ## Hard rules applied here
 
@@ -34,7 +34,7 @@ Schema in `src/config.ts`; `cordis.patch.yml` documents the same keys; the five-
 
 ## Checks
 
-`pnpm run typecheck && pnpm run typecheck:ci && pnpm test && pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts && pnpm pack`. The plain `typecheck` resolves the local harness checkout's type faces through tsconfig `paths`; `typecheck:ci` resolves the npm-published `0.1.5-rc.1` faces (no paths) and is what CI runs — keep both green.
+`pnpm run typecheck && pnpm run typecheck:ci && pnpm test && pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts && pnpm pack`. The plain `typecheck` resolves the local harness checkout's type faces through tsconfig `paths`; `typecheck:ci` resolves the npm-published `0.1.5-rc.2` faces (no paths) and is what CI runs — keep both green.
 
 ## Release
 

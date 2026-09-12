@@ -26,7 +26,7 @@
 
 | Superficie | Estado |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.5-rc.1` (GitHub tag, verificado el 2026-09-10; pin de npm `0.1.5-rc.1` adaptado el 2026-09-10; rango de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): el sobre de sesión conserva su campo ignorable solo para compatibilidad de lectura de logs almacenados - Session.append aún no puede estamparlo, por lo que el comportamiento de la puerta no cambia. Verificado el 2026-09-10 contra el master checkout dsh-v0.1.5-rc.1 (cadena local completa de puertas; el smoke de instalación de perfil lo cubre el workflow Compat mensual). |
+| Harness | DeepSeek Harness `dsh-v0.1.5-rc.2` (GitHub tag, verificado el 2026-09-11; pin de npm `0.1.5-rc.2` adaptado el 2026-09-10; rango de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): el sobre de sesión conserva su campo ignorable solo para compatibilidad de lectura de logs almacenados - Session.append aún no puede estamparlo, por lo que el comportamiento de la puerta no cambia. Verificado el 2026-09-11 contra el master checkout dsh-v0.1.5-rc.2 (cadena local completa de puertas; el smoke de instalación de perfil lo cubre el workflow Compat mensual). |
 
 | Eventos de auditoría | Se escriben en harness anteriores a `0.1.2-rc.1`; se suprimen con una razón de degradación registrada en `0.1.2-rc.1` y posteriores (vocabulario de eventos de sesión fail-closed, sin superficie de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Superficies | Host + cliente Web (pestaña Budget en Settings); comando `/budget` |
@@ -123,7 +123,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests contra el checkout local del harness
-pnpm run typecheck:ci  # tsc contra los tipos publicados 0.1.5-rc.1 (sin paths)
+pnpm run typecheck:ci  # tsc contra los tipos publicados 0.1.5-rc.2 (sin paths)
 pnpm test           # vitest
 pnpm run build      # declaraciones tsc + bundles tsdown (lib/)
 pnpm run verify:self-contained  # las especificaciones de dependencias resuelven desde el registry

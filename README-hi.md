@@ -26,7 +26,7 @@
 
 | सतह | स्थिति |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.5-rc.1` (GitHub tag, 2026-09-10 को सत्यापित; npm pin `0.1.5-rc.1` 2026-09-10 को अनुकूलित; peer रेंज `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): सत्र लिफ़ाफ़ा अपना ignorable फ़ील्ड केवल संग्रहीत-लॉग पठन संगतता के लिए रखता है - Session.append अभी भी इसे स्टैम्प नहीं कर सकता, इसलिए गेट व्यवहार अपरिवर्तित है। 2026-09-10 को dsh-v0.1.5-rc.1 master checkout के विरुद्ध सत्यापित (पूर्ण स्थानीय गेट श्रृंखला; प्रोफ़ाइल इंस्टॉल स्मोक मासिक Compat workflow द्वारा कवर किया जाता है)। |
+| Harness | DeepSeek Harness `dsh-v0.1.5-rc.2` (GitHub tag, 2026-09-11 को सत्यापित; npm pin `0.1.5-rc.2` 2026-09-10 को अनुकूलित; peer रेंज `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): सत्र लिफ़ाफ़ा अपना ignorable फ़ील्ड केवल संग्रहीत-लॉग पठन संगतता के लिए रखता है - Session.append अभी भी इसे स्टैम्प नहीं कर सकता, इसलिए गेट व्यवहार अपरिवर्तित है। 2026-09-11 को dsh-v0.1.5-rc.2 master checkout के विरुद्ध सत्यापित (पूर्ण स्थानीय गेट श्रृंखला; प्रोफ़ाइल इंस्टॉल स्मोक मासिक Compat workflow द्वारा कवर किया जाता है)। |
 
 | ऑडिट इवेंट | `0.1.2-rc.1` से पहले के harness पर लिखे जाते हैं; `0.1.2-rc.1` और बाद में दबाए जाते हैं और डिग्रेडेशन कारण लॉग होता है (fail-closed सत्र इवेंट शब्दावली, कोई बाहरी पंजीकरण सतह नहीं) || Node | `^22.19.0 \|\| >=24.0.0` |
 | सतहें | Host + वेब क्लाइंट (Settings में Budget टैब); `/budget` कमांड |
@@ -123,7 +123,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests स्थानीय हार्नेस चेकआउट के विरुद्ध
-pnpm run typecheck:ci  # tsc प्रकाशित 0.1.5-rc.1 प्रकारों के विरुद्ध (बिना paths)
+pnpm run typecheck:ci  # tsc प्रकाशित 0.1.5-rc.2 प्रकारों के विरुद्ध (बिना paths)
 pnpm test           # vitest
 pnpm run build      # tsc घोषणाएँ + tsdown बंडल (lib/)
 pnpm run verify:self-contained  # निर्भरता स्पेक registry से हल होती हैं

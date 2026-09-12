@@ -26,7 +26,7 @@
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.5-rc.1` (GitHub tag, verificado em 2026-09-10; pin npm `0.1.5-rc.1` adaptado em 2026-09-10; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): o envelope de sessão mantém seu campo ignorable apenas para compatibilidade de leitura de logs armazenados - o Session.append ainda não consegue estampá-lo, então o comportamento da porta não muda. Verificado em 2026-09-10 contra o checkout master dsh-v0.1.5-rc.1 (cadeia local completa de portas; o smoke de instalação de perfil é coberto pelo workflow Compat mensal). |
+| Harness | DeepSeek Harness `dsh-v0.1.5-rc.2` (GitHub tag, verificado em 2026-09-11; pin npm `0.1.5-rc.2` adaptado em 2026-09-10; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): o envelope de sessão mantém seu campo ignorable apenas para compatibilidade de leitura de logs armazenados - o Session.append ainda não consegue estampá-lo, então o comportamento da porta não muda. Verificado em 2026-09-11 contra o checkout master dsh-v0.1.5-rc.2 (cadeia local completa de portas; o smoke de instalação de perfil é coberto pelo workflow Compat mensal). |
 
 | Eventos de auditoria | Gravados em harness anteriores a `0.1.2-rc.1`; suprimidos com uma razão de degradação registrada em `0.1.2-rc.1` e posteriores (vocabulário de eventos de sessão fail-closed, sem superfície de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Superfícies | Host + cliente Web (aba Budget em Settings); comando `/budget` |
@@ -123,7 +123,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests contra o checkout local do harness
-pnpm run typecheck:ci  # tsc contra os tipos publicados 0.1.5-rc.1 (sem paths)
+pnpm run typecheck:ci  # tsc contra os tipos publicados 0.1.5-rc.2 (sem paths)
 pnpm test           # vitest
 pnpm run build      # declarações tsc + bundles tsdown (lib/)
 pnpm run verify:self-contained  # especificações de dependências resolvem pelo registry
