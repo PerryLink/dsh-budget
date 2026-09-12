@@ -2,7 +2,7 @@
  * `dsh-budget`, browser half: mounts the `budget` Remote contribution, then
  * registers the budget tab into the Plugins settings section
  * (`settings.plugins.tab`, id `budget`). All data arrives through the
- * `remote.budget` namespace 鈥?the tab issues no other RPC and holds no state
+ * `remote.budget` namespace — the tab issues no other RPC and holds no state
  * of its own beyond the edit form and the last loaded snapshot.
  *
  * @module dsh-budget/client

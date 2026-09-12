@@ -1,5 +1,5 @@
 /**
- * `dsh-budget` 鈥?cost governance for DeepSeek Harness. Aggregated
+ * `dsh-budget` — cost governance for DeepSeek Harness. Aggregated
  * token/cost/carbon metering per model, session and day; session/daily/monthly
  * budget caps with threshold alerts (webhook + desktop notification flag) and
  * alert/block/degrade over-limit policies; per-model latency statistics; the
@@ -8,7 +8,7 @@
  * `/budget` command; and `budget/alert` + `budget/block` session audit events
  * (suppressed on hosts whose fail-closed event vocabulary rejects them).
  *
- * Function plugin 鈥?no default export (the Loader unwraps
+ * Function plugin — no default export (the Loader unwraps
  * `exports.default ?? exports`).
  *
  * Seam notes (verified against 0.1.1-rc.2 and the local checkout):
@@ -17,7 +17,7 @@
  *   (`header.config.provider` / `header.config.model`).
  * - Blocking happens on the `llm/stream` waterfall: when a scope is blocked
  *   the listener short-circuits (no `next()`) and yields a text block plus an
- *   error finish that names the budget breach 鈥?loop-built requests are
+ *   error finish that names the budget breach — loop-built requests are
  *   deep-frozen and may NOT be rewritten, so `degrade` manifests the same way
  *   with corrective text naming the degraded model (plus the alert). A
  *   waterfall listener short-circuit is a deliberate claim, not a passthrough
