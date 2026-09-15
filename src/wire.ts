@@ -12,6 +12,17 @@
 import { z } from 'zod'
 import type { InvocationDescriptor } from '@deepseek-ai/dsh-typert-protocol'
 
+/**
+ * Strict wire codec carrying BOTH published and checkout faces: the
+ * `schema` field feeds the npm-published 0.1.5-rc.2 line, `create` feeds the
+ * checkout 0.1.6-alpha.1+ line (schemas materialize lazily on first use).
+ * Built through a variable, so neither typecheck ruler flags the other
+ * face's field as excess.
+ */
+function strictWire<T>(typeSymbol: string, schema: T) {
+  return Object.freeze({ ...{ mode: 'strict' as const, typeSymbol, schema }, create: () => schema })
+}
+
 /** The scopes a budget cap applies to. */
 export const BUDGET_SCOPES = ['session', 'daily', 'monthly'] as const
 export type BudgetScope = (typeof BUDGET_SCOPES)[number]
@@ -146,18 +157,10 @@ export const BUDGET_STATUS_DESCRIPTOR = Object.freeze({
     name: 'sessionId',
     wire: 'sessionId',
     source: 'json',
-    codec: Object.freeze({
-      mode: 'strict',
-      typeSymbol: 'dsh-budget/types#SessionId',
-      schema: BUDGET_SESSION_ID_SCHEMA,
-    }),
+    codec: strictWire('dsh-budget/types#SessionId', BUDGET_SESSION_ID_SCHEMA),
     acceptsUndefined: true,
   } satisfies InvocationDescriptor['parameters'][number])]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-budget/types#BudgetStatus',
-    schema: BUDGET_STATUS_SCHEMA,
-  }),
+  result: strictWire('dsh-budget/types#BudgetStatus', BUDGET_STATUS_SCHEMA),
   sourceLocation: Object.freeze({ file: 'src/wire.ts', line: 1, column: 1 }),
 } as const) satisfies InvocationDescriptor
 
@@ -185,17 +188,9 @@ export const BUDGET_SET_SETTINGS_DESCRIPTOR = Object.freeze({
     name: 'settingsJson',
     wire: 'settingsJson',
     source: 'json',
-    codec: Object.freeze({
-      mode: 'strict',
-      typeSymbol: 'dsh-budget/types#BudgetSettingsJson',
-      schema: z.string(),
-    }),
+    codec: strictWire('dsh-budget/types#BudgetSettingsJson', z.string()),
   } satisfies InvocationDescriptor['parameters'][number])]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-budget/types#BudgetStatus',
-    schema: BUDGET_STATUS_SCHEMA,
-  }),
+  result: strictWire('dsh-budget/types#BudgetStatus', BUDGET_STATUS_SCHEMA),
   sourceLocation: Object.freeze({ file: 'src/wire.ts', line: 1, column: 1 }),
 } as const) satisfies InvocationDescriptor
 
@@ -216,17 +211,9 @@ export const BUDGET_UNBLOCK_DESCRIPTOR = Object.freeze({
     name: 'scope',
     wire: 'scope',
     source: 'json',
-    codec: Object.freeze({
-      mode: 'strict',
-      typeSymbol: 'dsh-budget/types#BudgetUnblockScope',
-      schema: BUDGET_UNBLOCK_SCOPE_SCHEMA,
-    }),
+    codec: strictWire('dsh-budget/types#BudgetUnblockScope', BUDGET_UNBLOCK_SCOPE_SCHEMA),
   } satisfies InvocationDescriptor['parameters'][number])]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-budget/types#BudgetStatus',
-    schema: BUDGET_STATUS_SCHEMA,
-  }),
+  result: strictWire('dsh-budget/types#BudgetStatus', BUDGET_STATUS_SCHEMA),
   sourceLocation: Object.freeze({ file: 'src/wire.ts', line: 1, column: 1 }),
 } as const) satisfies InvocationDescriptor
 
