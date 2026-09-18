@@ -29,7 +29,7 @@
 
 | Surface | Status |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.5-rc.2` (GitHub tag, verified 2026-09-11; npm pin `0.1.5-rc.2` adapted 2026-09-10; peer range `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): the session envelope keeps its ignorable field for stored-log read compatibility only - Session.append still cannot stamp it, so audit-gate behavior is unchanged. Verified 2026-09-11 against the dsh-v0.1.5-rc.2 master checkout (full local gate chain; the profile install smoke runs in the monthly Compat workflow). |
+| Harness | DeepSeek Harness `dsh-v0.1.6-alpha.2` (GitHub tag, adapted 2026-09-18; peer range `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0`): the alpha.2 catalog prices are built into the price table and unknown models surface as unpriced instead of a fabricated estimate; the audit gate keeps suppressing `budget/alert`/`budget/block` appends (fail-closed session event vocabulary). Verified 2026-09-18 by the two-ruler typecheck chain and the full local gate; the browser-panel items stay 人工·未测即未完成 (maintainer manual checklist). |
 
 | Audit events | Written on harnesses before `0.1.2-rc.1`; suppressed with a logged degradation reason on `0.1.2-rc.1` and later (fail-closed session event vocabulary, no external registration surface) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Surfaces | Host + Web client (Settings budget tab); `/budget` command |
@@ -74,7 +74,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | Key | Default | Meaning |
 |---|---|---|
 | `prices` | `{}` | Per-model USD prices per 1M tokens, merged over the built-in table |
-| `defaultPrice` | `{input: 1.0, output: 3.0}` | Fallback for models absent from both tables |
+| `defaultPrice` | unpriced signal (`priced: false`, zero numbers) | Fallback for models absent from both tables: the default contributes 0 to accounting and surfaces as "unpriced"; set numbers with `priced: true` to price unknown models explicitly |
 | `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | Budget caps in USD per scope; omit for unlimited |
 | `warnRatio` | `0.8` | Alert once usage reaches this fraction of a cap (0..1) |
 | `overLimit` | `alert` | `alert` / `block` / `degrade` after a cap is crossed |
@@ -126,7 +126,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests against the local harness checkout
-pnpm run typecheck:ci  # tsc against the published 0.1.5-rc.2 types (no paths)
+pnpm run typecheck:ci  # tsc against the published types (no paths)
 pnpm test           # vitest
 pnpm run build      # tsc declarations + tsdown bundles (lib/)
 pnpm run verify:self-contained  # dependency specs resolve from the registry

@@ -27,7 +27,7 @@
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.5-rc.2` (GitHub tag, verificado em 2026-09-11; pin npm `0.1.5-rc.2` adaptado em 2026-09-10; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`): o envelope de sessão mantém seu campo ignorable apenas para compatibilidade de leitura de logs armazenados - o Session.append ainda não consegue estampá-lo, então o comportamento da porta não muda. Verificado em 2026-09-11 contra o checkout master dsh-v0.1.5-rc.2 (cadeia local completa de portas; o smoke de instalação de perfil é coberto pelo workflow Compat mensal). |
+| Harness | DeepSeek Harness `dsh-v0.1.6-alpha.2` (GitHub tag, adaptado em 2026-09-18; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0`): os preços do catálogo alpha.2 estão embutidos na tabela e modelos sem preço aparecem como "sem preço" em vez de uma estimativa inventada; a porta de auditoria continua suprimindo os appends `budget/alert`/`budget/block` (vocabulário de eventos de sessão fail-closed). Verificado em 2026-09-18 pela cadeia typecheck de duas réguas e pela porta local completa; os itens do painel no navegador ficam 人工·未测即未完成 (checklist manual do mantenedor). |
 
 | Eventos de auditoria | Gravados em harness anteriores a `0.1.2-rc.1`; suprimidos com uma razão de degradação registrada em `0.1.2-rc.1` e posteriores (vocabulário de eventos de sessão fail-closed, sem superfície de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Superfícies | Host + cliente Web (aba Budget em Settings); comando `/budget` |
@@ -72,7 +72,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 | Chave | Padrão | Significado |
 |---|---|---|
 | `prices` | `{}` | Preços USD por 1M de tokens por modelo, mesclados sobre a tabela integrada |
-| `defaultPrice` | `{input: 1.0, output: 3.0}` | Reserva para modelos ausentes de ambas as tabelas |
+| `defaultPrice` | sinal sem preço (`priced: false`, números zerados) | Reserva para modelos ausentes de ambas as tabelas: por padrão contribui 0 para a contabilidade e aparece como "sem preço"; defina números com `priced: true` para precificar explicitamente |
 | `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | Tetos de orçamento USD por escopo; omitir para ilimitado |
 | `warnRatio` | `0.8` | Alertar quando o uso atingir esta fração do teto (0..1) |
 | `overLimit` | `alert` | `alert` / `block` / `degrade` após cruzar um teto |

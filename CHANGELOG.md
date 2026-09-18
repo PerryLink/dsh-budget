@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add the alpha.2 catalog prices to the built-in table (`deepseek-flash` / `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` at 0.15/0.60/0.003/0.15 USD per 1M and `deepseek-v4-pro` at 0.66/1.98/0.022/0.66, off-peak, verified against the official pricing page on 2026-09-18). Before this release the table had ZERO overlap with the alpha.2 model catalog, so every catalog model fell back to the silent 1.0/3.0 default and was overestimated by 23.7×–64.4× on a session basis and 87×–213× on a monthly basis (both figures are correct; the ~100% gap comes from the load mix), which made `overLimit: 'block'` with a $10 session cap kill a session after ~$0.05 of real flash spend.
+- Replace the silent fallback estimate with an unpriced signal: a model with no price entry and no explicitly priced `defaultPrice` now contributes 0 to budget accounting (its cost is no longer a fabricated number), warns once per provider/model in the budget logger, and surfaces as "unpriced" in `/budget` and the settings panel. Third-party model costs change from a fabricated number to explicitly unknown; set `defaultPrice` with `priced: true` to price them.
+- Hold the persistence storage domain in one effect: the bare `await storageDomain.open(...)` before every registration could leave the plugin half-mounted when an unload landed during the async open (A02). The effect registers first and owns the open promise in its closure; the disposer flushes and closes the domain exactly once it resolves.
+- Derive the client's current session from `retainedBy.mainView` instead of the deleted `SessionListState.current` leaf (B5): session-scope attribution no longer silently degrades to unbound, and the panel shows a visible "no current session bound" notice when the face is absent.
+- Own the injected style node across reload races: the duplicate-found branch previously returned a no-op disposer and stranded the tab stylesheet.
+
 ### Changed
 
 - Carry both Typert strict-codec faces on the wire descriptors: the published `schema` field (0.1.5-rc.2 line) and the `create` factory the 0.1.6-alpha.1 checkout materializes lazily on first use. Both typecheck rulers stay green.
+- Declare `dsh.manifestVersion: 1` and the three-clause `engines.dsh` range (G-3).
 
 ## [0.4.9] - 2026-09-12
 
