@@ -104,6 +104,7 @@ export class BudgetService extends TypertRemoteService {
       costUsd: entry.costUsd,
       carbonKg: entry.carbonKg,
       latency: latencySummary(entry.latencyMs),
+      priced: entry.priced,
     }))
 
     const degraded = this.bindings.degradation()

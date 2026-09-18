@@ -33,8 +33,24 @@ describe('BudgetAggregator', () => {
     expect(aggregator.sessionUsage('s1').costUsd).toBeCloseTo(0.27)
   })
 
-  it('uses the fallback price for unknown models', () => {
-    const aggregator = makeAggregator()
+  it('treats an unknown model as an unpriced signal (no fabricated cost, warn-once)', () => {
+    const warnings: Array<[string, string]> = []
+    const aggregator = new BudgetAggregator(resolveConfig({}), () => FIXED_NOW, (provider, model) => {
+      warnings.push([provider, model])
+    })
+    aggregator.setAttribution('acme', 'unknown-model')
+    aggregator.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 0 })
+    expect(aggregator.sessionUsage('s1').costUsd).toBe(0)
+    const line = aggregator.modelUsage().find(entry => entry.model === 'unknown-model')
+    expect(line?.priced).toBe(false)
+    expect(warnings).toEqual([['acme', 'unknown-model']])
+    // Second record of the same model must not warn again (dedupe).
+    aggregator.recordUsage('s1', { inputTokens: 1, outputTokens: 0 })
+    expect(warnings).toHaveLength(1)
+  })
+
+  it('honours an explicitly priced defaultPrice for unknown models', () => {
+    const aggregator = new BudgetAggregator(resolveConfig({ defaultPrice: { input: 1.0, output: 3.0, priced: true } }), () => FIXED_NOW)
     aggregator.setAttribution('acme', 'unknown-model')
     aggregator.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 0 })
     expect(aggregator.sessionUsage('s1').costUsd).toBeCloseTo(1.0)

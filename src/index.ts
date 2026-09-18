@@ -128,7 +128,9 @@ interface StorageDomainService {
 export async function apply(ctx: Context, config: Config): Promise<void> {
   const resolved = resolveConfig(config)
   const logger = ctx.logger('budget')
-  const aggregator = new BudgetAggregator(resolved)
+  const aggregator = new BudgetAggregator(resolved, Date.now, (provider, model) => {
+    logger.warn(`unpriced model "${provider}/${model}": no price entry and no priced defaultPrice — its usage contributes 0 to budget accounting (cost unknown)`)
+  })
 
   // Durable day/month persistence: restore once at mount and snapshot on a
   // timer. The storage domain is optional — when absent, aggregation stays

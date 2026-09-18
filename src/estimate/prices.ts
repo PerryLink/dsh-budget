@@ -25,6 +25,12 @@ export interface PriceEntry {
   cacheWrite?: number
   /** Provenance metadata for built-in entries. */
   source?: PriceSource
+  /**
+   * `false` marks an entry as an unpriced signal instead of an estimate:
+   * its numbers are NOT used for cost accounting and consumers must surface
+   * the model as "cost unknown". Absent (or `true`) means priced.
+   */
+  priced?: boolean
 }
 
 /**

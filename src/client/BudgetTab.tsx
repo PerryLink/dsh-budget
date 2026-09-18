@@ -187,7 +187,7 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
                 <li key={model.model}>
                   <span className="dbud-model-name">{model.provider}/{model.model}</span>
                   <span className="dbud-model-meta">
-                    {`${formatMoney(snapshot, model.costUsd)} · ${model.inputTokens} in / ${model.outputTokens} out · ${t('latency')} ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`}`}
+                    {`${model.priced === false ? t('unpriced') : formatMoney(snapshot, model.costUsd)} · ${model.inputTokens} in / ${model.outputTokens} out · ${t('latency')} ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`}`}
                   </span>
                 </li>
               ))}

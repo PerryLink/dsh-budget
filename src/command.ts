@@ -25,6 +25,7 @@ interface Messages {
   unknownScope: (scope: string) => string
   unblocked: (scope: string) => string
   noModels: string
+  unpriced: string
 }
 
 const EN_MESSAGES: Messages = {
@@ -35,6 +36,7 @@ const EN_MESSAGES: Messages = {
   unknownScope: (scope: string) => `unknown scope "${scope}" (session | daily | monthly)`,
   unblocked: (scope: string) => `budget scope "${scope}" unblocked`,
   noModels: 'no model usage recorded yet',
+  unpriced: 'unpriced',
 }
 
 const ZH_MESSAGES: Messages = {
@@ -45,12 +47,18 @@ const ZH_MESSAGES: Messages = {
   unknownScope: (scope: string) => `未知作用域 "${scope}"（session | daily | monthly）`,
   unblocked: (scope: string) => `预算作用域 "${scope}" 已解除阻断`,
   noModels: '尚未记录到任何模型用量',
+  unpriced: '未定价',
 }
 
 /** Format one USD amount through the display currency. */
 function money(status: BudgetStatus, usd: number): string {
   const converted = usd * status.currency.rate
   return `${converted.toFixed(status.currency.decimals)} ${status.currency.code}`
+}
+
+/** Cost text for one model line: the honest amount, or the unpriced signal. */
+function modelCost(status: BudgetStatus, model: BudgetStatus['models'][number], messages: Messages): string {
+  return model.priced === false ? messages.unpriced : money(status, model.costUsd)
 }
 
 /** Render the overview body for one snapshot. */
@@ -70,7 +78,7 @@ export function renderBudgetOverview(status: BudgetStatus, messages: Messages): 
     for (const model of status.models.slice(0, 8)) {
       const p50 = model.latency.p50 === null ? '-' : `${model.latency.p50}ms`
       lines.push(
-        `${model.provider}/${model.model}: ${money(status, model.costUsd)}`
+        `${model.provider}/${model.model}: ${modelCost(status, model, messages)}`
         + ` (${model.inputTokens} in / ${model.outputTokens} out · p50 ${p50} · ${model.carbonKg.toFixed(4)} kg CO2e)`,
       )
     }
@@ -97,7 +105,7 @@ export function parseBudgetArgs(rawInput: string):
 export function renderBudgetModels(status: BudgetStatus, _messages: Messages): string {
   if (status.models.length === 0) return _messages.noModels
   return status.models.map(model =>
-    `${model.provider}/${model.model}: ${money(status, model.costUsd)}`
+    `${model.provider}/${model.model}: ${modelCost(status, model, _messages)}`
     + ` (${model.inputTokens} in / ${model.outputTokens} out · p50 ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`})`,
   ).join('\n')
 }

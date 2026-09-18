@@ -34,6 +34,8 @@ export const zh = {
   save: '保存',
   saved: '已保存（会话内生效，重载后恢复 cordis.yml 配置）',
   degraded: '已降级至',
+  unpriced: '未定价',
+  noSessionBound: '未绑定当前会话：会话作用域用量以「未绑定」口径显示。',
   history: '最近告警',
   usageCurve: '用量曲线',
 } as const
@@ -72,6 +74,8 @@ export const en: Record<keyof typeof zh, string> = {
   save: 'Save',
   saved: 'Saved (session-scoped; a reload restores the cordis.yml values)',
   degraded: 'Degraded to',
+  unpriced: 'unpriced',
+  noSessionBound: 'No current session bound: session-scope usage is shown as unbound.',
   history: 'Recent alerts',
   usageCurve: 'Usage curve',
 } as const

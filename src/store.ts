@@ -31,6 +31,7 @@ const modelUsageSchema = z.object({
   cacheWriteTokens: z.number().nonnegative(),
   costUsd: z.number(),
   carbonKg: z.number(),
+  priced: z.boolean().optional(),
 })
 
 /** Zod schema for one persisted day/month bucket. */

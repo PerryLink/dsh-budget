@@ -38,6 +38,8 @@ export interface ModelUsage extends ScopeUsage {
   model: string
   /** Latency samples kept for this model (ms). */
   latencyMs: readonly number[]
+  /** `false` when the model is unpriced (cost contribution is 0, cost unknown). */
+  priced: boolean
 }
 
 /** One persisted model usage entry (latency windows stay process-local, so they are excluded). */
@@ -50,6 +52,8 @@ export interface PersistedModelUsage {
   cacheWriteTokens: number
   costUsd: number
   carbonKg: number
+  /** `false` when the model was unpriced at record time (absent = priced). */
+  priced?: boolean | undefined
 }
 
 /** One persisted day/month bucket. */
@@ -124,10 +128,23 @@ export interface BudgetSnapshot {
 export class BudgetAggregator {
   private readonly state: AggregatorState
   private readonly table: Record<string, PriceEntry>
+  /** Provider/model pairs already reported as unpriced (warn-once dedupe). */
+  private readonly unpricedWarned = new Map<string, true>()
 
-  /** @param config - resolved plugin config. @param now - clock (defaults to Date.now). */
-  constructor(private readonly config: ResolvedConfig, private readonly now: () => number = Date.now) {
+  /**
+   * @param config - resolved plugin config.
+   * @param now - clock (defaults to Date.now).
+   * @param onUnpriced - optional hook fired once per provider/model the first
+   *   time an unpriced model contributes usage (warn-once dedupe lives here
+   *   so tests can assert single calls without a logger).
+   */
+  constructor(
+    private readonly config: ResolvedConfig,
+    private readonly now: () => number = Date.now,
+    onUnpriced?: (provider: string, model: string) => void,
+  ) {
     this.table = mergePrices(config.prices)
+    this.onUnpriced = onUnpriced
     this.state = {
       sessions: new Map(),
       days: new Map(),
@@ -140,6 +157,8 @@ export class BudgetAggregator {
       model: '',
     }
   }
+
+  private readonly onUnpriced: ((provider: string, model: string) => void) | undefined
 
   /** Update the current provider/model attribution from a request header. */
   setAttribution(provider: string, model: string): void {
@@ -166,8 +185,20 @@ export class BudgetAggregator {
     const cacheWrite = usage.cacheWriteTokens ?? 0
     if (input + output + cacheRead + cacheWrite <= 0) return
 
-    const price = priceFor(this.table, this.config.defaultPrice, this.state.provider, this.state.model)
-    const cost = estimateUsageCost(price, input, output, cacheRead, cacheWrite)
+    const resolvedPrice = priceFor(this.table, this.config.defaultPrice, this.state.provider, this.state.model)
+    // The fallback object carries `priced:false` unless the user explicitly
+    // priced unknown models: an unpriced model contributes ZERO cost (the
+    // estimate would be a fabricated number) and surfaces as "cost unknown".
+    const priced = resolvedPrice !== this.config.defaultPrice || this.config.defaultPrice.priced
+    if (!priced) {
+      const key = `${this.state.provider}/${this.state.model}`
+      if (!this.unpricedWarned.has(key)) {
+        this.unpricedWarned.set(key, true)
+        this.onUnpriced?.(this.state.provider, this.state.model)
+      }
+    }
+    const cost = priced ? estimateUsageCost(resolvedPrice, input, output, cacheRead, cacheWrite) : null
+    const costUsd = cost?.totalCost ?? 0
     const tokens = input + output + cacheRead + cacheWrite
     const carbon = this.config.carbon.enabled
       ? tokenCarbon(tokens, this.config.carbon.energyKwhPerToken, this.config.carbon.pue, this.config.carbon.region).co2Kg
@@ -178,7 +209,7 @@ export class BudgetAggregator {
       target.outputTokens += output
       target.cacheReadTokens += cacheRead
       target.cacheWriteTokens += cacheWrite
-      target.costUsd += cost.totalCost
+      target.costUsd += costUsd
       target.carbonKg += carbon
     }
 
@@ -189,12 +220,12 @@ export class BudgetAggregator {
     const at = this.now()
     const day = this.state.days.get(dayKey(at)) ?? { total: emptyUsage(), models: new Map() }
     add(day.total)
-    this.addModel(day.models, input, output, cacheRead, cacheWrite, cost.totalCost, carbon)
+    this.addModel(day.models, input, output, cacheRead, cacheWrite, costUsd, carbon, priced)
     this.state.days.set(dayKey(at), day)
 
     const month = this.state.months.get(monthKey(at)) ?? { total: emptyUsage(), models: new Map() }
     add(month.total)
-    this.addModel(month.models, input, output, cacheRead, cacheWrite, cost.totalCost, carbon)
+    this.addModel(month.models, input, output, cacheRead, cacheWrite, costUsd, carbon, priced)
     this.state.months.set(monthKey(at), month)
   }
 
@@ -216,6 +247,7 @@ export class BudgetAggregator {
     cacheWrite: number,
     costUsd: number,
     carbonKg: number,
+    priced: boolean,
   ): void {
     const model = this.state.model || 'unknown'
     const entry = models.get(model) ?? {
@@ -228,6 +260,7 @@ export class BudgetAggregator {
       costUsd: 0,
       carbonKg: 0,
       latencyMs: [],
+      priced: true,
     }
     entry.inputTokens += input
     entry.outputTokens += output
@@ -235,6 +268,8 @@ export class BudgetAggregator {
     entry.cacheWriteTokens += cacheWrite
     entry.costUsd += costUsd
     entry.carbonKg += carbonKg
+    // One unpriced record marks the whole line unpriced (its cost is 0 either way).
+    entry.priced = entry.priced && priced
     models.set(model, entry)
   }
 
@@ -360,6 +395,7 @@ export class BudgetAggregator {
           cacheWriteTokens: usage.cacheWriteTokens,
           costUsd: usage.costUsd,
           carbonKg: usage.carbonKg,
+          priced: usage.priced,
         }
       }
       out[key] = { total: { ...bucket.total }, models }
@@ -386,6 +422,7 @@ export class BudgetAggregator {
           costUsd: 0,
           carbonKg: 0,
           latencyMs: [],
+          priced: true,
         }
         entry.provider = usage.provider
         entry.inputTokens += usage.inputTokens
@@ -394,6 +431,7 @@ export class BudgetAggregator {
         entry.cacheWriteTokens += usage.cacheWriteTokens
         entry.costUsd += usage.costUsd
         entry.carbonKg += usage.carbonKg
+        entry.priced = entry.priced && (usage.priced ?? true)
         existing.models.set(model, entry)
       }
       target.set(key, existing)

@@ -49,6 +49,8 @@ export interface ModelLine {
   carbonKg: number
   /** Latency percentiles over the kept window (ms). */
   latency: { min: number | null; p50: number | null; p95: number | null; max: number | null; samples: number }
+  /** `false` when the model is unpriced: costUsd is 0 and the cost is unknown. */
+  priced: boolean
 }
 
 /** One recent threshold alert (newest first). */
@@ -112,6 +114,7 @@ export const BUDGET_STATUS_SCHEMA = z.object({
       max: z.number().int().nullable(),
       samples: z.number().int(),
     }),
+    priced: z.boolean(),
   })),
   alerts: z.array(z.object({
     scope: z.enum(BUDGET_SCOPES),
