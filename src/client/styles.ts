@@ -10,8 +10,11 @@
 
 /** One `<style>` installation; returns the exact disposer that removes it. */
 export function installBudgetStyles(): () => void {
-  const existing = document.querySelector('style[data-dsh-budget]')
-  if (existing !== null) return () => {}
+  // A leftover node belongs to a dying fiber (reload race): this mount takes
+  // ownership by replacing it, so its disposer always removes the node it
+  // inserted instead of returning a no-op that strands the stylesheet.
+  const stale = document.querySelector('style[data-dsh-budget]')
+  if (stale !== null) stale.remove()
   const element = document.createElement('style')
   element.dataset.dshBudget = ''
   element.textContent = BUDGET_CSS
