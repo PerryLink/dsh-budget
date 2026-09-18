@@ -25,6 +25,12 @@ export interface PriceEntry {
   cacheWrite?: number
   /** Provenance metadata for built-in entries. */
   source?: PriceSource
+  /**
+   * `false` marks an entry as an unpriced signal instead of an estimate:
+   * its numbers are NOT used for cost accounting and consumers must surface
+   * the model as "cost unknown". Absent (or `true`) means priced.
+   */
+  priced?: boolean
 }
 
 /**
@@ -50,6 +56,12 @@ export const BUILTIN_PRICES: Readonly<Record<string, PriceEntry>> = Object.freez
   // Vendor-authored USD pricing (captured at porting time).
   'deepseek-chat': { input: 0.27, cacheRead: 0.027, cacheWrite: 0.27, output: 1.1, source: 'vendor' },
   'deepseek-reasoner': { input: 0.55, cacheRead: 0.055, cacheWrite: 0.55, output: 2.19, source: 'vendor' },
+  // DeepSeek alpha.2 catalog (verified against the official pricing page,
+  // off-peak rates, 2026-09-18; see wave-plan/scratch/price-verify-2026-09-18.txt).
+  'deepseek-flash': { input: 0.15, cacheRead: 0.003, cacheWrite: 0.15, output: 0.6, source: 'vendor' },
+  'deepseek-v4-flash': { input: 0.15, cacheRead: 0.003, cacheWrite: 0.15, output: 0.6, source: 'vendor' },
+  'deepseek-v4-flash-vision-exp': { input: 0.15, cacheRead: 0.003, cacheWrite: 0.15, output: 0.6, source: 'vendor' },
+  'deepseek-v4-pro': { input: 0.66, cacheRead: 0.022, cacheWrite: 0.66, output: 1.98, source: 'vendor' },
   'gpt-4o': { input: 2.5, cacheRead: 1.25, output: 10.0, source: 'vendor' },
   'gpt-4o-mini': { input: 0.15, cacheRead: 0.075, output: 0.6, source: 'vendor' },
   'gpt-4.1': { input: 2.0, cacheRead: 0.5, output: 8.0, source: 'vendor' },

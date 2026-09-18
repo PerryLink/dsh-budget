@@ -29,7 +29,7 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.5-rc.2`（GitHub tag，2026-09-11 核验；npm 钉号 `0.1.5-rc.2`，2026-09-10 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`）：会话信封保留 ignorable 字段但仅用于存量日志读取兼容——Session.append 仍无法盖章，门控行为不变。已于 2026-09-11 对照 dsh-v0.1.5-rc.2 master 检出核验（完整本地门禁链；profile 安装冒烟由每月 Compat workflow 覆盖）。 |
+| Harness | DeepSeek Harness `dsh-v0.1.6-alpha.2`（GitHub tag，2026-09-18 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0`）：alpha.2 目录价已内置进价目表，未定价模型以「未定价」呈现而非虚构估算；审计门继续抑制 `budget/alert`/`budget/block` 落盘（fail-closed 会话事件词表）。已于 2026-09-18 通过双尺子 typecheck 链与完整本地门禁核验；浏览器面板项为 人工·未测即未完成（维护者人工清单）。 |
 
 | 审计事件 | `0.1.2-rc.1` 之前的宿主上写入；在 `0.1.2-rc.1` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
 | 界面 | Host + Web 客户端（设置页预算页签）；`/budget` 命令 |
@@ -74,7 +74,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 | 键 | 默认值 | 含义 |
 |---|---|---|
 | `prices` | `{}` | 每模型 USD/百万 token 价格，合并覆盖内置价目表 |
-| `defaultPrice` | `{input: 1.0, output: 3.0}` | 两表均无该模型时的回退价格 |
+| `defaultPrice` | 未定价信号（`priced: false`，数字为零） | 两表均无该模型时的回退：默认对记账贡献 0 并显示「未定价」；设置数字并加 `priced: true` 可为未知模型显式定价 |
 | `budgets.session` / `daily` / `monthly` | `10` / `50` / `500` | 各作用域 USD 预算上限；缺省表示不限 |
 | `warnRatio` | `0.8` | 用量达到上限该比例时告警（0..1） |
 | `overLimit` | `alert` | 超限后策略：`alert` / `block` / `degrade` |

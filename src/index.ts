@@ -128,38 +128,53 @@ interface StorageDomainService {
 export async function apply(ctx: Context, config: Config): Promise<void> {
   const resolved = resolveConfig(config)
   const logger = ctx.logger('budget')
-  const aggregator = new BudgetAggregator(resolved)
+  const aggregator = new BudgetAggregator(resolved, Date.now, (provider, model) => {
+    logger.warn(`unpriced model "${provider}/${model}": no price entry and no priced defaultPrice — its usage contributes 0 to budget accounting (cost unknown)`)
+  })
 
   // Durable day/month persistence: restore once at mount and snapshot on a
   // timer. The storage domain is optional — when absent, aggregation stays
   // process-local (the pre-persistence behavior) and the plugin keeps working.
+  // A02: the effect registers FIRST and the open promise lives in its closure
+  // (one effect holds the registration and the resource), so an unload during
+  // the async open can no longer interrupt the remaining registrations below;
+  // the disposer flushes and closes the domain exactly once it resolves.
   if (resolved.persistence.enabled) {
     const storageDomain = ctx.get('storageDomain') as StorageDomainService | undefined
     if (storageDomain !== undefined) {
-      try {
-        const domain = await storageDomain.open(budgetDomainSpec)
-        const table = domain.table('state')
-        const persisted = table.get('usage')
-        if (persisted !== undefined) aggregator.restoreState(persisted)
-        ctx.effect(() => {
-          const timer = setInterval(() => {
+      ctx.effect(() => {
+        let timer: ReturnType<typeof setInterval> | undefined
+        const domainPromise = storageDomain.open(budgetDomainSpec)
+        void domainPromise.then(domain => {
+          const table = domain.table('state')
+          const persisted = table.get('usage')
+          if (persisted !== undefined) aggregator.restoreState(persisted)
+          timer = setInterval(() => {
             void table.put('usage', aggregator.exportState()).catch(error => {
               logger.warn(`budget persistence write failed: ${error instanceof Error ? error.message : String(error)}`)
             })
           }, resolved.persistence.intervalMs)
-          return async () => {
-            clearInterval(timer)
+        }).catch(error => {
+          logger.warn(`budget persistence unavailable (degrading to in-memory): ${error instanceof Error ? error.message : String(error)}`)
+        })
+        return () => {
+          if (timer !== undefined) clearInterval(timer)
+          void domainPromise.then(async domain => {
             try {
-              await table.put('usage', aggregator.exportState())
+              await domain.table('state').put('usage', aggregator.exportState())
             } catch (error) {
               logger.warn(`final budget persistence write failed: ${error instanceof Error ? error.message : String(error)}`)
             }
-            await domain.close()
-          }
-        })
-      } catch (error) {
-        logger.warn(`budget persistence unavailable (degrading to in-memory): ${error instanceof Error ? error.message : String(error)}`)
-      }
+            try {
+              await domain.close()
+            } catch (error) {
+              logger.warn(`budget persistence domain close failed: ${error instanceof Error ? error.message : String(error)}`)
+            }
+          }).catch(() => {
+            // The open itself rejected (already warned); nothing to close.
+          })
+        }
+      }, 'dsh-budget: persistence')
     }
   }
 

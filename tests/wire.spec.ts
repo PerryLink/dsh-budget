@@ -19,7 +19,7 @@ import {
 function fullStatus(): BudgetStatus {
   return {
     scopes: [{ scope: 'session', capUsd: 10, usedUsd: 3, ratio: 0.3, tokens: 100, carbonKg: 0.001 }],
-    models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 } }],
+    models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 }, priced: true }],
     alerts: [{ scope: 'daily', kind: 'warn', at: 1_700_000_000_000, usedUsd: 1, capUsd: 2 }],
     blockedScopes: [],
     currency: { code: 'USD', rate: 1.0, decimals: 2 },

@@ -50,7 +50,7 @@ export interface Config {
   /** Per-model USD prices per 1M tokens, merged over the built-in table. */
   prices?: Record<string, { input: number; output: number; cacheRead?: number; cacheWrite?: number }>
   /** Fallback price for models absent from both tables. */
-  defaultPrice?: { input: number; output: number; cacheRead?: number; cacheWrite?: number }
+  defaultPrice?: { input: number; output: number; cacheRead?: number; cacheWrite?: number; priced?: boolean }
   /** Budget caps in USD per scope; omit a scope for unlimited. */
   budgets?: BudgetsConfig
   /** Alert once usage reaches this fraction of a cap (0..1). */
@@ -88,7 +88,7 @@ export interface Config {
 /** Fully resolved config. */
 export interface ResolvedConfig {
   readonly prices: Record<string, { input: number; output: number; cacheRead?: number; cacheWrite?: number }>
-  readonly defaultPrice: { input: number; output: number; cacheRead?: number; cacheWrite?: number }
+  readonly defaultPrice: { input: number; output: number; cacheRead?: number; cacheWrite?: number; priced: boolean }
   readonly budgets: BudgetsConfig
   readonly warnRatio: number
   readonly overLimit: 'alert' | 'block' | 'degrade'
@@ -119,11 +119,12 @@ export const Config: z<Config> = z.object({
     cacheWrite: z.number().min(0),
   })).default({}),
   defaultPrice: z.object({
-    input: z.number().min(0).default(1.0),
-    output: z.number().min(0).default(3.0),
-    cacheRead: z.number().min(0).default(1.0),
-    cacheWrite: z.number().min(0).default(1.0),
-  }).default({ input: 1.0, output: 3.0, cacheRead: 1.0, cacheWrite: 1.0 }),
+    input: z.number().min(0).default(0),
+    output: z.number().min(0).default(0),
+    cacheRead: z.number().min(0).default(0),
+    cacheWrite: z.number().min(0).default(0),
+    priced: z.boolean().default(false),
+  }).default({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, priced: false }),
   budgets: z.object({
     session: z.number().min(0),
     daily: z.number().min(0),
@@ -178,9 +179,20 @@ export function resolveConfig(config: Config | undefined): ResolvedConfig {
     if (!Number.isFinite(entry.input) || entry.input < 0) invalid(`prices.${model}.input`, 'must be a non-negative number')
     if (!Number.isFinite(entry.output) || entry.output < 0) invalid(`prices.${model}.output`, 'must be a non-negative number')
   }
-  const defaultPrice = config?.defaultPrice ?? { input: 1.0, output: 3.0 }
-  if (!Number.isFinite(defaultPrice.input) || defaultPrice.input < 0) invalid('defaultPrice.input', 'must be a non-negative number')
-  if (!Number.isFinite(defaultPrice.output) || defaultPrice.output < 0) invalid('defaultPrice.output', 'must be a non-negative number')
+  const rawDefault = config?.defaultPrice ?? { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, priced: false }
+  if (!Number.isFinite(rawDefault.input) || rawDefault.input < 0) invalid('defaultPrice.input', 'must be a non-negative number')
+  if (!Number.isFinite(rawDefault.output) || rawDefault.output < 0) invalid('defaultPrice.output', 'must be a non-negative number')
+  // Explicit user numbers mean the user priced the unknown-model fallback;
+  // the built-in (all-zero) default stays an unpriced signal (priced:false),
+  // so unpriced models never fabricate a cost estimate.
+  const defaultPriced = rawDefault.priced === true || (rawDefault.priced !== false && (rawDefault.input > 0 || rawDefault.output > 0))
+  const defaultPrice = Object.freeze({
+    input: defaultPriced ? rawDefault.input : 0,
+    output: defaultPriced ? rawDefault.output : 0,
+    cacheRead: defaultPriced ? rawDefault.cacheRead ?? rawDefault.input : 0,
+    cacheWrite: defaultPriced ? rawDefault.cacheWrite ?? rawDefault.input : 0,
+    priced: defaultPriced,
+  })
 
   const budgets = { ...(config?.budgets ?? { session: 10, daily: 50, monthly: 500 }) }
   for (const [scope, cap] of Object.entries(budgets)) {
@@ -258,7 +270,7 @@ export function resolveConfig(config: Config | undefined): ResolvedConfig {
 
   return Object.freeze({
     prices: Object.freeze(prices),
-    defaultPrice: Object.freeze(defaultPrice),
+    defaultPrice,
     budgets: Object.freeze(budgets),
     warnRatio,
     overLimit,

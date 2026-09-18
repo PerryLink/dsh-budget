@@ -8,6 +8,7 @@
 import { describe, expect, it } from 'vitest'
 import { resolveConfig } from '../src/config.ts'
 import { BudgetAggregator, dayKey, monthKey } from '../src/aggregate/usage.ts'
+import { BUILTIN_PRICES, mergePrices, priceFor } from '../src/estimate/prices.ts'
 
 /** A fixed clock so day/month keys are stable across runs. */
 const FIXED_NOW = Date.parse('2026-08-16T12:00:00Z')
@@ -33,11 +34,39 @@ describe('BudgetAggregator', () => {
     expect(aggregator.sessionUsage('s1').costUsd).toBeCloseTo(0.27)
   })
 
-  it('uses the fallback price for unknown models', () => {
-    const aggregator = makeAggregator()
+  it('treats an unknown model as an unpriced signal (no fabricated cost, warn-once)', () => {
+    const warnings: Array<[string, string]> = []
+    const aggregator = new BudgetAggregator(resolveConfig({}), () => FIXED_NOW, (provider, model) => {
+      warnings.push([provider, model])
+    })
+    aggregator.setAttribution('acme', 'unknown-model')
+    aggregator.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 0 })
+    expect(aggregator.sessionUsage('s1').costUsd).toBe(0)
+    const line = aggregator.modelUsage().find(entry => entry.model === 'unknown-model')
+    expect(line?.priced).toBe(false)
+    expect(warnings).toEqual([['acme', 'unknown-model']])
+    // Second record of the same model must not warn again (dedupe).
+    aggregator.recordUsage('s1', { inputTokens: 1, outputTokens: 0 })
+    expect(warnings).toHaveLength(1)
+  })
+
+  it('honours an explicitly priced defaultPrice for unknown models', () => {
+    const aggregator = new BudgetAggregator(resolveConfig({ defaultPrice: { input: 1.0, output: 3.0, priced: true } }), () => FIXED_NOW)
     aggregator.setAttribution('acme', 'unknown-model')
     aggregator.recordUsage('s1', { inputTokens: 1_000_000, outputTokens: 0 })
     expect(aggregator.sessionUsage('s1').costUsd).toBeCloseTo(1.0)
+  })
+
+  it('resolves the alpha.2 catalog ids out of the fallback (two-level assertion lock)', () => {
+    const fallback = resolveConfig({}).defaultPrice
+    // Level 1: the core acceptance assertion — the priceFor result must not
+    // be the unpriced fallback for a catalog model.
+    expect(priceFor(mergePrices({}), fallback, 'deepseek-official', 'deepseek-flash')).not.toBe(fallback)
+    expect(priceFor(mergePrices({}), fallback, 'deepseek-official', 'deepseek-v4-pro')).not.toBe(fallback)
+    // Level 2: catalog-alignment fixture — both alpha.2 catalog ids are
+    // pinned in the built-in table (red here means the table drifted).
+    expect(BUILTIN_PRICES['deepseek-flash']).toMatchObject({ input: 0.15, output: 0.6, cacheRead: 0.003, cacheWrite: 0.15 })
+    expect(BUILTIN_PRICES['deepseek-v4-pro']).toMatchObject({ input: 0.66, output: 1.98, cacheRead: 0.022, cacheWrite: 0.66 })
   })
 
   it('keys today by the injected clock', () => {

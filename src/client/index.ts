@@ -78,6 +78,11 @@ export async function apply(ctx: ClientContext): Promise<void> {
       unwrap<BudgetStatus>(await scope.remote.budget.setSettings(settingsJson), 'setSettings')
     const unblock: BudgetTabInjected['unblock'] = async (scopeName) =>
       unwrap<BudgetStatus>(await scope.remote.budget.unblock(scopeName), 'unblock')
+    // Whether a main-view session is currently bound (B5: the deleted
+    // SessionListState.current face is replaced by the retainedBy.mainView
+    // derivation, upstream ui-session:434-449 pattern). undefined = degrade.
+    const sessionBound: BudgetTabInjected['sessionBound'] = () =>
+      currentSessionId(scope.get('sessions')) !== undefined
     const slots = scope.get('slots') as unknown as BudgetSlotsService
     slots.inject('settings.plugins.tab', () => slots.register({
       name: 'settings.plugins.tab',
@@ -85,23 +90,35 @@ export async function apply(ctx: ClientContext): Promise<void> {
       order: 40,
       label: () => t('tab'),
       locale: NS,
-      inject: (): BudgetTabInjected => ({ status, setSettings, unblock }),
+      inject: (): BudgetTabInjected => ({ status, setSettings, unblock, sessionBound }),
     }, BudgetTab))
   })
 }
 
 /**
- * Read the current session id from the sessions store face (structural:
- * the store shape differs across harness lines, so only the leaf is read).
+ * Read the current (main-view) session id from the sessions store face
+ * (structural, so it survives both harness lines): the deleted
+ * `SessionListState.current` leaf is replaced by the first session whose
+ * `retainedBy.mainView` is positive, mirroring the upstream ui-session
+ * main-binding derivation. Returns undefined when the face is absent — the
+ * panel then degrades visibly instead of silently attributing usage to "".
  */
 function currentSessionId(sessions: unknown): string | undefined {
   try {
-    const list = (sessions as { list?: unknown } | null)?.list
+    const face = sessions as {
+      list?: {
+        getSnapshot?: () => { byId?: Record<string, { retainedBy?: Partial<Record<string, number>> }> }
+      } | null
+    } | null
+    if (typeof face !== 'object' || face === null) return undefined
+    const list = face.list
     if (typeof list !== 'object' || list === null) return undefined
-    const getSnapshot = (list as { getSnapshot?: unknown }).getSnapshot
+    const getSnapshot = list.getSnapshot
     if (typeof getSnapshot !== 'function') return undefined
-    const current = (getSnapshot as () => { current?: unknown })().current
-    return typeof current === 'string' ? current : undefined
+    const byId = getSnapshot().byId
+    if (typeof byId !== 'object' || byId === null) return undefined
+    const main = Object.entries(byId).find(([, row]) => (row?.retainedBy?.mainView ?? 0) > 0)
+    return main?.[0]
   } catch {
     return undefined
   }

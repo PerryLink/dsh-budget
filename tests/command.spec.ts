@@ -15,7 +15,7 @@ const STATUS: BudgetStatus = {
     { scope: 'daily', capUsd: 50, usedUsd: 60, ratio: 1.2, tokens: 20_000, carbonKg: 0.02 },
     { scope: 'monthly', capUsd: null, usedUsd: 60, ratio: 0, tokens: 20_000, carbonKg: 0.02 },
   ],
-  models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 } }],
+  models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 }, priced: true }],
   alerts: [],
   blockedScopes: ['daily'],
   currency: { code: 'USD', rate: 1.0, decimals: 2 },

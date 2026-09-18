@@ -13,6 +13,8 @@ export interface BudgetTabInjected {
   setSettings: (settingsJson: string) => Promise<BudgetStatus>
   /** Lift one blocked scope after user confirmation. */
   unblock: (scope: string) => Promise<BudgetStatus>
+  /** Whether a main-view session is currently bound (false = degraded attribution). */
+  sessionBound: () => boolean
 }
 
 /** Full component props assembled by the Settings slot renderer. */
@@ -27,8 +29,9 @@ type ViewState =
   | { readonly status: 'ready'; readonly snapshot: BudgetStatus }
 
 /** The budget tab body. */
-export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): ReactNode {
+export function BudgetTab({ status, setSettings, unblock, sessionBound, t }: BudgetTabProps): ReactNode {
   const [state, setState] = useState<ViewState>({ status: 'loading' })
+  const [bound, setBound] = useState(true)
   const [sessionCap, setSessionCap] = useState('')
   const [dailyCap, setDailyCap] = useState('')
   const [monthlyCap, setMonthlyCap] = useState('')
@@ -42,6 +45,7 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
     try {
       const snapshot = await status()
       setState({ status: 'ready', snapshot })
+      setBound(sessionBound())
       setSessionCap(snapshot.scopes.find(scope => scope.scope === 'session')?.capUsd?.toString() ?? '')
       setDailyCap(snapshot.scopes.find(scope => scope.scope === 'daily')?.capUsd?.toString() ?? '')
       setMonthlyCap(snapshot.scopes.find(scope => scope.scope === 'monthly')?.capUsd?.toString() ?? '')
@@ -118,6 +122,9 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
   const maxDayCost = Math.max(0, ...snapshot.days.map(day => day.costUsd))
   return (
     <div className="dbud-section" data-dsh-budget>
+      {bound
+        ? null
+        : <p className="dbud-notice">{t('noSessionBound')}</p>}
       <div className="dbud-rows">
         <h3 className="dbud-heading">{t('scopes')}</h3>
         {snapshot.scopes.map(scope => {
@@ -187,7 +194,7 @@ export function BudgetTab({ status, setSettings, unblock, t }: BudgetTabProps): 
                 <li key={model.model}>
                   <span className="dbud-model-name">{model.provider}/{model.model}</span>
                   <span className="dbud-model-meta">
-                    {`${formatMoney(snapshot, model.costUsd)} · ${model.inputTokens} in / ${model.outputTokens} out · ${t('latency')} ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`}`}
+                    {`${model.priced === false ? t('unpriced') : formatMoney(snapshot, model.costUsd)} · ${model.inputTokens} in / ${model.outputTokens} out · ${t('latency')} ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`}`}
                   </span>
                 </li>
               ))}
