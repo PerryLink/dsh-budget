@@ -38,7 +38,7 @@ function appendMessage(session: Session, usage: TokenUsage): void {
   const message = {
     role: 'assistant',
     content: [{ type: 'text', text: 'ok' }],
-    source: { kind: 'model', provider: 'deepseek', model: 'deepseek-chat' },
+    source: { kind: 'model', provider: 'deepseek', model: 'deepseek-flash' },
     id: 'test-message-id',
   } as unknown as AssistantMessage
   session.append(
@@ -51,16 +51,16 @@ function appendMessage(session: Session, usage: TokenUsage): void {
 describe('dsh-budget assembly', () => {
   it('aggregates real session events and serves the snapshot', async () => {
     const { session, service } = await mount()
-    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-chat' } }, reason: 'initial' })
+    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
     appendMessage(session, { inputTokens: 1_000_000, outputTokens: 100_000 })
     const status = service.status()
     const sessionScope = status.scopes.find(scope => scope.scope === 'session')
-    expect(sessionScope?.usedUsd).toBeCloseTo(0.27 + 0.11)
-    expect(status.models[0]?.model).toBe('deepseek-chat')
+    expect(sessionScope?.usedUsd).toBeCloseTo(0.15 + 0.06)
+    expect(status.models[0]?.model).toBe('deepseek-flash')
     expect(status.warnRatio).toBe(0.8)
     expect(status.refreshIntervalMs).toBe(5_000)
     expect(status.days).toHaveLength(30)
-    expect(status.days[status.days.length - 1]?.costUsd).toBeCloseTo(0.27 + 0.11)
+    expect(status.days[status.days.length - 1]?.costUsd).toBeCloseTo(0.15 + 0.06)
   })
 
   it('registers the /budget command', async () => {
@@ -70,10 +70,10 @@ describe('dsh-budget assembly', () => {
 
   it('blocks the llm stream once a cap is crossed', async () => {
     const { ctx, session } = await mount({ budgets: { session: 0.1, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 })
-    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-chat' } }, reason: 'initial' })
-    appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 }) // 0.27 USD > 0.1 cap
+    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
+    appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 }) // 0.15 USD > 0.1 cap
     const chunks: StreamChunk[] = []
-    for await (const chunk of ctx.waterfall('llm/stream', { provider: 'deepseek', model: 'deepseek-chat' } as never, () => (async function* (): AsyncGenerator<StreamChunk> {
+    for await (const chunk of ctx.waterfall('llm/stream', { provider: 'deepseek', model: 'deepseek-flash' } as never, () => (async function* (): AsyncGenerator<StreamChunk> {
       yield { type: 'finish', reason: { kind: 'stop' } }
     })())) {
       chunks.push(chunk)
@@ -87,10 +87,10 @@ describe('dsh-budget assembly', () => {
 
   it('passes the stream through when nothing is blocked', async () => {
     const { ctx, session } = await mount({ budgets: { session: 100 }, warnRatio: 0.8 })
-    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-chat' } }, reason: 'initial' })
+    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
     appendMessage(session, { inputTokens: 100, outputTokens: 0 })
     const chunks: StreamChunk[] = []
-    for await (const chunk of ctx.waterfall('llm/stream', { provider: 'deepseek', model: 'deepseek-chat' } as never, () => (async function* (): AsyncGenerator<StreamChunk> {
+    for await (const chunk of ctx.waterfall('llm/stream', { provider: 'deepseek', model: 'deepseek-flash' } as never, () => (async function* (): AsyncGenerator<StreamChunk> {
       yield { type: 'finish', reason: { kind: 'stop' } }
     })())) {
       chunks.push(chunk)
@@ -100,7 +100,7 @@ describe('dsh-budget assembly', () => {
 
   it('keeps the session log free of budget audit events on fail-closed host lines', async () => {
     const { session } = await mount({ budgets: { session: 0.1, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 })
-    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-chat' } }, reason: 'initial' })
+    session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
     appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 })
     // The audit append is microtask-deferred past the reentrancy guard.
     await new Promise(resolve => setTimeout(resolve, 0))
