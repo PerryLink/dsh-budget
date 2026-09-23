@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.10] - 2026-09-23
 
 ### Fixed
 
@@ -18,7 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Carry both Typert strict-codec faces on the wire descriptors: the published `schema` field (0.1.5-rc.2 line) and the `create` factory the 0.1.6-alpha.1 checkout materializes lazily on first use. Both typecheck rulers stay green.
-- Declare `dsh.manifestVersion: 1` and the three-clause `engines.dsh` range (G-3).
+- Move the `@deepseek-ai/dsh-*` dev/test pins to the published `0.1.7-alpha.2` line and record `0.1.7-alpha.2` in `dshWorkshop.compatibility.dshVersions`; the monthly Compat workflow now installs the `0.1.7-alpha.2` host (`dsh-base` + `dsh-headless`) instead of `0.1.6-alpha.2`, and the five READMEs state that line as the verified one.
+- Append the fourth host clause `|| >=0.1.7-0 <0.2.0` to `engines.dsh` and to all eleven `@deepseek-ai/dsh-*` peer ranges. Under semver's prerelease rule a range whose only prerelease comparators sit on earlier tuples cannot admit a later alpha, so the three-clause band excluded the very host line this release targets. No previously supported host line is dropped.
+- Raise the `@deepseek-ai/cordis` dev/test pin to `^4.0.4`.
+- Declare `dsh.manifestVersion: 1` and the four-clause `engines.dsh` range (G-3).
+
+### Docs
+
+- Correct `AGENTS.md`: the `tests/` layout entry and the `Checks` ruler note still named `0.1.5-rc.2` as the line this repo's installed peers and `typecheck:ci` measure against.
 
 ## [0.4.9] - 2026-09-12
 
