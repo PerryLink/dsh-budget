@@ -29,7 +29,7 @@
 
 | Superficie | Estado |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.7-alpha.1` (GitHub tag, adaptado el 2026-09-18; rango de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0`): los precios del catálogo alpha.2 están integrados en la tabla y los modelos sin precio aparecen como "sin precio" en lugar de una estimación inventada; la puerta de auditoría sigue suprimiendo los appends `budget/alert`/`budget/block` (vocabulario de eventos de sesión fail-closed). Verificado el 2026-09-18 mediante la cadena typecheck de dos reglas y la puerta local completa; los ítems del panel del navegador quedan 人工·未测即未完成 (checklist manual del mantenedor). |
+| Harness | DeepSeek Harness `dsh-v0.1.7-alpha.1` (GitHub tag, adaptado el 2026-09-18; rango de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`): los precios del catálogo alpha.2 están integrados en la tabla y los modelos sin precio aparecen como "sin precio" en lugar de una estimación inventada; la puerta de auditoría sigue suprimiendo los appends `budget/alert`/`budget/block` (vocabulario de eventos de sesión fail-closed). Verificado el 2026-09-18 mediante la cadena typecheck de dos reglas y la puerta local completa; los ítems del panel del navegador quedan 人工·未测即未完成 (checklist manual del mantenedor). |
 
 | Eventos de auditoría | Se escriben en harness anteriores a `0.1.2-rc.1`; se suprimen con una razón de degradación registrada en `0.1.2-rc.1` y posteriores (vocabulario de eventos de sesión fail-closed, sin superficie de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Superficies | Host + cliente Web (pestaña Budget en Settings); comando `/budget` |
@@ -126,7 +126,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests contra el checkout local del harness
-pnpm run typecheck:ci  # tsc contra los tipos publicados 0.1.5-rc.2 (sin paths)
+pnpm run typecheck:ci  # tsc contra los tipos publicados 0.1.7-alpha.2 (sin paths)
 pnpm test           # vitest
 pnpm run build      # declaraciones tsc + bundles tsdown (lib/)
 pnpm run verify:self-contained  # las especificaciones de dependencias resuelven desde el registry
