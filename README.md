@@ -32,7 +32,7 @@
 
 | Surface | Status |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.7-alpha.2` (GitHub tag, adapted 2026-09-18; peer range `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`): the alpha.2 catalog prices are built into the price table and unknown models surface as unpriced instead of a fabricated estimate; the audit gate keeps suppressing `budget/alert`/`budget/block` appends (fail-closed session event vocabulary). Verified 2026-09-18 by the two-ruler typecheck chain and the full local gate; the browser-panel items stay 人工·未测即未完成 (maintainer manual checklist). |
+| Harness | DeepSeek Harness `dsh-v0.1.7-rc.1` (GitHub tag, adapted 2026-09-24; peer range `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`): the alpha.2 catalog prices are built into the price table and unknown models surface as unpriced instead of a fabricated estimate; the audit gate keeps suppressing `budget/alert`/`budget/block` appends (fail-closed session event vocabulary). Verified 2026-09-24 by the two-ruler typecheck chain and the full local gate; the browser-panel items stay 人工·未测即未完成 (maintainer manual checklist). |
 
 | Audit events | Written on harnesses before `0.1.2-rc.1`; suppressed with a logged degradation reason on `0.1.2-rc.1` and later (fail-closed session event vocabulary, no external registration surface) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Surfaces | Host + Web client (Settings budget tab); `/budget` command |
