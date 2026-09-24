@@ -38,7 +38,7 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.7-rc.1`（GitHub tag，2026-09-24 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`）：alpha.2 目录价已内置进价目表，未定价模型以「未定价」呈现而非虚构估算；审计门继续抑制 `budget/alert`/`budget/block` 落盘（fail-closed 会话事件词表）。已于 2026-09-24 通过双尺子 typecheck 链与完整本地门禁核验；浏览器面板项为 人工·未测即未完成（维护者人工清单）。 |
+| Harness | DeepSeek Harness `dsh-v0.1.7-rc.2`（GitHub tag，2026-09-24 已适配；peer 范围 `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`）：alpha.2 目录价已内置进价目表，未定价模型以「未定价」呈现而非虚构估算；审计门继续抑制 `budget/alert`/`budget/block` 落盘（fail-closed 会话事件词表）。已于 2026-09-24 通过双尺子 typecheck 链与完整本地门禁核验；浏览器面板项为 人工·未测即未完成（维护者人工清单）。 |
 
 | 审计事件 | `0.1.2-rc.1` 之前的宿主上写入；在 `0.1.2-rc.1` 及以后抑制并记录降级原因（fail-closed 会话事件词表，无外部注册面） || Node | `^22.19.0 \|\| >=24.0.0` |
 | 界面 | Host + Web 客户端（设置页预算页签）；`/budget` 命令 |
@@ -135,7 +135,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc：src + tests，对照本地 harness checkout
-pnpm run typecheck:ci  # tsc：对照已发布的 0.1.7-rc.1 类型（无 paths）
+pnpm run typecheck:ci  # tsc：对照已发布的 0.1.7-rc.2 类型（无 paths）
 pnpm test           # vitest
 pnpm run build      # tsc 声明 + tsdown bundles（lib/）
 pnpm run verify:self-contained  # 依赖声明全部来自 registry

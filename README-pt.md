@@ -36,7 +36,7 @@ Este plugin faz parte da [família de plugins DSH](https://github.com/PerryLink)
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.1.7-rc.1` (GitHub tag, adaptado em 2026-09-24; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`): os preços do catálogo alpha.2 estão embutidos na tabela e modelos sem preço aparecem como "sem preço" em vez de uma estimativa inventada; a porta de auditoria continua suprimindo os appends `budget/alert`/`budget/block` (vocabulário de eventos de sessão fail-closed). Verificado em 2026-09-24 pela cadeia typecheck de duas réguas e pela porta local completa; os itens do painel no navegador ficam 人工·未测即未完成 (checklist manual do mantenedor). |
+| Harness | DeepSeek Harness `dsh-v0.1.7-rc.2` (GitHub tag, adaptado em 2026-09-24; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0`): os preços do catálogo alpha.2 estão embutidos na tabela e modelos sem preço aparecem como "sem preço" em vez de uma estimativa inventada; a porta de auditoria continua suprimindo os appends `budget/alert`/`budget/block` (vocabulário de eventos de sessão fail-closed). Verificado em 2026-09-24 pela cadeia typecheck de duas réguas e pela porta local completa; os itens do painel no navegador ficam 人工·未测即未完成 (checklist manual do mantenedor). |
 
 | Eventos de auditoria | Gravados em harness anteriores a `0.1.2-rc.1`; suprimidos com uma razão de degradação registrada em `0.1.2-rc.1` e posteriores (vocabulário de eventos de sessão fail-closed, sem superfície de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
 | Superfícies | Host + cliente Web (aba Budget em Settings); comando `/budget` |
@@ -133,7 +133,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 ```sh
 pnpm install        # node ^22.19 || >=24
 pnpm run typecheck  # tsc: src + tests contra o checkout local do harness
-pnpm run typecheck:ci  # tsc contra os tipos publicados 0.1.7-rc.1 (sem paths)
+pnpm run typecheck:ci  # tsc contra os tipos publicados 0.1.7-rc.2 (sem paths)
 pnpm test           # vitest
 pnpm run build      # declarações tsc + bundles tsdown (lib/)
 pnpm run verify:self-contained  # especificações de dependências resolvem pelo registry
