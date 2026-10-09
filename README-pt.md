@@ -29,6 +29,14 @@
 **📖 Base de conhecimento do ecossistema** — dados medidos, não marketing: [guia de desenvolvimento · dados de seleção · critérios de manutenção](https://perrylink.github.io/dsh-plugin-guide/).
 
 <!-- star-cta -->
+## What is dsh-budget?
+
+Governança de custos para o DeepSeek Harness: orçamentos, carbono e latência em um só painel.
+
+Saiba quanto cada sessão custa — antes que custe a você.
+
+![Demonstração de terminal do dsh-budget: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+
 ## Status de manutenção: 🧊 CONGELADO
 
 > **Congelado em 2026-10-05. Sem novos recursos.** Este pacote continua funcionando e **não foi aposentado**, mas não recebe mais trabalho de recursos; apenas uma falha real será corrigida.
@@ -51,6 +59,12 @@ Os mantenedores consideram que nesta capacidade **já existem alternativas com m
 Este plugin faz parte da [família de plugins DSH](https://github.com/PerryLink) (mais de 40, todos Apache-2.0). Se for útil, **deixe uma estrela**: não desbloqueia nada, mas ajuda a próxima pessoa a encontrá-lo.
 
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
+## Comparison
+
+![Gráfico comparativo medido do dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-evidence.png)
+
+measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly downloads)
+
 ## Compatibilidade
 
 | Superfície | Status |
@@ -72,8 +86,12 @@ O `dsh-budget` transforma o fluxo de eventos da sessão em um ciclo de governan�
 ## Início rápido
 
 ```sh
+dsh plugin --profile web add github:PerryLink/dsh-budget
+```
+
+```sh
 # 1. instale o bundle no seu perfil
-dsh plugin --profile web add "github:PerryLink/dsh-budget#main"
+dsh plugin --profile web add github:PerryLink/dsh-budget
 
 # ou pelo npm (versões publicadas)
 dsh plugin --profile web add dsh-budget
@@ -86,7 +104,7 @@ Então peça ao agente: `/budget` — e veja a aba de Settings se preencher.
 
 ## Instalação e desinstalação
 
-- **Canal git** (último `main`): `dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` — o script `prepare` compila apenas com dependências de produção.
+- **Canal git** (último `main`): `dsh plugin --profile web add github:PerryLink/dsh-budget` — o script `prepare` compila apenas com dependências de produção.
 - **Canal npm** (versões publicadas): `dsh plugin --profile web add dsh-budget`.
 - **Canal tarball**: `pnpm pack` neste repositório e então `dsh plugin --profile web add ./dsh-budget-<version>.tgz`.
 - **Desinstalar**: `dsh plugin --profile web remove dsh-budget`.

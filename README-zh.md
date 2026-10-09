@@ -31,6 +31,14 @@
 **📖 生态实测知识库**（实测数据，不是营销）：[插件开发指南 · 选型实测数据 · 维护取舍判据](https://perrylink.github.io/dsh-plugin-guide/)。
 
 <!-- star-cta -->
+## What is dsh-budget?
+
+DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全览。
+
+让每次会话的成本在超支之前就被看清。
+
+![dsh-budget 终端演示：dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+
 ## 维护状态：🧊 已冻结
 
 > **2026-10-05 起冻结，不再新增功能。** 本包仍可正常使用，**没有退役**——但不再投入功能开发，只有真实故障才会修复。
@@ -55,6 +63,12 @@
 这个插件是 [DSH 插件家族](https://github.com/PerryLink)的一员（40+ 个，全部 Apache-2.0）。如果你在用，**给个 star** —— 它不会解锁任何功能，但会让下一个人在搜索里更容易找到它。
 
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
+## Comparison
+
+![dsh-budget 的实测对比柱状图](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-evidence.png)
+
+measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly downloads)
+
 ## 兼容性
 
 | 方面 | 状态 |
@@ -76,8 +90,12 @@
 ## 快速开始
 
 ```sh
+dsh plugin --profile web add github:PerryLink/dsh-budget
+```
+
+```sh
 # 1. 把 bundle 装进你的 profile
-dsh plugin --profile web add "github:PerryLink/dsh-budget#main"
+dsh plugin --profile web add github:PerryLink/dsh-budget
 
 # 或从 npm 安装（正式发布版）
 dsh plugin --profile web add dsh-budget
@@ -90,7 +108,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 
 ## 安装与卸载
 
-- **git 通道**（最新 `main`）：`dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` —— `prepare` 脚本仅用生产依赖构建。
+- **git 通道**（最新 `main`）：`dsh plugin --profile web add github:PerryLink/dsh-budget` —— `prepare` 脚本仅用生产依赖构建。
 - **npm 通道**（正式发布版）：`dsh plugin --profile web add dsh-budget`。
 - **tarball 通道**：在本仓库执行 `pnpm pack`，然后 `dsh plugin --profile web add ./dsh-budget-<version>.tgz`。
 - **卸载**：`dsh plugin --profile web remove dsh-budget`。

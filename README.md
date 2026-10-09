@@ -38,6 +38,14 @@
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
 
 
+## What is dsh-budget?
+
+Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.
+
+Know what every session costs — before it costs you.
+
+![Terminal demo of dsh-budget: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+
 ## Maintenance status: 🧊 FROZEN
 
 > **Frozen on 2026-10-05. No new features.** This package still works, and it is not retired — but it no longer receives feature work. Only a genuine breakage will be fixed.
@@ -58,6 +66,12 @@ Maintainers treat this capability as one where **better-adopted alternatives now
 👉 **For new work, prefer dsh-cost-meter.** Existing installs keep working unchanged; nothing is being removed.
 
 *Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.*
+
+## Comparison
+
+![Measured comparison chart for dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-evidence.png)
+
+measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly downloads)
 
 ## Compatibility
 
@@ -80,8 +94,12 @@ Maintainers treat this capability as one where **better-adopted alternatives now
 ## Quick start
 
 ```sh
+dsh plugin --profile web add github:PerryLink/dsh-budget
+```
+
+```sh
 # 1. install the bundle into your profile
-dsh plugin --profile web add "github:PerryLink/dsh-budget#main"
+dsh plugin --profile web add github:PerryLink/dsh-budget
 
 # or from npm (published releases)
 dsh plugin --profile web add dsh-budget
@@ -94,7 +112,7 @@ Then ask the agent: `/budget` — and watch the Settings tab fill in.
 
 ## Install & uninstall
 
-- **git channel** (latest `main`): `dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` — the `prepare` script builds with production dependencies only.
+- **git channel** (latest `main`): `dsh plugin --profile web add github:PerryLink/dsh-budget` — the `prepare` script builds with production dependencies only.
 - **npm channel** (published releases): `dsh plugin --profile web add dsh-budget`.
 - **tarball channel**: `pnpm pack` in this repo, then `dsh plugin --profile web add ./dsh-budget-<version>.tgz`.
 - **uninstall**: `dsh plugin --profile web remove dsh-budget`.

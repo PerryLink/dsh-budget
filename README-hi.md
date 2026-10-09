@@ -29,6 +29,14 @@
 **📖 इकोसिस्टम नॉलेज बेस** — मापे गए आँकड़े, मार्केटिंग नहीं: [डेवलपमेंट गाइड · चयन डेटा · रखरखाव मानदंड](https://perrylink.github.io/dsh-plugin-guide/)।
 
 <!-- star-cta -->
+## What is dsh-budget?
+
+DeepSeek Harness के लिए लागत प्रशासन: बजट, कार्बन और लेटेंसी एक ही पैनल में।
+
+हर सत्र की लागत जानें — उससे पहले कि वह आप पर भारी पड़े।
+
+![dsh-budget का टर्मिनल डेमो: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+
 ## रखरखाव स्थिति: 🧊 फ़्रीज़
 
 > **2026-10-05 से फ़्रीज़। कोई नई सुविधा नहीं।** यह पैकेज अभी भी काम करता है और **सेवानिवृत्त नहीं है**, पर अब इसमें नई सुविधाओं का काम नहीं होगा; केवल वास्तविक खराबी ठीक की जाएगी।
@@ -51,6 +59,12 @@
 यह प्लगइन [DSH प्लगइन परिवार](https://github.com/PerryLink) का हिस्सा है (40+ प्लगइन, सभी Apache-2.0)। अगर यह उपयोगी लगे, तो **एक स्टार दें** — इससे कोई सुविधा अनलॉक नहीं होती, पर अगला व्यक्ति इसे खोज में आसानी से पा लेता है।
 
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
+## Comparison
+
+![dsh-budget का मापा गया तुलना चार्ट](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-evidence.png)
+
+measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly downloads)
+
 ## संगतता
 
 | सतह | स्थिति |
@@ -72,8 +86,12 @@
 ## त्वरित शुरुआत
 
 ```sh
+dsh plugin --profile web add github:PerryLink/dsh-budget
+```
+
+```sh
 # 1. बंडल को अपने प्रोफ़ाइल में इंस्टॉल करें
-dsh plugin --profile web add "github:PerryLink/dsh-budget#main"
+dsh plugin --profile web add github:PerryLink/dsh-budget
 
 # या npm से (प्रकाशित रिलीज़)
 dsh plugin --profile web add dsh-budget
@@ -86,7 +104,7 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 
 ## इंस्टॉल और अनइंस्टॉल
 
-- **git चैनल** (नवीनतम `main`): `dsh plugin --profile web add "github:PerryLink/dsh-budget#main"` — `prepare` स्क्रिप्ट केवल प्रोडक्शन निर्भरताओं से बिल्ड करती है।
+- **git चैनल** (नवीनतम `main`): `dsh plugin --profile web add github:PerryLink/dsh-budget` — `prepare` स्क्रिप्ट केवल प्रोडक्शन निर्भरताओं से बिल्ड करती है।
 - **npm चैनल** (प्रकाशित रिलीज़): `dsh plugin --profile web add dsh-budget`।
 - **tarball चैनल**: इस रेपो में `pnpm pack`, फिर `dsh plugin --profile web add ./dsh-budget-<version>.tgz`।
 - **अनइंस्टॉल**: `dsh plugin --profile web remove dsh-budget`।
