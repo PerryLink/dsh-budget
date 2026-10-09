@@ -31,6 +31,7 @@
 **📖 生态实测知识库**（实测数据，不是营销）：[插件开发指南 · 选型实测数据 · 维护取舍判据](https://perrylink.github.io/dsh-plugin-guide/)。
 
 <!-- star-cta -->
+
 ## What is dsh-budget?
 
 DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全览。
@@ -63,6 +64,7 @@ DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全
 这个插件是 [DSH 插件家族](https://github.com/PerryLink)的一员（40+ 个，全部 Apache-2.0）。如果你在用，**给个 star** —— 它不会解锁任何功能，但会让下一个人在搜索里更容易找到它。
 
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
+
 ## Comparison
 
 ![dsh-budget 的实测对比柱状图](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-evidence.png)
