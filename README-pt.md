@@ -36,7 +36,7 @@ Governança de custos para o DeepSeek Harness: orçamentos, carbono e latência 
 
 Saiba quanto cada sessão custa — antes que custe a você.
 
-![Demonstração de terminal do dsh-budget: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+![Demonstração de terminal do dsh-budget: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
 
 ![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
 

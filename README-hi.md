@@ -36,7 +36,7 @@ DeepSeek Harness के लिए लागत प्रशासन: बजट,
 
 हर सत्र की लागत जानें — उससे पहले कि वह आप पर भारी पड़े।
 
-![dsh-budget का टर्मिनल डेमो: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+![dsh-budget का टर्मिनल डेमो: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
 
 ![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
 

@@ -38,7 +38,7 @@ DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全
 
 让每次会话的成本在超支之前就被看清。
 
-![dsh-budget 终端演示：dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.png)
+![dsh-budget 终端演示：dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
 
 ![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
 

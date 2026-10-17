@@ -1,6 +1,14 @@
-{
-  "screenshots": [
-    "docs/assets/dsh-budget-demo.png",
-    "docs/assets/dsh-budget-evidence.png"
-  ]
-}
+[
+  {
+    "path": "docs/assets/dsh-budget-hero.png",
+    "kind": "hero",
+    "alt": "dsh-budget terminal output",
+    "caption": "Real dsh-budget test run; 74 tests passed."
+  },
+  {
+    "path": "docs/assets/dsh-budget-demo.gif",
+    "kind": "demo",
+    "alt": "Animated dsh-budget terminal session",
+    "caption": "The same run, assembled line by line."
+  }
+]
