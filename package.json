@@ -1,6 +1,6 @@
 {
   "name": "dsh-budget",
-  "version": "0.4.18",
+  "version": "0.4.19",
   "description": "Cost governance for DeepSeek Harness: aggregated token/cost metering per model, session and day, session/daily/monthly budget caps with threshold alerts (desktop notification + webhook) and alert/block/degrade over-limit policies, built-in carbon footprint estimation and per-model latency benchmarks, a Settings budget tab, and the /budget command",
   "repository": {
     "type": "git",
@@ -146,8 +146,6 @@
     }
   },
   "dependencies": {
-    "tsdown": "^0.22.14",
-    "typescript": "^5.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -176,7 +174,9 @@
     "oxlint": "0.18.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "tsdown": "^0.22.14",
+    "typescript": "^5.9.0"
   },
   "scripts": {
     "build": "node scripts/prepare.mjs",
