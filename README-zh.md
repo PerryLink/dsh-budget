@@ -43,9 +43,10 @@ DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全
 
 让每次会话的成本在超支之前就被看清。
 
-![dsh-budget 终端演示：dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
+![dsh-budget 工作流图：请求 → 策略/复核 → 判定。](docs/assets/dsh-budget-flow.svg)
 
-![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
+*工作流概览：请求 → 策略/复核 → 判定。下面的示例使用实际命令面。*
+
 
 *同一次运行，动图版。*
 
@@ -125,6 +126,19 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 - **卸载**：`dsh plugin --profile web remove dsh-budget`。
 
 > 如果 pnpm 对本包报 `ERR_PNPM_IGNORED_BUILDS`（esbuild 的平台二进制无害校验），在你的 `pnpm-workspace.yaml` 中加入 `allowBuilds: { esbuild: true }` —— `dsh` CLI 会打印确切片段。
+
+### 示例
+
+以下为插件真实入口；安装后调用一个即可。
+
+#### 详细示例
+
+- `/budget`
+
+#### 简短示例
+
+- `/budget models`
+- `/budget unblock <scope>`
 
 ## 配置
 

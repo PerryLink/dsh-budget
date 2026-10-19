@@ -50,9 +50,10 @@ DeepSeek Harness के लिए लागत प्रशासन: बजट,
 
 हर सत्र की लागत जानें — उससे पहले कि वह आप पर भारी पड़े।
 
-![dsh-budget का टर्मिनल डेमो: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
+![dsh-budget कार्यप्रवाह आरेख: अनुरोध → नीति/समीक्षा → निर्णय।](docs/assets/dsh-budget-flow.svg)
 
-![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
+*कार्यप्रवाह: अनुरोध → नीति/समीक्षा → निर्णय। नीचे के उदाहरण वास्तविक कमांड सतह का उपयोग करते हैं।*
+
 
 *वही रन, एनिमेटेड।*
 
@@ -121,6 +122,19 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 ```
 
 फिर एजेंट से कहें: `/budget` — और Settings टैब को भरते देखें।
+
+### उदाहरण
+
+ये वास्तविक प्रवेश बिंदु हैं; इंस्टॉल के बाद एक चलाएँ।
+
+#### विस्तृत उदाहरण
+
+- `/budget`
+
+#### संक्षिप्त उदाहरण
+
+- `/budget models`
+- `/budget unblock <scope>`
 
 ## कॉन्फ़िगरेशन
 

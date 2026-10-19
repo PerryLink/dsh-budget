@@ -50,9 +50,10 @@ Governança de custos para o DeepSeek Harness: orçamentos, carbono e latência 
 
 Saiba quanto cada sessão custa — antes que custe a você.
 
-![Demonstração de terminal do dsh-budget: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
+![Diagrama de fluxo de dsh-budget: solicitação → política/revisão → veredito.](docs/assets/dsh-budget-flow.svg)
 
-![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
+*Visão geral do fluxo: solicitação → política/revisão → veredito. Os exemplos abaixo usam a superfície real de comandos.*
+
 
 *A mesma execução, animada.*
 
@@ -121,6 +122,19 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 ```
 
 Então peça ao agente: `/budget` — e veja a aba de Settings se preencher.
+
+### Exemplos
+
+São os pontos de entrada reais; instale e chame um.
+
+#### Exemplo detalhado
+
+- `/budget`
+
+#### Exemplos breves
+
+- `/budget models`
+- `/budget unblock <scope>`
 
 ## Configuração
 

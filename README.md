@@ -58,11 +58,11 @@ Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.
 
 Know what every session costs — before it costs you.
 
-![Terminal demo of dsh-budget: dsh-budget — install, then /budget and /budget models](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-hero.png)
+![Workflow diagram for dsh-budget: request → policy / review → verdict.](docs/assets/dsh-budget-flow.svg)
 
-![Animated terminal demo of dsh-budget](https://raw.githubusercontent.com/PerryLink/dsh-budget/main/docs/assets/dsh-budget-demo.gif)
+*Workflow overview: request → policy / review → verdict. The examples below use the real command surface.*
 
-*The same run, animated.*
+
 
 ## Maintenance status: 🧊 FROZEN
 
@@ -127,6 +127,19 @@ dsh --profile web --dump-config | grep -A2 'id: budget'
 ```
 
 Then ask the agent: `/budget` — and watch the Settings tab fill in.
+
+### Examples
+
+These are the plugin's real entry points; install once, then call one.
+
+#### Detailed example
+
+- `/budget`
+
+#### Brief examples
+
+- `/budget models`
+- `/budget unblock <scope>`
 
 ## Configuration
 
