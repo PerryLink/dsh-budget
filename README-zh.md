@@ -150,6 +150,22 @@ deepseek/deepseek-chat: 0.05 USD (100 in / 50 out · p50 20ms · 0.0001 kg CO2e)
 
 *来源 `tests/command.spec.ts:14-62 (STATUS fixture and overview test); src/command.ts:65-88`*
 
+#### 失败分支
+
+**输入**
+
+~~~text
+/budget unblock yearly
+~~~
+
+**输出**
+
+~~~text
+usage: /budget [unblock session|daily|monthly | models]
+~~~
+
+*来源 `plugins/dsh-budget/src/command.ts:35; plugins/dsh-budget/src/command.ts:99-103; plugins/dsh-budget/src/command.ts:128; plugins/dsh-budget/tests/command.spec.ts:49-50`*
+
 #### 简短示例
 
 - `/budget models`

@@ -146,6 +146,22 @@ deepseek/deepseek-chat: 0.05 USD (100 in / 50 out · p50 20ms · 0.0001 kg CO2e)
 
 *Observado em `tests/command.spec.ts:14-62 (STATUS fixture and overview test); src/command.ts:65-88`*
 
+#### Ramo de falha
+
+**Entrada**
+
+~~~text
+/budget unblock yearly
+~~~
+
+**Saída**
+
+~~~text
+usage: /budget [unblock session|daily|monthly | models]
+~~~
+
+*Observado em `plugins/dsh-budget/src/command.ts:35; plugins/dsh-budget/src/command.ts:99-103; plugins/dsh-budget/src/command.ts:128; plugins/dsh-budget/tests/command.spec.ts:49-50`*
+
 #### Exemplos breves
 
 - `/budget models`
