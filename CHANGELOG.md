@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.20] - 2026-10-19
+
+### Fixed
+
+- CI: pin `zod` to 4.5.4 in the workspace so the frozen package no longer type-checks against both 4.4.3 and 4.5.4 declarations.
+
 ## [0.4.19] - 2026-10-18
 
 ### Changed

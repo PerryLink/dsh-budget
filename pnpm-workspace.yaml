@@ -64,3 +64,6 @@ verifyDepsBeforeRun: false
 # exclusion list above is the primary mechanism, and this zero-age override
 # keeps fresh installs deterministic when pnpm's lockfile policy re-checks.
 minimumReleaseAge: 0
+
+overrides:
+  zod: 4.5.4
