@@ -129,7 +129,22 @@ Son los puntos de entrada reales; instala y llama a uno.
 
 #### Ejemplo detallado
 
-- `/budget`
+**Comando**
+
+~~~sh
+/budget
+~~~
+
+**Salida**
+
+~~~text
+session: 5.00 USD / 10.00 USD (50% · 1000 tokens · 0.0010 kg CO2e)
+daily: 60.00 USD / 50.00 USD (120% · 20000 tokens · 0.0200 kg CO2e) BLOCKED
+monthly: 60.00 USD / unlimited (0% · 20000 tokens · 0.0200 kg CO2e)
+deepseek/deepseek-chat: 0.05 USD (100 in / 50 out · p50 20ms · 0.0001 kg CO2e)
+~~~
+
+*Observado en `tests/command.spec.ts:14-62 (STATUS fixture and overview test); src/command.ts:65-88`*
 
 #### Ejemplos breves
 
