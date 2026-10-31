@@ -68,20 +68,20 @@ Know what every session costs — before it costs you.
 
 > **Frozen on 2026-10-05. No new features.** This package still works, and it is not retired — but it no longer receives feature work. Only a genuine breakage will be fixed.
 
-Maintainers treat this capability as one where **better-adopted alternatives now exist**, so effort has moved elsewhere. The comparison below was measured on 2026-10-05 and is recorded so nobody has to redo it.
+Maintainers treat this capability as one where **the ecosystem has converged on a more widely adopted implementation**, so effort has moved elsewhere. The comparison below was measured on 2026-10-05 and is recorded so nobody has to redo it.
 
 | | package | weekly downloads |
 |---|---|---|
 | **this package** | `dsh-budget` | 1,079 |
-| better-adopted alternative | [`dsh-cost-meter`](https://github.com/Han-1413141/dsh-cost-meter) | **33,526** |
+| more widely adopted implementation | [`dsh-cost-meter`](https://github.com/Han-1413141/dsh-cost-meter) | **33,526** |
 | another alternative | `dsh-usage-stats` | not measured |
 | another alternative | `@dougen/dsh-deepseek-usage` | 6,019 |
 
-**Why the alternative leads.** `dsh-cost-meter` provides a 170+ model price catalog with automatic matching, and Coding-Plan quota lookup for 11 providers.
+**Why it is the mainstream choice.** `dsh-cost-meter` provides a 170+ model price catalog with automatic matching, and Coding-Plan quota lookup for 11 providers.
 
 **Compatibility.** Its declared dsh peer range admits the 0.2.x line, so it loads on current hosts.
 
-👉 **For new work, prefer dsh-cost-meter.** Existing installs keep working unchanged; nothing is being removed.
+👉 **For new work, dsh-cost-meter is the mainstream choice.** Existing installs keep working unchanged; nothing is being removed.
 
 *Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.*
 

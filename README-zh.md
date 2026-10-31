@@ -54,18 +54,18 @@ DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全
 
 > **2026-10-05 起冻结，不再新增功能。** 本包仍可正常使用，**没有退役**——但不再投入功能开发，只有真实故障才会修复。
 
-维护者判定该能力面**已出现采用度更高、更值得推荐的替代方案**，因此把精力移到了别处。
+维护者判定该能力面**生态已收敛到更广泛采用的实现**，因此把精力移到了别处。
 
 | | 包 | 周下载量 |
 |---|---|---|
 | **本包** | `dsh-budget` | 1,079 |
-| 更值得推荐的替代品 | [`dsh-cost-meter`](https://github.com/Han-1413141/dsh-cost-meter) | **33,526** |
+| 更广泛采用的实现 | [`dsh-cost-meter`](https://github.com/Han-1413141/dsh-cost-meter) | **33,526** |
 | 另一个替代品 | `dsh-usage-stats` | 未测 |
 | 另一个替代品 | `@dougen/dsh-deepseek-usage` | 6,019 |
 
-**为什么替代品更强。** `dsh-cost-meter` 提供 170+ 模型的价目目录与自动匹配，并支持 11 家主流 Coding Plan 的订阅额度查询。
+**为什么它是主流选择。** `dsh-cost-meter` 提供 170+ 模型的价目目录与自动匹配，并支持 11 家主流 Coding Plan 的订阅额度查询。
 
-👉 **新工作请优先使用 dsh-cost-meter。** 已安装的照常可用，没有任何东西被移除。
+👉 **新工作以 dsh-cost-meter 为主流选择。** 已安装的照常可用，没有任何东西被移除。
 
 *完整证据（含宿主版本兼容矩阵）见 `dsh-plugin-supersession-review-20261005.md`；英文版见 [README.md](README.md) 的 **Maintenance status: 🧊 FROZEN** 一节。*
 

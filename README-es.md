@@ -61,16 +61,16 @@ Conoce cuánto cuesta cada sesión — antes de que te cueste a ti.
 
 > **Congelado el 2026-10-05. Sin nuevas funciones.** Este paquete sigue funcionando y **no está retirado**, pero ya no recibe trabajo de funciones; solo se corregirá una avería real.
 
-Los mantenedores consideran que en esta capacidad **ya existen alternativas con mejor adopción**, así que el esfuerzo se ha trasladado. Comparativa medida el 2026-10-05:
+Los mantenedores consideran que en esta capacidad **la comunidad ha convergido en una implementación más ampliamente adoptada**, así que el esfuerzo se ha trasladado. Comparativa medida el 2026-10-05:
 
 | | paquete | descargas semanales |
 |---|---|---|
 | **este paquete** | `dsh-budget` | 1,079 |
-| alternativa mejor adoptada | [`dsh-cost-meter`](https://github.com/Han-1413141/dsh-cost-meter) | **33,526** |
+| implementación más ampliamente adoptada | [`dsh-cost-meter`](https://github.com/Han-1413141/dsh-cost-meter) | **33,526** |
 | otra alternativa | `dsh-usage-stats` | not measured |
 | otra alternativa | `@dougen/dsh-deepseek-usage` | 6,019 |
 
-👉 **Para trabajo nuevo, prefiera dsh-cost-meter.** Las instalaciones existentes siguen funcionando sin cambios.
+👉 **Para trabajo nuevo, dsh-cost-meter es la opción principal.** Las instalaciones existentes siguen funcionando sin cambios.
 
 *Evidencia completa: `dsh-plugin-supersession-review-20261005.md`. Texto completo en la sección **Maintenance status: 🧊 FROZEN** de [README.md](README.md).*
 
