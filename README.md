@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-budget-hero-en-dark.webp">
+  <img src="docs/assets/dsh-budget-hero-en-light.webp" width="100%" alt="dsh-budget: cost, carbon and latency metered from one event stream, with three budget scopes and a pre-flight stop">
+</picture>
+
 # dsh-budget
 
 **Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.**
@@ -51,9 +56,12 @@ Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.
 
 Know what every session costs — before it costs you.
 
-![Workflow diagram for dsh-budget: request → policy / review → verdict.](docs/assets/dsh-budget-flow.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-budget-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-budget-flow-v5-light.svg" width="100%" alt="dsh-budget structure: session/event usage is metered after the fact, converted in-process to cost, carbon and latency, charged to a three-scope gate ledger (session / daily / monthly), and disposed as alert / block / degrade — a blocked scope short-circuits the next llm/stream call, and a passed call returns as the next usage sample">
+</picture>
 
-*Workflow overview: request → policy / review → verdict. The examples below use the real command surface.*
+*Structure: usage arrives after the fact on `session/event`; `checkBudgets` walks session → daily → monthly; the over-limit disposal ends on the `llm/stream` seam, where a blocked scope short-circuits the next call — a passed call returns as the next usage sample. The examples below use the real command surface.*
 
 
 

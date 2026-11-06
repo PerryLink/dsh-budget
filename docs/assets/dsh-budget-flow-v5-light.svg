@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-label="dsh-budget structure: usage arrives after the fact on session/event, converts in-process to cost, carbon and latency, lands in a three-scope gate ledger (session / daily / monthly), hands off to the alert / block / degrade disposition, and a blocked scope short-circuits the next llm/stream call; the dashed return rail closes the loop">
+<title>dsh-budget: one usage stream, three scoped gates, a pre-flight stop</title>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f9f6fd"/>
+    <stop offset="1" stop-color="#e4eaf8"/>
+  </linearGradient>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="180%">
+    <feDropShadow dx="0" dy="7" stdDeviation="10" flood-color="#1b1735" flood-opacity=".10"/>
+  </filter>
+  <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
+    <circle cx="1.4" cy="1.4" r="1.4" fill="#ddd6ee"/>
+  </pattern>
+  <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0 0 L10 5 L0 10 z" fill="#4B67B4"/>
+  </marker>
+  <marker id="dn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0 0 L10 5 L0 10 z" fill="#c02b2b"/>
+  </marker>
+</defs>
+<rect width="1100" height="660" fill="url(#bg)"/>
+<rect width="1100" height="660" fill="url(#dots)" opacity=".45"/>
+<text x="40" y="46" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="26" font-weight="700" text-anchor="start">dsh-budget</text>
+<text x="40" y="70" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="12.5" font-weight="400" text-anchor="start">one usage stream · three scoped gates · one pre-flight stop</text>
+<text x="1060" y="46" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="end">surfaces: /budget · Settings tab · budget/*</text>
+<g filter="url(#soft)"><rect x="40" y="108" width="504" height="138" rx="18" fill="#ffffff" stroke="#e2dff0" stroke-width="1.2"/></g>
+<g filter="url(#soft)"><rect x="640" y="108" width="420" height="138" rx="18" fill="#ffffff" stroke="#e2dff0" stroke-width="1.2"/></g>
+<g filter="url(#soft)"><rect x="40" y="282" width="1020" height="186" rx="18" fill="#ffffff" stroke="#e2dff0" stroke-width="1.2"/></g>
+<g filter="url(#soft)"><rect x="40" y="504" width="504" height="120" rx="18" fill="#ffffff" stroke="#e2dff0" stroke-width="1.2"/></g>
+<g filter="url(#soft)"><rect x="640" y="504" width="420" height="120" rx="18" fill="#ffffff" stroke="#e2dff0" stroke-width="1.2"/></g>
+<text x="40" y="100" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start" letter-spacing="1.2">METERING · AFTER THE FACT</text>
+<text x="60" y="135" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="14" font-weight="700" text-anchor="start">session/event</text>
+<text x="524" y="135" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="end">host → plugin</text>
+<rect x="60.0" y="152" width="112.6" height="20" rx="10.0" fill="#ece7f9"/>
+<text x="68" y="166.14" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">request/header</text>
+<text x="184.6" y="168" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="12" font-weight="400" text-anchor="start">→ attribution: provider · model</text>
+<rect x="60.0" y="188" width="133.3" height="20" rx="10.0" fill="#ece7f9"/>
+<text x="68" y="202.14" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">assistant/message</text>
+<text x="205.3" y="204" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="12" font-weight="400" text-anchor="start">→ usage: in / out / cache-read / cache-write</text>
+<text x="60" y="232" fill="#8f94a4" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">no usage field → nothing recorded</text>
+<text x="524" y="232" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="end">usage?: TokenUsage</text>
+<text x="640" y="100" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start" letter-spacing="1.2">CONVERSION · IN-PROCESS</text>
+<text x="660" y="133" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="14" font-weight="700" text-anchor="start">cost · carbon · latency</text>
+<text x="660" y="163" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="700" text-anchor="start">USD</text>
+<text x="730" y="163" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">Σ tokens/1M × price · config.prices</text>
+<text x="660" y="192" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="700" text-anchor="start">CO2e</text>
+<text x="730" y="192" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">tokens × 7e-6 kWh × PUE 1.58 × 0.475</text>
+<text x="660" y="221" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="700" text-anchor="start">p50/95</text>
+<text x="730" y="221" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">stream-wrapper clock · window 200</text>
+<text x="40" y="274" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start" letter-spacing="1.2">LEDGER · THREE SCOPED GATES</text>
+<text x="60" y="310" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="14" font-weight="700" text-anchor="start">checkBudgets()</text>
+<text x="206" y="310" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11.5" font-weight="400" text-anchor="start">one sample → three scopes</text>
+<text x="1040" y="310" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="end">warn at 0.8 of each cap · cooldown-gated</text>
+<path d="M204 320 L204 410" stroke="#4B67B4" stroke-width="1.8" opacity=".55"/>
+<path d="M204 342 L212 342" stroke="#4B67B4" stroke-width="1.8" opacity=".55" marker-end="url(#a)"/>
+<path d="M204 376 L212 376" stroke="#4B67B4" stroke-width="1.8" opacity=".55" marker-end="url(#a)"/>
+<path d="M204 410 L212 410" stroke="#4B67B4" stroke-width="1.8" opacity=".55" marker-end="url(#a)"/>
+<text x="60" y="347" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="13" font-weight="700" text-anchor="start">session</text>
+<text x="142" y="347" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">$10 cap</text>
+<rect x="216" y="335" width="500" height="14" rx="7" fill="#ece8f6"/>
+<rect x="216" y="335" width="250" height="14" rx="7" fill="#4B67B4" opacity="0.9"/>
+<line x1="616" y1="332" x2="616" y2="352" stroke="#bc4c00" stroke-width="2" opacity=".7"/>
+<text x="736" y="347" fill="#4d5261" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">$5.00 of $10 · 50%</text>
+<rect x="916" y="332" width="31" height="20" rx="10" fill="#ece7f9"/>
+<text x="925" y="347" fill="#16a34a" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start">ok</text>
+<text x="60" y="381" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="13" font-weight="700" text-anchor="start">daily</text>
+<text x="142" y="381" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">$50 cap</text>
+<rect x="216" y="369" width="500" height="14" rx="7" fill="#ece8f6"/>
+<rect x="216" y="369" width="500" height="14" rx="7" fill="#c02b2b" opacity="1"/>
+<line x1="616" y1="366" x2="616" y2="386" stroke="#bc4c00" stroke-width="2" opacity=".7"/>
+<text x="736" y="381" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">$60.00 of $50 · 120%</text>
+<rect x="916" y="366" width="110" height="20" rx="10" fill="#ece7f9"/>
+<text x="925" y="381" fill="#c02b2b" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start">over · blocked</text>
+<text x="60" y="415" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="13" font-weight="700" text-anchor="start">monthly</text>
+<text x="142" y="415" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">$500 cap</text>
+<rect x="216" y="403" width="500" height="14" rx="7" fill="#ece8f6"/>
+<rect x="216" y="403" width="60" height="14" rx="7" fill="#4B67B4" opacity="0.9"/>
+<line x1="616" y1="400" x2="616" y2="420" stroke="#bc4c00" stroke-width="2" opacity=".7"/>
+<text x="736" y="415" fill="#4d5261" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11.5" font-weight="400" text-anchor="start">$60.00 of $500 · 12%</text>
+<rect x="916" y="400" width="31" height="20" rx="10" fill="#ece7f9"/>
+<text x="925" y="415" fill="#16a34a" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start">ok</text>
+<text x="60" y="443" fill="#8f94a4" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">same sample charges all three scopes · overLimit picks the exit · /budget unblock &lt;scope&gt; lifts it</text>
+<text x="40" y="496" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start" letter-spacing="1.2">INTERCEPTION · BEFORE THE CALL</text>
+<text x="60" y="526" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="14" font-weight="700" text-anchor="start">llm/stream · prepend</text>
+<rect x="60" y="532" width="240" height="62" rx="12" fill="#ece8f6" opacity=".7"/>
+<text x="72" y="550" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">blockedScopes empty</text>
+<text x="72" y="575" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="13" font-weight="700" text-anchor="start">next()</text>
+<text x="140" y="575" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">pass-through</text>
+<rect x="316" y="532" width="208" height="62" rx="12" fill="#c02b2b" opacity=".10"/>
+<text x="328" y="550" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">non-empty</text>
+<text x="328" y="573" fill="#c02b2b" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="13" font-weight="700" text-anchor="start">short-circuit</text>
+<text x="328" y="590" fill="#c02b2b" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start" opacity=".9">error finish BUDGET_BLOCKED</text>
+<text x="60" y="614" fill="#8f94a4" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">a short-circuited call yields no usage — the ledger does not move</text>
+<text x="640" y="496" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="700" text-anchor="start" letter-spacing="1.2">DISPOSITION · overLimit</text>
+<text x="660" y="526" fill="#141419" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="14" font-weight="700" text-anchor="start">alert / block / degrade</text>
+<rect x="660.0" y="540" width="49.0" height="20" rx="10.0" fill="#ece7f9"/>
+<text x="668" y="553.96" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">alert</text>
+<text x="721.0" y="554" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">webhook POST · URL credentials stripped</text>
+<rect x="660.0" y="564" width="49.0" height="20" rx="10.0" fill="#ece7f9"/>
+<text x="668" y="577.96" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">block</text>
+<text x="721.0" y="578" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">blockedScopes.add → next call stopped</text>
+<rect x="660.0" y="588" width="62.2" height="20" rx="10.0" fill="#ece7f9"/>
+<text x="668" y="601.96" fill="#4B67B4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">degrade</text>
+<text x="734.2" y="602" fill="#4d5261" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">corrective text names the cheaper model</text>
+<line x1="546" y1="177" x2="632" y2="177" stroke="#4B67B4" stroke-width="2.4" marker-end="url(#a)"/>
+<text x="589" y="168" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="middle">usage</text>
+<line x1="830" y1="248" x2="830" y2="274" stroke="#4B67B4" stroke-width="2.4" marker-end="url(#a)"/>
+<text x="838" y="266" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">priced</text>
+<line x1="830" y1="470" x2="830" y2="496" stroke="#4B67B4" stroke-width="2.4" marker-end="url(#a)"/>
+<text x="838" y="490" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="start">decisions</text>
+<line x1="638" y1="564" x2="552" y2="564" stroke="#c02b2b" stroke-width="2.4" marker-end="url(#dn)"/>
+<text x="595" y="556" fill="#c02b2b" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="11" font-weight="400" text-anchor="middle">blocked set</text>
+<path d="M40 564 H26 Q18 564 18 556 V185 Q18 177 26 177 H38" stroke="#4B67B4" stroke-width="2" stroke-dasharray="7 5" opacity=".6" fill="none" marker-end="url(#a)"/>
+<text x="32" y="371" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="10.5" text-anchor="middle" transform="rotate(-90 32 371)">return</text>
+<line x1="40" y1="636" x2="1060" y2="636" stroke="#e6e1f2"/>
+<text x="40" y="652" fill="#8f94a4" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="11" font-weight="400" text-anchor="start">dashed return: a passed call returns as the next usage sample · audit appends only on hosts before 0.1.2-alpha.1</text>
+<text x="1060" y="652" fill="#8f94a4" font-family="ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, 'Microsoft YaHei', monospace" font-size="10.5" font-weight="400" text-anchor="end">src/index.ts · governance.ts · aggregate/usage.ts</text>
+</svg>
