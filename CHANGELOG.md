@@ -1,6 +1,8 @@
 # Changelog
 
-## [0.4.23] - 2026-11-14
+## [0.4.24] - 2026-11-14
+
+> 0.4.23 was not published: npm reported a previously staged version, so this release uses 0.4.24. The code is unchanged from the price update below.
 
 ### Changed
 
