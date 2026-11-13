@@ -1,8 +1,8 @@
 # Changelog
 
-## [0.4.24] - 2026-11-14
+## [0.4.24] - 2026-11-14 (pending npm publish)
 
-> 0.4.23 was not published: npm reported a previously staged version, so this release uses 0.4.24. The code is unchanged from the price update below.
+> 0.4.23 and 0.4.24 are not on npm yet: this package's publish requires 2FA and the available automation token cannot complete it; npm has staged 0.4.23 and 0.4.24. The source is on main. Retry with an OTP (`npm publish --otp <code>`) or publish a follow-up version once 2FA is available. The code is unchanged from the price update below.
 
 ### Changed
 
