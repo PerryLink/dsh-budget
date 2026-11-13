@@ -32,6 +32,8 @@ const modelUsageSchema = z.object({
   costUsd: z.number(),
   carbonKg: z.number(),
   priced: z.boolean().optional(),
+  /** Absent = the host never reported reasoning tokens (unknown, not zero). */
+  reasoningTokens: z.number().nonnegative().optional(),
 })
 
 /** Zod schema for one persisted day/month bucket. */

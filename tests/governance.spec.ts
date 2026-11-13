@@ -8,7 +8,7 @@
 import { describe, expect, it } from 'vitest'
 import { resolveConfig } from '../src/config.ts'
 import { BudgetAggregator } from '../src/aggregate/usage.ts'
-import { checkBudgets, degradationFor, webhookDisplay } from '../src/governance.ts'
+import { checkBudgets, degradationFor, warnThresholdReached, webhookDisplay } from '../src/governance.ts'
 import type { ScopeDecision } from '../src/governance.ts'
 
 const FIXED_NOW = Date.parse('2026-08-16T12:00:00Z')
@@ -18,7 +18,7 @@ interface Sink {
   blocks: Array<{ scope: 'session' | 'daily' | 'monthly'; degradation: { from: string; to: string } | undefined }>
 }
 
-function run(config: Record<string, unknown>, usage: { inputTokens: number; outputTokens?: number }, sessionId = 's1'): { aggregator: BudgetAggregator; sink: Sink; decisions: ScopeDecision[] } {
+function run(config: Record<string, unknown>, usage: { inputTokens: number; outputTokens?: number }, sessionId = 's1'): { resolved: ReturnType<typeof resolveConfig>; aggregator: BudgetAggregator; sink: Sink; decisions: ScopeDecision[] } {
   const resolved = resolveConfig({ budgets: { session: 10, daily: 50, monthly: 500 }, ...config } as never)
   const aggregator = new BudgetAggregator(resolved, () => FIXED_NOW)
   const sink: Sink = { alerts: [], blocks: [] }
@@ -28,7 +28,7 @@ function run(config: Record<string, unknown>, usage: { inputTokens: number; outp
     onAlert: decision => { sink.alerts.push(decision) },
     onBlock: (scope, degradation) => { sink.blocks.push({ scope, degradation }) },
   }, FIXED_NOW)
-  return { aggregator, sink, decisions }
+  return { resolved, aggregator, sink, decisions }
 }
 
 describe('checkBudgets', () => {
@@ -77,6 +77,28 @@ describe('checkBudgets', () => {
   it('does not alert when alerts are disabled', () => {
     const { sink } = run({ alertsEnabled: false, warnRatio: 0.01 }, { inputTokens: 32_000_000 })
     expect(sink.alerts.length).toBe(0)
+  })
+})
+
+describe('warnThresholdReached', () => {
+  it('is false below the warn ratio', () => {
+    const { resolved, aggregator } = run({ warnRatio: 0.8 }, { inputTokens: 1_000_000 }) // 0.27 of 10
+    expect(warnThresholdReached(resolved, aggregator, 's1')).toBe(false)
+  })
+
+  it('is true once any capped scope reaches the warn ratio', () => {
+    const { resolved, aggregator } = run({ warnRatio: 0.8 }, { inputTokens: 32_000_000 }) // 8.64 of 10
+    expect(warnThresholdReached(resolved, aggregator, 's1')).toBe(true)
+  })
+
+  it('stays true past the cap (the hard block is a separate decision)', () => {
+    const { resolved, aggregator } = run({ warnRatio: 0.8 }, { inputTokens: 40_000_000 }) // 10.8 of 10
+    expect(warnThresholdReached(resolved, aggregator, 's1')).toBe(true)
+  })
+
+  it('ignores unlimited scopes', () => {
+    const { resolved, aggregator } = run({ budgets: { session: 0, daily: 0, monthly: 0 }, warnRatio: 0.8 }, { inputTokens: 40_000_000 })
+    expect(warnThresholdReached(resolved, aggregator, 's1')).toBe(false)
   })
 })
 

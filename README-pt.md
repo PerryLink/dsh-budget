@@ -179,6 +179,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 | `warnRatio` | `0.8` | Alertar quando o uso atingir esta fração do teto (0..1) |
 | `overLimit` | `alert` | `alert` / `block` / `degrade` após cruzar um teto |
 | `degradation` | `{}` | Id de modelo → id de modelo mais barato do mesmo provedor |
+| `degradeThinking` | `true` | Acima de `warnRatio` (e antes de um bloqueio), envia requisições DeepSeek com `reasoningEffort: 'off'` para frear o gasto; a semântica do bloqueio rígido não muda |
 | `webhookUrl` | *(nenhuma)* | URL opcional de webhook para alertas de limiar (POST JSON) |
 | `webhookTimeoutMs` | `5000` | Timeout da requisição webhook |
 | `alertsEnabled` | `true` | Interruptor mestre dos alertas de limiar |
@@ -197,7 +198,7 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 | Superfície | Tipo | Notas |
 |---|---|---|
 | `/budget` | Comando | Visão geral por escopo (uso, proporção, carbono, estado bloqueado) |
-| `/budget models` | Comando | Detalhamento por modelo com percentis de latência |
+| `/budget models` | Comando | Detalhamento por modelo com percentis de latência e a proporção de pensamento (`reasoningTokens / outputTokens`, `n/a` quando o host não a reporta) |
 | `/budget unblock <scope>` | Comando | Liberar um escopo bloqueado (`session` / `daily` / `monthly`) |
 | Settings → Plugins → Budget | Aba de Settings | Barras de uso, curva de uso por dia, detalhamento, alertas, editores de teto, desbloqueio |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | Canal do cliente (consumido pela aba) |
@@ -206,12 +207,12 @@ Todos os ajustes são campos `Config` do Schemastery (alteráveis pelo cordis.ym
 
 - **Permissões**: `network:outbound` (apenas o webhook de alerta opcional), `session:append` (eventos de auditoria), `native-code:none`.
 - **Dados**: tudo exibido vem do fluxo de eventos da sessão; a única chamada de rede é o webhook configurado, validado ao carregar e sem credenciais nos registros. Nenhum prompt ou payload sai do host.
-- **Registro de sessão**: `budget/alert` e `budget/block` são eventos de auditoria somente-registro com nomes de escopo e valores USD (adiados por microtarefa ante o guard de reentrância do append). Em harness `0.1.2-rc.1` e posteriores eles não são gravados — o vocabulário de eventos fail-closed rejeita logs com tipos de evento não registrados e não oferece superfície de registro externa — então o rastro de auditoria degrada apenas para o logger de orçamento e o webhook.
+- **Registro de sessão**: `budget/alert`, `budget/block` e `budget/degrade` são eventos de auditoria somente-registro com nomes de escopo e valores USD (adiados por microtarefa ante o guard de reentrância do append). Em harness `0.1.2-rc.1` e posteriores eles não são gravados — o vocabulário de eventos fail-closed rejeita logs com tipos de evento não registrados e não oferece superfície de registro externa — então o rastro de auditoria degrada apenas para o logger de orçamento e o webhook.
 
 ## Limites de segurança
 
 - **Sem fabricação**: um bloqueio de orçamento produz um final de erro corretivo no waterfall `llm/stream` — o plugin nunca inventa saída de modelo.
-- **Sem reescrita de requisições**: requisições do loop são congeladas; `degrade` nomeia o modelo alvo na mensagem corretiva em vez de substituir a requisição.
+- **Requisições do loop congeladas**: requisições do loop são congeladas; `degrade` nomeia o modelo alvo na mensagem corretiva em vez de substituir a requisição. A única reescrita no nível da requisição é `degradeThinking`: acima de `warnRatio` (e antes de um bloqueio) a requisição é reenviada a partir de uma cópia rasa com `reasoningEffort: 'off'`; o bloqueio rígido mantém sua semântica exata.
 - **Falha ruidosa**: preços, URLs, proporções, regiões ou limites inválidos falham o mount.
 - **Escopo honesto**: edições em tempo de execução do painel valem por sessão; uma recarga restaura os valores do cordis.yml.
 

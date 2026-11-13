@@ -1,9 +1,9 @@
 /**
  * Session audit events for `dsh-budget` (declaration merging into the
- * harness `SessionEventMap`). Both events are log-only: the panel/command
+ * harness `SessionEventMap`). All events are log-only: the panel/command
  * surfaces are the model-visible projections; on legacy harnesses these
- * events keep the alert/block trail reconstructable from the session log
- * (see auditAppendsAllowed for the fail-closed gate). Amounts are plain
+ * events keep the alert/block/degrade trail reconstructable from the session
+ * log (see auditAppendsAllowed for the fail-closed gate). Amounts are plain
  * numbers, webhook URLs are sanitized before they ever reach a payload.
  *
  * @module dsh-budget/events
@@ -31,6 +31,16 @@ declare module '@deepseek-ai/dsh-session/types' {
       blocked: boolean
       degradation?: { from: string; to: string }
     }
+    /**
+     * The warn ratio was reached and the plugin disabled model thinking to slow
+     * spending before the hard budget block. Log-only audit.
+     */
+    'budget/degrade': {
+      reason: 'thinking'
+      /** The effort replaced by `off`; null when the request used the route default. */
+      from: string | null
+      to: 'off'
+    }
   }
 }
 
@@ -40,11 +50,14 @@ export const ALERT_EVENT = 'budget/alert' as const
 /** The block audit event type. */
 export const BLOCK_EVENT = 'budget/block' as const
 
+/** The soft-landing degradation audit event type. */
+export const DEGRADE_EVENT = 'budget/degrade' as const
+
 /**
- * Decide whether `budget/alert` and `budget/block` appends are safe on this
- * host line. From 0.1.2-alpha.1 the session read path refuses logs
- * containing event types outside the harness-known vocabulary and exposes no
- * external registration surface, so appends would poison the log.
+ * Decide whether `budget/alert`, `budget/block`, and `budget/degrade` appends
+ * are safe on this host line. From 0.1.2-alpha.1 the session read path refuses
+ * logs containing event types outside the harness-known vocabulary and exposes
+ * no external registration surface, so appends would poison the log.
  * 0.1.2-alpha.3 retains the `ignorable?: true` envelope field, but only for
  * stored-log read compatibility: its `Session.append` third argument is a
  * `SurfaceIntent` for surface events and still cannot stamp the marker, so
@@ -79,4 +92,11 @@ export type BudgetBlockEvent = {
   scope: 'session' | 'daily' | 'monthly'
   blocked: boolean
   degradation?: { from: string; to: string }
+}
+
+/** Soft-landing degradation payload type (thinking disabled before the hard block). */
+export type BudgetDegradeEvent = {
+  reason: 'thinking'
+  from: string | null
+  to: 'off'
 }

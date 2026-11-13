@@ -10,6 +10,7 @@
 
 import type { CommandDefinition } from '@deepseek-ai/dsh-commands'
 import { sanitizeText } from './estimate/sanitize.ts'
+import { thinkingShareText } from './thinking.ts'
 import type { BudgetService } from './service.ts'
 import type { BudgetStatus, BudgetScope } from './wire.ts'
 
@@ -26,6 +27,7 @@ interface Messages {
   unblocked: (scope: string) => string
   noModels: string
   unpriced: string
+  thinking: string
 }
 
 const EN_MESSAGES: Messages = {
@@ -37,6 +39,7 @@ const EN_MESSAGES: Messages = {
   unblocked: (scope: string) => `budget scope "${scope}" unblocked`,
   noModels: 'no model usage recorded yet',
   unpriced: 'unpriced',
+  thinking: 'thinking share',
 }
 
 const ZH_MESSAGES: Messages = {
@@ -48,6 +51,7 @@ const ZH_MESSAGES: Messages = {
   unblocked: (scope: string) => `预算作用域 "${scope}" 已解除阻断`,
   noModels: '尚未记录到任何模型用量',
   unpriced: '未定价',
+  thinking: '思考占比',
 }
 
 /** Format one USD amount through the display currency. */
@@ -79,7 +83,7 @@ export function renderBudgetOverview(status: BudgetStatus, messages: Messages): 
       const p50 = model.latency.p50 === null ? '-' : `${model.latency.p50}ms`
       lines.push(
         `${model.provider}/${model.model}: ${modelCost(status, model, messages)}`
-        + ` (${model.inputTokens} in / ${model.outputTokens} out · p50 ${p50} · ${model.carbonKg.toFixed(4)} kg CO2e)`,
+        + ` (${model.inputTokens} in / ${model.outputTokens} out · ${messages.thinking} ${thinkingShareText(model.reasoningTokens, model.outputTokens)} · p50 ${p50} · ${model.carbonKg.toFixed(4)} kg CO2e)`,
       )
     }
   }
@@ -106,7 +110,7 @@ export function renderBudgetModels(status: BudgetStatus, _messages: Messages): s
   if (status.models.length === 0) return _messages.noModels
   return status.models.map(model =>
     `${model.provider}/${model.model}: ${modelCost(status, model, _messages)}`
-    + ` (${model.inputTokens} in / ${model.outputTokens} out · p50 ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`})`,
+    + ` (${model.inputTokens} in / ${model.outputTokens} out · ${_messages.thinking} ${thinkingShareText(model.reasoningTokens, model.outputTokens)} · p50 ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`})`,
   ).join('\n')
 }
 

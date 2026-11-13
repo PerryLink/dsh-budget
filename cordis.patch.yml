@@ -25,6 +25,11 @@
           monthly: 500
         # Alert once usage reaches this fraction of a cap (0..1).
         warnRatio: 0.8
+        # Soft landing before the hard block: at/above warnRatio (and while
+        # no scope is blocked) DeepSeek requests are sent with thinking off
+        # (reasoningEffort: 'off') to slow spending. The hard block is
+        # unchanged; set false to keep the configured effort.
+        degradeThinking: true
         # Behavior after a cap is crossed:
         #   alert   - notify only (webhook/notification/session event)
         #   block   - fail new model requests until unblocked by the user

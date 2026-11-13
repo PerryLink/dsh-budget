@@ -179,6 +179,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 | `warnRatio` | `0.8` | Alertar cuando el uso alcance esta fracción del límite (0..1) |
 | `overLimit` | `alert` | `alert` / `block` / `degrade` tras cruzar un límite |
 | `degradation` | `{}` | Id de modelo → id de modelo más barato del mismo proveedor |
+| `degradeThinking` | `true` | Por encima de `warnRatio` (y antes de un bloqueo), envía las solicitudes DeepSeek con `reasoningEffort: 'off'` para frenar el gasto; la semántica del bloqueo duro no cambia |
 | `webhookUrl` | *(ninguna)* | URL opcional de webhook para alertas de umbral (POST JSON) |
 | `webhookTimeoutMs` | `5000` | Tiempo de espera de la solicitud webhook |
 | `alertsEnabled` | `true` | Interruptor maestro de alertas de umbral |
@@ -197,7 +198,7 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 | Superficie | Tipo | Notas |
 |---|---|---|
 | `/budget` | Comando | Resumen por ámbito (uso, ratio, carbono, estado bloqueado) |
-| `/budget models` | Comando | Desglose por modelo con percentiles de latencia |
+| `/budget models` | Comando | Desglose por modelo con percentiles de latencia y la proporción de pensamiento (`reasoningTokens / outputTokens`, `n/a` si el host no la aporta) |
 | `/budget unblock <scope>` | Comando | Levantar un ámbito bloqueado (`session` / `daily` / `monthly`) |
 | Settings → Plugins → Budget | Pestaña de Settings | Barras de uso, curva de uso por día, desglose, alertas, editores de límites, desbloqueo |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | Canal del cliente (consumido por la pestaña) |
@@ -206,12 +207,12 @@ Todos los ajustes son campos `Config` de Schemastery (modificables desde cordis.
 
 - **Permisos**: `network:outbound` (solo el webhook de alerta opcional), `session:append` (eventos de auditoría), `native-code:none`.
 - **Datos**: todo lo mostrado proviene del flujo de eventos de sesión; la única llamada de red es el webhook configurado, validado al cargar y sin credenciales en los registros. Ningún prompt o payload sale del host.
-- **Registro de sesión**: `budget/alert` y `budget/block` son eventos de auditoría solo-registro con nombres de ámbito e importes USD (diferidos por microtarea ante el guard de reentrada de append). En harness `0.1.2-rc.1` y posteriores no se escriben — el vocabulario de eventos fail-closed rechaza logs con tipos de evento no registrados y no ofrece superficie de registro externa — así que el rastro de auditoría se degrada al logger de presupuesto y al webhook únicamente.
+- **Registro de sesión**: `budget/alert`, `budget/block` y `budget/degrade` son eventos de auditoría solo-registro con nombres de ámbito e importes USD (diferidos por microtarea ante el guard de reentrada de append). En harness `0.1.2-rc.1` y posteriores no se escriben — el vocabulario de eventos fail-closed rechaza logs con tipos de evento no registrados y no ofrece superficie de registro externa — así que el rastro de auditoría se degrada al logger de presupuesto y al webhook únicamente.
 
 ## Límites de seguridad
 
 - **Sin fabricación**: un bloqueo de presupuesto produce un final de error correctivo en el waterfall `llm/stream` — el plugin nunca inventa salida de modelo.
-- **Sin reescritura de solicitudes**: las solicitudes del loop están congeladas; `degrade` nombra el modelo objetivo en el mensaje correctivo en lugar de reemplazar la solicitud.
+- **Solicitudes del loop congeladas**: las solicitudes del loop están congeladas; `degrade` nombra el modelo objetivo en el mensaje correctivo en lugar de reemplazar la solicitud. La única reescritura a nivel de solicitud es `degradeThinking`: por encima de `warnRatio` (y antes de un bloqueo) se reenvía una copia superficial con `reasoningEffort: 'off'`; el bloqueo duro conserva su semántica exacta.
 - **Fallo ruidoso**: precios, URLs, ratios, regiones o límites inválidos fallan el montaje.
 - **Alcance honesto**: las ediciones en tiempo de ejecución del panel son por sesión; una recarga restaura los valores de cordis.yml.
 

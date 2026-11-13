@@ -183,6 +183,7 @@ usage: /budget [unblock session|daily|monthly | models]
 | `warnRatio` | `0.8` | 用量达到上限该比例时告警（0..1） |
 | `overLimit` | `alert` | 超限后策略：`alert` / `block` / `degrade` |
 | `degradation` | `{}` | 模型 id → 同厂商更便宜模型 id 的映射 |
+| `degradeThinking` | `true` | 达到 `warnRatio` 且尚未硬阻断时，向 DeepSeek 请求发送 `reasoningEffort: 'off'` 以延缓预算消耗；硬阻断语义不变 |
 | `webhookUrl` | *(无)* | 可选阈值告警 webhook URL（POST JSON） |
 | `webhookTimeoutMs` | `5000` | webhook 请求超时 |
 | `alertsEnabled` | `true` | 阈值告警总开关 |
@@ -201,7 +202,7 @@ usage: /budget [unblock session|daily|monthly | models]
 | 界面 | 类型 | 说明 |
 |---|---|---|
 | `/budget` | 命令 | 各作用域概览（用量、比例、碳足迹、阻断状态） |
-| `/budget models` | 命令 | 按模型明细 + 延迟百分位 |
+| `/budget models` | 命令 | 按模型明细 + 延迟百分位 + 思考占比（`reasoningTokens / outputTokens`，宿主未提供时显示 `n/a`） |
 | `/budget unblock <scope>` | 命令 | 解除某作用域阻断（`session` / `daily` / `monthly`） |
 | 设置 → 插件 → 预算 | 设置页签 | 用量条、按天用量曲线、模型明细、告警、上限编辑、解除阻断按钮 |
 | `budget/status`、`budget/setSettings`、`budget/unblock` | Typert Remote | 客户端通道（页签消费这些方法） |
@@ -210,12 +211,12 @@ usage: /budget [unblock session|daily|monthly | models]
 
 - **权限**：`network:outbound`（仅可选告警 webhook）、`session:append`（审计事件）、`native-code:none`。
 - **数据**：展示内容全部来自会话事件流；主机侧唯一网络调用是配置的 webhook，URL 在加载时校验、入日志前剥离凭据。任何 prompt/载荷都不会离开主机。
-- **会话日志**：`budget/alert` 与 `budget/block` 是仅日志审计事件，只携带作用域名与 USD 金额（微任务延后以绕过会话 append 重入保护）。在 `0.1.2-rc.1` 及以后的宿主上不再写入——fail-closed 事件词表会拒绝含未注册事件类型的日志，且没有外部注册面——审计轨迹因此仅降级到预算日志与 webhook。
+- **会话日志**：`budget/alert`、`budget/block` 与 `budget/degrade` 是仅日志审计事件，只携带作用域名与 USD 金额（微任务延后以绕过会话 append 重入保护）。在 `0.1.2-rc.1` 及以后的宿主上不再写入——fail-closed 事件词表会拒绝含未注册事件类型的日志，且没有外部注册面——审计轨迹因此仅降级到预算日志与 webhook。
 
 ## 安全边界
 
 - **不伪造数据**：预算阻断在 `llm/stream` 瀑布上产出修正性错误 finish —— 插件绝不编造模型输出。
-- **不改写请求**：loop 构建的请求被冻结；`degrade` 因此在修正消息中点名目标模型，而非替换请求。
+- **冻结的 loop 请求**：loop 构建的请求会被冻结；`degrade` 因此在修正消息中点名目标模型，而非替换请求。唯一的请求级改写是 `degradeThinking`：达到 `warnRatio`（且尚未阻断）时，从浅拷贝重新派发并把 `reasoningEffort` 置为 `'off'`；硬阻断语义完全不变。
 - **失败大声**：非法价格、URL、比例、区域与边界在挂载时即失败。
 - **如实作用域**：面板的运行时编辑仅会话级生效；重载后恢复 cordis.yml 配置。
 
@@ -224,6 +225,7 @@ usage: /budget [unblock session|daily|monthly | models]
 - 聚合为进程本地：harness 重启后用量清零（日/月桶从当前会话日志视图重建）。
 - `block`/`degrade` 依赖 `llm/stream` 瀑布；无此 seam 的构建无法阻断请求（告警仍有效）。
 - 内置价目会漂移；用 `config.prices` 覆盖条目。
+- 宿主不提供 `reasoningTokens` 时，思考占比显示 `n/a`，不会伪造为 0%。
 
 ## 开发
 

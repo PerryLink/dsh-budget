@@ -74,8 +74,34 @@ describe('BudgetAggregator', () => {
     expect(monthKey(FIXED_NOW)).toBe('2026-08')
   })
 
-  it('caps the latency window per model', () => {
+  it('tracks reasoning tokens with an explicit seen flag (omitted is not zero)', () => {
     const aggregator = makeAggregator()
+    aggregator.setAttribution('deepseek', 'deepseek-flash')
+    aggregator.recordUsage('s1', { inputTokens: 1_000, outputTokens: 100 })
+    const unseen = aggregator.modelUsage().find(entry => entry.model === 'deepseek-flash')
+    expect(unseen?.reasoningTokens).toBe(0)
+    expect(unseen?.reasoningTokensSeen).toBe(false)
+    // A missing reading is persisted as absent, never as a fabricated zero.
+    expect(aggregator.exportState().days['2026-08-16']?.models['deepseek-flash']?.reasoningTokens).toBeUndefined()
+
+    aggregator.recordUsage('s1', { inputTokens: 1_000, outputTokens: 100, reasoningTokens: 40 })
+    const seen = aggregator.modelUsage().find(entry => entry.model === 'deepseek-flash')
+    expect(seen?.reasoningTokens).toBe(40)
+    expect(seen?.reasoningTokensSeen).toBe(true)
+  })
+
+  it('round-trips reasoning tokens through export/restore', () => {
+    const source = makeAggregator()
+    source.setAttribution('deepseek', 'deepseek-flash')
+    source.recordUsage('s1', { inputTokens: 1_000, outputTokens: 100, reasoningTokens: 40 })
+    const restored = makeAggregator()
+    restored.restoreState(source.exportState())
+    const entry = restored.modelUsage().find(model => model.model === 'deepseek-flash')
+    expect(entry?.reasoningTokens).toBe(40)
+    expect(entry?.reasoningTokensSeen).toBe(true)
+  })
+
+  it('caps the latency window per model', () => {    const aggregator = makeAggregator()
     for (let index = 0; index < 250; index++) aggregator.recordLatency('m1', index)
     const models = aggregator.modelUsage()
     expect(models.length).toBe(0) // no usage recorded yet

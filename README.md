@@ -185,6 +185,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | `warnRatio` | `0.8` | Alert once usage reaches this fraction of a cap (0..1) |
 | `overLimit` | `alert` | `alert` / `block` / `degrade` after a cap is crossed |
 | `degradation` | `{}` | Model id → cheaper model id of the same provider |
+| `degradeThinking` | `true` | Above `warnRatio` (and before a hard block), send DeepSeek requests with `reasoningEffort: 'off'` to slow spending; the hard block semantics are unchanged |
 | `webhookUrl` | *(none)* | Optional webhook URL for threshold alerts (POST JSON) |
 | `webhookTimeoutMs` | `5000` | Webhook request timeout |
 | `alertsEnabled` | `true` | Master switch for threshold alerts |
@@ -203,7 +204,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 | Surface | Kind | Notes |
 |---|---|---|
 | `/budget` | Command | Per-scope overview (usage, ratio, carbon, blocked state) |
-| `/budget models` | Command | Per-model breakdown with latency percentiles |
+| `/budget models` | Command | Per-model breakdown with latency percentiles and the thinking share (`reasoningTokens / outputTokens`, `n/a` when the host omits it) |
 | `/budget unblock <scope>` | Command | Lift a blocked scope (`session` / `daily` / `monthly`) |
 | Settings → Plugins → Budget | Settings tab | Usage bars, per-day usage curve, model breakdown, alerts, cap editors, unblock buttons |
 | `budget/status`, `budget/setSettings`, `budget/unblock` | Typert Remote | The client channel (the tab consumes these) |
@@ -212,12 +213,12 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 
 - **Permissions**: `network:outbound` (the optional alert webhook only), `session:append` (audit events), `native-code:none`.
 - **Data**: everything displayed comes from the session event stream; the only host-side network call is the configured webhook, whose URL is validated at load and credential-stripped before any log. No prompts or payloads ever leave the host.
-- **Session log**: `budget/alert` and `budget/block` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard). On harnesses `0.1.2-rc.1` and later they are not written — the fail-closed event vocabulary rejects logs with unregistered event types and offers no external registration surface — so the audit trail degrades to the budget logger and webhook only.
+- **Session log**: `budget/alert`, `budget/block`, and `budget/degrade` are log-only audit events carrying scope names and USD amounts (microtask-deferred past the session-append reentrancy guard). On harnesses `0.1.2-rc.1` and later they are not written — the fail-closed event vocabulary rejects logs with unregistered event types and offers no external registration surface — so the audit trail degrades to the budget logger and webhook only.
 
 ## Security boundaries
 
 - **No fabrication**: a budget block yields a corrective error finish on the `llm/stream` waterfall — the plugin never invents model output.
-- **No request rewriting**: loop-built requests are frozen; `degrade` therefore names the target model in the corrective message instead of swapping the request.
+- **Frozen loop requests**: loop-built requests arrive frozen; `degrade` therefore names the target model in the corrective message instead of swapping the request. The one request-level rewrite is `degradeThinking`: above `warnRatio` (and before a block) the request is re-dispatched from a shallow copy with `reasoningEffort: 'off'`; the hard block keeps its exact semantics.
 - **Fail loud**: invalid prices, URLs, ratios, regions, and bounds fail the mount.
 - **Honest scope**: runtime edits from the panel are session-scoped; a reload restores the cordis.yml values.
 
@@ -226,6 +227,7 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 - Aggregation is process-local: usage resets when the harness restarts (per-day/per-month buckets rebuild from the current session log view).
 - `block`/`degrade` rely on the `llm/stream` waterfall; harness builds without that seam cannot block requests (alerts still work).
 - Built-in prices drift; override entries via `config.prices`.
+- Hosts that do not report `reasoningTokens` show the thinking share as `n/a` rather than a fabricated 0%.
 
 ## Development
 

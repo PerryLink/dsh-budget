@@ -14,6 +14,7 @@ describe('Config schema', () => {
     const resolved = Config({})
     expect(resolved.budgets).toEqual({ session: 10, daily: 50, monthly: 500 })
     expect(resolved.overLimit).toBe('alert')
+    expect(resolved.degradeThinking).toBe(true)
     expect(resolved.carbon).toEqual({ enabled: true, region: 'global', pue: 1.58, energyKwhPerToken: 0.000007 })
     expect(resolved.currency).toEqual({ code: 'USD', rate: 1.0, decimals: 2 })
     expect(resolved.outputLanguage).toBe('en')
@@ -25,6 +26,11 @@ describe('Config schema', () => {
 
   it('rejects an unknown carbon region', () => {
     expect(() => Config({ carbon: { region: 'moon' as 'global' } })).toThrow()
+  })
+
+  it('accepts degradeThinking false and rejects a non-boolean', () => {
+    expect(Config({ degradeThinking: false }).degradeThinking).toBe(false)
+    expect(() => Config({ degradeThinking: 'yes' as unknown as boolean })).toThrow()
   })
 })
 
@@ -43,6 +49,11 @@ describe('resolveConfig', () => {
 
   it('fails loud on an out-of-range warn ratio', () => {
     expect(() => resolveConfig({ warnRatio: 1.5 })).toThrow(/warnRatio/u)
+  })
+
+  it('resolves degradeThinking to the documented default and freezes it', () => {
+    expect(resolveConfig({}).degradeThinking).toBe(true)
+    expect(resolveConfig({ degradeThinking: false }).degradeThinking).toBe(false)
   })
 
   it('normalizes the webhook URL', () => {

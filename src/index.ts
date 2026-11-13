@@ -22,6 +22,9 @@
  *   with corrective text naming the degraded model (plus the alert). A
  *   waterfall listener short-circuit is a deliberate claim, not a passthrough
  *   bug: pass-through paths always call `next()`.
+ * - Soft landing: above the warn ratio (and before a block) DeepSeek requests
+ *   are sent with `reasoningEffort: 'off'`; frozen loop requests are
+ *   re-dispatched from a shallow copy, so the configured header stays intact.
  * - Session audit appends use the two-argument `Session.append` form (the
  *   pinned rc.2 peers have no append-envelope option).
  *
@@ -29,7 +32,7 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import type { FinishReason, StreamChunk } from '@deepseek-ai/dsh-llm'
+import type { FinishReason, GenerateOptions, ReasoningEffortId, StreamChunk } from '@deepseek-ai/dsh-llm'
 import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-commands'
 import type {} from '@deepseek-ai/dsh-tools'
@@ -39,8 +42,8 @@ import { dirname, join } from 'node:path'
 import { Config, resolveConfig } from './config.ts'
 import { BudgetAggregator } from './aggregate/usage.ts'
 import type { PersistedBudgetState } from './aggregate/usage.ts'
-import { checkBudgets, sendWebhook, type Degradation, type GovernanceHooks, type ScopeDecision } from './governance.ts'
-import { ALERT_EVENT, auditAppendsAllowed, BLOCK_EVENT, type BudgetAlertEvent, type BudgetBlockEvent } from './events.ts'
+import { checkBudgets, sendWebhook, warnThresholdReached, type Degradation, type GovernanceHooks, type ScopeDecision } from './governance.ts'
+import { ALERT_EVENT, auditAppendsAllowed, BLOCK_EVENT, DEGRADE_EVENT, type BudgetAlertEvent, type BudgetBlockEvent, type BudgetDegradeEvent } from './events.ts'
 import { BudgetService, effectiveCap, type RuntimeSettings } from './service.ts'
 import { budgetCommand } from './command.ts'
 import { budgetDomainSpec } from './store.ts'
@@ -90,10 +93,10 @@ export { Config, resolveConfig } from './config.ts'
 export type { ResolvedConfig } from './config.ts'
 export { BudgetAggregator } from './aggregate/usage.ts'
 export type { PersistedBudgetState, PersistedBucket, PersistedModelUsage } from './aggregate/usage.ts'
-export { checkBudgets, degradationFor } from './governance.ts'
+export { checkBudgets, degradationFor, warnThresholdReached } from './governance.ts'
 export { BudgetService, effectiveCap } from './service.ts'
 export { budgetCommand, parseBudgetArgs, renderBudgetModels, renderBudgetOverview } from './command.ts'
-export { ALERT_EVENT, auditAppendsAllowed, BLOCK_EVENT } from './events.ts'
+export { ALERT_EVENT, auditAppendsAllowed, BLOCK_EVENT, DEGRADE_EVENT } from './events.ts'
 export { budgetDomainSpec, budgetStateSchema } from './store.ts'
 
 /** The short-circuit stream the blocker yields when a scope is blocked. */
@@ -105,6 +108,15 @@ function blockedStream(message: string, code: string): AsyncIterable<StreamChunk
     yield { type: 'block-end', index: 0, block: { type: 'text', text: message } }
     yield { type: 'finish', reason: finish }
   })()
+}
+
+/**
+ * Whether a provider route belongs to the DeepSeek adapter line, whose
+ * documented thinking switch is `reasoningEffort: 'off'`. Other routes keep
+ * their own effort vocabulary and are never rewritten by this plugin.
+ */
+function isDeepSeekRoute(provider: string): boolean {
+  return provider === 'deepseek' || provider.startsWith('deepseek-')
 }
 
 /** The structural surface of the optional `ctx.storageDomain` service (persistence). */
@@ -199,10 +211,10 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   // lines (suppress and log the degradation reason).
   const auditWritable = auditAppendsAllowed(installedSessionVersion())
   if (!auditWritable) {
-    logger.warn('budget audit events suppressed on this harness (>= 0.1.2-alpha.1): the fail-closed session event vocabulary rejects logs containing unregistered event types and exposes no external registration surface; the alert/block trail degrades to the budget logger and webhook only')
+    logger.warn('budget audit events suppressed on this harness (>= 0.1.2-alpha.1): the fail-closed session event vocabulary rejects logs containing unregistered event types and exposes no external registration surface; the alert/block/degrade trail degrades to the budget logger and webhook only')
   }
 
-  const append = (session: Session, type: 'budget/alert' | 'budget/block', event: BudgetAlertEvent | BudgetBlockEvent): void => {
+  const append = (session: Session, type: 'budget/alert' | 'budget/block' | 'budget/degrade', event: BudgetAlertEvent | BudgetBlockEvent | BudgetDegradeEvent): void => {
     if (!auditWritable) return
     // Session appends are reentrancy-guarded: the budget checks run inside the
     // `session/event` callback (during the publish of the triggering event),
@@ -266,14 +278,50 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
     }
   })
 
+  // Soft landing before the hard block: once a capped scope reaches the warn
+  // ratio, DeepSeek requests are dispatched with thinking off — the most
+  // direct cost lever, since reasoning is billed as output and is on by
+  // default. The hard block below keeps its exact semantics.
+  let thinkingDegradeLogged = false
+  // Loop-built requests arrive deep-frozen; the rewrite therefore re-dispatches
+  // a shallow copy through ctx.llm.stream(). This set stops the copy from
+  // recursing into this same rewrite.
+  const rewritten = new WeakSet<object>()
+
   // The blocking seam: when a scope is blocked the model stream is
   // short-circuited with a corrective error finish instead of reaching the
   // provider. Pass-through paths always call next().
   const llm = ctx.get('llm')
   if (llm !== undefined) {
-    ctx.on('llm/stream', function (_options, next) {
+    ctx.on('llm/stream', function (options: GenerateOptions, next) {
+      if (rewritten.has(options)) return next()
       const blocked = aggregator.blockedScopes
-      if (blocked.length === 0) return next()
+      if (blocked.length === 0) {
+        const session = currentSession()
+        const warn = warnThresholdReached(resolved, aggregator, session === undefined ? '' : String(session.id))
+        if (resolved.degradeThinking && warn && isDeepSeekRoute(options.provider) && options.reasoningEffort !== 'off') {
+          if (!thinkingDegradeLogged) {
+            thinkingDegradeLogged = true
+            logger.warn('budget warn: thinking disabled (reasoningEffort=off) to slow spending before the hard budget block')
+            if (session !== undefined) {
+              append(session, DEGRADE_EVENT, {
+                reason: 'thinking',
+                from: options.reasoningEffort === undefined ? null : String(options.reasoningEffort),
+                to: 'off',
+              })
+            }
+          }
+          if (Object.isFrozen(options)) {
+            const copy: GenerateOptions = { ...options, reasoningEffort: 'off' as ReasoningEffortId }
+            rewritten.add(copy)
+            return llm.stream(copy)
+          }
+          options.reasoningEffort = 'off' as ReasoningEffortId
+        } else if (!warn) {
+          thinkingDegradeLogged = false
+        }
+        return next()
+      }
       const caps = blocked.map(scope => {
         const cap = effectiveCap(settings, resolved, scope)
         return { scope, cap }

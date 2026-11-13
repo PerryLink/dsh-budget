@@ -36,6 +36,10 @@ export function emptyUsage(): ScopeUsage {
 export interface ModelUsage extends ScopeUsage {
   provider: string
   model: string
+  /** Output tokens the provider reported as reasoning (thinking) tokens. */
+  reasoningTokens: number
+  /** Whether any record carried `reasoningTokens`; false = host omitted it (show n/a, never 0%). */
+  reasoningTokensSeen: boolean
   /** Latency samples kept for this model (ms). */
   latencyMs: readonly number[]
   /** `false` when the model is unpriced (cost contribution is 0, cost unknown). */
@@ -54,6 +58,8 @@ export interface PersistedModelUsage {
   carbonKg: number
   /** `false` when the model was unpriced at record time (absent = priced). */
   priced?: boolean | undefined
+  /** Present only when the host reported reasoning tokens (absent = unknown, not zero). */
+  reasoningTokens?: number | undefined
 }
 
 /** One persisted day/month bucket. */
@@ -183,6 +189,7 @@ export class BudgetAggregator {
     const output = usage.outputTokens
     const cacheRead = usage.cacheReadTokens ?? 0
     const cacheWrite = usage.cacheWriteTokens ?? 0
+    const reasoning = usage.reasoningTokens
     if (input + output + cacheRead + cacheWrite <= 0) return
 
     const resolvedPrice = priceFor(this.table, this.config.defaultPrice, this.state.provider, this.state.model)
@@ -220,12 +227,12 @@ export class BudgetAggregator {
     const at = this.now()
     const day = this.state.days.get(dayKey(at)) ?? { total: emptyUsage(), models: new Map() }
     add(day.total)
-    this.addModel(day.models, input, output, cacheRead, cacheWrite, costUsd, carbon, priced)
+    this.addModel(day.models, input, output, cacheRead, cacheWrite, costUsd, carbon, priced, reasoning)
     this.state.days.set(dayKey(at), day)
 
     const month = this.state.months.get(monthKey(at)) ?? { total: emptyUsage(), models: new Map() }
     add(month.total)
-    this.addModel(month.models, input, output, cacheRead, cacheWrite, costUsd, carbon, priced)
+    this.addModel(month.models, input, output, cacheRead, cacheWrite, costUsd, carbon, priced, reasoning)
     this.state.months.set(monthKey(at), month)
   }
 
@@ -248,6 +255,7 @@ export class BudgetAggregator {
     costUsd: number,
     carbonKg: number,
     priced: boolean,
+    reasoningTokens: number | undefined,
   ): void {
     const model = this.state.model || 'unknown'
     const entry = models.get(model) ?? {
@@ -259,6 +267,8 @@ export class BudgetAggregator {
       cacheWriteTokens: 0,
       costUsd: 0,
       carbonKg: 0,
+      reasoningTokens: 0,
+      reasoningTokensSeen: false,
       latencyMs: [],
       priced: true,
     }
@@ -268,6 +278,10 @@ export class BudgetAggregator {
     entry.cacheWriteTokens += cacheWrite
     entry.costUsd += costUsd
     entry.carbonKg += carbonKg
+    if (reasoningTokens !== undefined) {
+      entry.reasoningTokens += reasoningTokens
+      entry.reasoningTokensSeen = true
+    }
     // One unpriced record marks the whole line unpriced (its cost is 0 either way).
     entry.priced = entry.priced && priced
     models.set(model, entry)
@@ -396,6 +410,7 @@ export class BudgetAggregator {
           costUsd: usage.costUsd,
           carbonKg: usage.carbonKg,
           priced: usage.priced,
+          ...usage.reasoningTokensSeen ? { reasoningTokens: usage.reasoningTokens } : {},
         }
       }
       out[key] = { total: { ...bucket.total }, models }
@@ -421,6 +436,8 @@ export class BudgetAggregator {
           cacheWriteTokens: 0,
           costUsd: 0,
           carbonKg: 0,
+          reasoningTokens: 0,
+          reasoningTokensSeen: false,
           latencyMs: [],
           priced: true,
         }
@@ -431,6 +448,10 @@ export class BudgetAggregator {
         entry.cacheWriteTokens += usage.cacheWriteTokens
         entry.costUsd += usage.costUsd
         entry.carbonKg += usage.carbonKg
+        if (usage.reasoningTokens !== undefined) {
+          entry.reasoningTokens += usage.reasoningTokens
+          entry.reasoningTokensSeen = true
+        }
         entry.priced = entry.priced && (usage.priced ?? true)
         existing.models.set(model, entry)
       }

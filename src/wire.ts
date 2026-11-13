@@ -45,6 +45,8 @@ export interface ModelLine {
   model: string
   inputTokens: number
   outputTokens: number
+  /** Reasoning (thinking) tokens; null when the host did not report them (never 0-by-default). */
+  reasoningTokens: number | null
   costUsd: number
   carbonKg: number
   /** Latency percentiles over the kept window (ms). */
@@ -105,6 +107,7 @@ export const BUDGET_STATUS_SCHEMA = z.object({
     model: z.string(),
     inputTokens: z.number().int(),
     outputTokens: z.number().int(),
+    reasoningTokens: z.number().int().nonnegative().nullable().default(null),
     costUsd: z.number(),
     carbonKg: z.number(),
     latency: z.object({

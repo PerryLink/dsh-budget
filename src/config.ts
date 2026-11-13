@@ -55,6 +55,8 @@ export interface Config {
   budgets?: BudgetsConfig
   /** Alert once usage reaches this fraction of a cap (0..1). */
   warnRatio?: number
+  /** At the warn ratio (before the hard block), disable DeepSeek thinking to slow spending (default true). */
+  degradeThinking?: boolean
   /** Behavior after a cap is crossed: alert | block | degrade. */
   overLimit?: 'alert' | 'block' | 'degrade'
   /** Degradation map: model id -> cheaper model id of the SAME provider. */
@@ -91,6 +93,7 @@ export interface ResolvedConfig {
   readonly defaultPrice: { input: number; output: number; cacheRead?: number; cacheWrite?: number; priced: boolean }
   readonly budgets: BudgetsConfig
   readonly warnRatio: number
+  readonly degradeThinking: boolean
   readonly overLimit: 'alert' | 'block' | 'degrade'
   readonly degradation: Record<string, string>
   readonly webhookUrl: string | undefined
@@ -131,6 +134,7 @@ export const Config: z<Config> = z.object({
     monthly: z.number().min(0),
   }).default({ session: 10, daily: 50, monthly: 500 }),
   warnRatio: z.number().min(0).max(1).default(0.8),
+  degradeThinking: z.boolean().default(true),
   overLimit: z.union(['alert', 'block', 'degrade']).default('alert'),
   degradation: z.dict(z.string()).default({}),
   webhookUrl: z.string().default(''),
@@ -201,6 +205,9 @@ export function resolveConfig(config: Config | undefined): ResolvedConfig {
 
   const warnRatio = config?.warnRatio ?? 0.8
   if (!Number.isFinite(warnRatio) || warnRatio < 0 || warnRatio > 1) invalid('warnRatio', 'must be a number in [0, 1]')
+
+  const degradeThinking = config?.degradeThinking ?? true
+  if (typeof degradeThinking !== 'boolean') invalid('degradeThinking', 'must be a boolean')
 
   const overLimit = config?.overLimit ?? 'alert'
   if (overLimit !== 'alert' && overLimit !== 'block' && overLimit !== 'degrade') invalid('overLimit', 'must be alert, block, or degrade')
@@ -273,6 +280,7 @@ export function resolveConfig(config: Config | undefined): ResolvedConfig {
     defaultPrice,
     budgets: Object.freeze(budgets),
     warnRatio,
+    degradeThinking,
     overLimit,
     degradation: Object.freeze(degradation),
     webhookUrl,

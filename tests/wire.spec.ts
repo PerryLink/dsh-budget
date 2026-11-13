@@ -19,7 +19,7 @@ import {
 function fullStatus(): BudgetStatus {
   return {
     scopes: [{ scope: 'session', capUsd: 10, usedUsd: 3, ratio: 0.3, tokens: 100, carbonKg: 0.001 }],
-    models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 }, priced: true }],
+    models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, reasoningTokens: 20, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 }, priced: true }],
     alerts: [{ scope: 'daily', kind: 'warn', at: 1_700_000_000_000, usedUsd: 1, capUsd: 2 }],
     blockedScopes: [],
     currency: { code: 'USD', rate: 1.0, decimals: 2 },
@@ -40,8 +40,22 @@ describe('BUDGET_STATUS_SCHEMA', () => {
     const parsed = BUDGET_STATUS_SCHEMA.parse(fullStatus())
     expect(parsed.days).toHaveLength(2)
     expect(parsed.days[1]?.costUsd).toBeCloseTo(0.27)
+    expect(parsed.models[0]?.reasoningTokens).toBe(20)
     expect(parsed.warnRatio).toBe(0.8)
     expect(parsed.refreshIntervalMs).toBe(5_000)
+  })
+
+  it('keeps a missing reasoningTokens reading as null (n/a), not 0', () => {
+    const status = fullStatus()
+    const parsed = BUDGET_STATUS_SCHEMA.parse({ ...status, models: [{ ...status.models[0]!, reasoningTokens: null }] })
+    expect(parsed.models[0]?.reasoningTokens).toBeNull()
+  })
+
+  it('decodes an older host snapshot that omits reasoningTokens to null', () => {
+    const status = fullStatus()
+    const { reasoningTokens: _omitted, ...model } = status.models[0]!
+    const parsed = BUDGET_STATUS_SCHEMA.parse({ ...status, models: [model] })
+    expect(parsed.models[0]?.reasoningTokens).toBeNull()
   })
 
   it('rejects an out-of-range warn ratio', () => {

@@ -10,13 +10,16 @@
 
 import { Context } from '@deepseek-ai/cordis'
 import SessionStore, { SessionId, type Session, type SessionEventMap } from '@deepseek-ai/dsh-session'
-import type { AssistantMessage, StreamChunk, TokenUsage } from '@deepseek-ai/dsh-llm'
+import type { AssistantMessage, GenerateOptions, StreamChunk, TokenUsage } from '@deepseek-ai/dsh-llm'
 import type { Plugin } from '@deepseek-ai/cordis'
 import { describe, expect, it } from 'vitest'
 import { apply } from '../src/index.ts'
 import type { BudgetService } from '../src/service.ts'
 
-async function mount(config: Record<string, unknown> = {}): Promise<{ ctx: Context; session: Session; service: BudgetService; commands: Array<{ name: string }> }> {
+async function mount(
+  config: Record<string, unknown> = {},
+  makeLlm: (ctx: Context) => unknown = () => ({}),
+): Promise<{ ctx: Context; session: Session; service: BudgetService; commands: Array<{ name: string }> }> {
   const ctx = new Context()
   await ctx.plugin(SessionStore)
   const session = ctx.sessions.create(SessionId('budget-harness'))
@@ -27,10 +30,19 @@ async function mount(config: Record<string, unknown> = {}): Promise<{ ctx: Conte
     list: () => [],
     resolve: () => undefined,
   } as never)
-  ctx.provide('llm', {} as never)
+  ctx.provide('llm', makeLlm(ctx) as never)
   await ctx.plugin(apply as unknown as Plugin, config)
   const service = ctx.get('budget') as BudgetService
   return { ctx, session, service, commands }
+}
+
+/** Config whose session cap is 10 USD with the default 0.8 warn ratio. */
+const WARN_CONFIG = { budgets: { session: 10, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 }
+
+/** Record 9.00 USD of deepseek-flash usage: above the warn ratio, below the hard cap. */
+function reachWarn(session: Session): void {
+  session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
+  appendMessage(session, { inputTokens: 60_000_000, outputTokens: 0 })
 }
 
 /** One assistant/message payload with the required surface intent. */
@@ -68,12 +80,13 @@ describe('dsh-budget assembly', () => {
     expect(commands.some(command => command.name === 'budget')).toBe(true)
   })
 
-  it('blocks the llm stream once a cap is crossed', async () => {
+  it('blocks the llm stream once a cap is crossed (hard block wins over the thinking rewrite)', async () => {
     const { ctx, session } = await mount({ budgets: { session: 0.1, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 })
     session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
     appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 }) // 0.15 USD > 0.1 cap
+    const options = { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'high' }
     const chunks: StreamChunk[] = []
-    for await (const chunk of ctx.waterfall('llm/stream', { provider: 'deepseek', model: 'deepseek-flash' } as never, () => (async function* (): AsyncGenerator<StreamChunk> {
+    for await (const chunk of ctx.waterfall('llm/stream', options as never, () => (async function* (): AsyncGenerator<StreamChunk> {
       yield { type: 'finish', reason: { kind: 'stop' } }
     })())) {
       chunks.push(chunk)
@@ -83,6 +96,102 @@ describe('dsh-budget assembly', () => {
     expect((finish?.reason as { failure?: { code?: string } }).failure?.code).toBe('BUDGET_BLOCKED')
     const text = chunks.filter((chunk): chunk is Extract<StreamChunk, { type: 'text-delta' }> => chunk.type === 'text-delta').map(chunk => chunk.text).join('')
     expect(text).toContain('budget blocked')
+    // The hard block is unchanged: it claims the stream without rewriting the request.
+    expect(options.reasoningEffort).toBe('high')
+  })
+
+  it('turns thinking off for DeepSeek requests once the warn ratio is reached', async () => {
+    const { ctx, session } = await mount(WARN_CONFIG)
+    reachWarn(session)
+    const options = { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'high' }
+    let reached = false
+    const chunks: StreamChunk[] = []
+    for await (const chunk of ctx.waterfall('llm/stream', options as never, () => {
+      reached = true
+      return (async function* (): AsyncGenerator<StreamChunk> {
+        yield { type: 'finish', reason: { kind: 'stop' } }
+      })()
+    })) {
+      chunks.push(chunk)
+    }
+    expect(reached).toBe(true)
+    expect(options.reasoningEffort).toBe('off')
+    expect(chunks.some(chunk => chunk.type === 'finish' && chunk.reason.kind === 'stop')).toBe(true)
+  })
+
+  it('leaves an explicit reasoningEffort "off" untouched', async () => {
+    const { ctx, session } = await mount(WARN_CONFIG)
+    reachWarn(session)
+    let writes = 0
+    const options: { provider: string; model: string; reasoningEffort: string } = { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'off' }
+    Object.defineProperty(options, 'reasoningEffort', {
+      get: () => 'off',
+      set: () => { writes += 1 },
+      configurable: true,
+    })
+    for await (const _chunk of ctx.waterfall('llm/stream', options as never, () => (async function* (): AsyncGenerator<StreamChunk> {
+      yield { type: 'finish', reason: { kind: 'stop' } }
+    })())) { /* drain */ }
+    expect(writes).toBe(0)
+  })
+
+  it('never rewrites thinking when degradeThinking is false', async () => {
+    const { ctx, session } = await mount({ ...WARN_CONFIG, degradeThinking: false })
+    reachWarn(session)
+    const options = { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'high' }
+    for await (const _chunk of ctx.waterfall('llm/stream', options as never, () => (async function* (): AsyncGenerator<StreamChunk> {
+      yield { type: 'finish', reason: { kind: 'stop' } }
+    })())) { /* drain */ }
+    expect(options.reasoningEffort).toBe('high')
+  })
+
+  it('leaves non-DeepSeek routes alone', async () => {
+    const { ctx, session } = await mount(WARN_CONFIG)
+    reachWarn(session)
+    const options = { provider: 'anthropic', model: 'claude', reasoningEffort: 'high' }
+    for await (const _chunk of ctx.waterfall('llm/stream', options as never, () => (async function* (): AsyncGenerator<StreamChunk> {
+      yield { type: 'finish', reason: { kind: 'stop' } }
+    })())) { /* drain */ }
+    expect(options.reasoningEffort).toBe('high')
+  })
+
+  it('re-dispatches a frozen loop-built request with thinking off instead of mutating it', async () => {
+    let seen: GenerateOptions | undefined
+    const { ctx, session } = await mount(WARN_CONFIG, inner => ({
+      stream: (options: GenerateOptions) => {
+        seen = options
+        return inner.waterfall('llm/stream', options, () => (async function* (): AsyncGenerator<StreamChunk> {
+          yield { type: 'finish', reason: { kind: 'stop' } }
+        })())
+      },
+    }))
+    reachWarn(session)
+    const options = Object.freeze({ provider: 'deepseek-official', model: 'deepseek-flash', messages: [], reasoningEffort: 'high' }) as unknown as GenerateOptions
+    const chunks: StreamChunk[] = []
+    for await (const chunk of ctx.waterfall('llm/stream', options, () => (async function* (): AsyncGenerator<StreamChunk> {
+      yield { type: 'finish', reason: { kind: 'stop' } }
+    })())) {
+      chunks.push(chunk)
+    }
+    expect(seen).toBeDefined()
+    if (seen === undefined) return
+    expect(seen).not.toBe(options)
+    expect(seen.reasoningEffort).toBe('off')
+    expect(chunks.some(chunk => chunk.type === 'finish' && chunk.reason.kind === 'stop')).toBe(true)
+  })
+
+  it('reports the reasoning share per model and null when the host omitted it', async () => {
+    const withReasoning = await mount()
+    withReasoning.session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
+    appendMessage(withReasoning.session, { inputTokens: 1_000_000, outputTokens: 100_000, reasoningTokens: 40_000 })
+    const reported = withReasoning.service.status().models[0]
+    expect(reported?.reasoningTokens).toBe(40_000)
+    expect(reported?.outputTokens).toBe(100_000)
+
+    const withoutReasoning = await mount()
+    withoutReasoning.session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
+    appendMessage(withoutReasoning.session, { inputTokens: 1_000_000, outputTokens: 100_000 })
+    expect(withoutReasoning.service.status().models[0]?.reasoningTokens).toBeNull()
   })
 
   it('passes the stream through when nothing is blocked', async () => {
@@ -111,5 +220,6 @@ describe('dsh-budget assembly', () => {
     // the budget logger and webhook channel.
     expect(types).not.toContain('budget/alert')
     expect(types).not.toContain('budget/block')
+    expect(types).not.toContain('budget/degrade')
   })
 })

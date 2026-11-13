@@ -15,7 +15,7 @@ const STATUS: BudgetStatus = {
     { scope: 'daily', capUsd: 50, usedUsd: 60, ratio: 1.2, tokens: 20_000, carbonKg: 0.02 },
     { scope: 'monthly', capUsd: null, usedUsd: 60, ratio: 0, tokens: 20_000, carbonKg: 0.02 },
   ],
-  models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 }, priced: true }],
+  models: [{ provider: 'deepseek', model: 'deepseek-chat', inputTokens: 100, outputTokens: 50, reasoningTokens: null, costUsd: 0.05, carbonKg: 0.0001, latency: { min: 10, p50: 20, p95: 30, max: 40, samples: 3 }, priced: true }],
   alerts: [],
   blockedScopes: ['daily'],
   currency: { code: 'USD', rate: 1.0, decimals: 2 },
@@ -31,6 +31,7 @@ const EN = {
   unlimited: 'unlimited',
   blocked: 'BLOCKED',
   noModels: 'no model usage recorded yet',
+  thinking: 'thinking share',
 }
 
 describe('parseBudgetArgs', () => {
@@ -67,5 +68,19 @@ describe('renderBudgetModels', () => {
     const text = renderBudgetModels(STATUS, EN as never)
     expect(text).toContain('deepseek/deepseek-chat')
     expect(text).toContain('p50 20ms')
+  })
+
+  it('shows n/a when the host omitted reasoningTokens (never a fabricated 0%)', () => {
+    const text = renderBudgetModels(STATUS, EN as never)
+    expect(text).toContain('thinking share n/a')
+  })
+
+  it('renders the reasoning share when the host reported reasoningTokens', () => {
+    const model = STATUS.models[0]!
+    const text = renderBudgetModels({
+      ...STATUS,
+      models: [{ ...model, reasoningTokens: 25 }],
+    }, EN as never)
+    expect(text).toContain('thinking share 50%')
   })
 })

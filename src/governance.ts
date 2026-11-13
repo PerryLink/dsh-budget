@@ -1,7 +1,8 @@
 /**
  * Budget governance: the per-scope cap checks, threshold alerts, and the
- * over-limit policy (alert / block / degrade). Pure decision logic — the only
- * side effect is the optional webhook POST, which is fire-and-forget and
+ * over-limit policy (alert / block / degrade), plus the warn-threshold probe
+ * the `llm/stream` soft-landing rewrite consults. Pure decision logic — the
+ * only side effect is the optional webhook POST, which is fire-and-forget and
  * sanitized. The actual request blocking happens in the `llm/stream`
  * waterfall short-circuit owned by `src/index.ts`; this module only decides.
  *
@@ -85,6 +86,34 @@ export function checkBudgets(
     }
   }
   return decisions
+}
+
+/**
+ * Whether any capped scope has reached its warn ratio. The `llm/stream`
+ * listener consults this before a request goes out: at or above the ratio
+ * (and while no scope is blocked) the plugin disables model thinking to slow
+ * spending; the hard block itself is decided elsewhere and stays unchanged.
+ *
+ * @param config - resolved plugin config.
+ * @param aggregator - the runtime aggregator.
+ * @param sessionId - owning session id (empty = no session attribution yet).
+ * @returns true when at least one capped scope is at/over the warn ratio.
+ */
+export function warnThresholdReached(
+  config: ResolvedConfig,
+  aggregator: BudgetAggregator,
+  sessionId: string,
+): boolean {
+  const scopes: Array<{ used: ScopeUsage; cap: number | undefined }> = [
+    { used: aggregator.sessionUsage(sessionId), cap: config.budgets.session },
+    { used: aggregator.todayUsage(), cap: config.budgets.daily },
+    { used: aggregator.monthUsage(), cap: config.budgets.monthly },
+  ]
+  for (const { used, cap } of scopes) {
+    if (cap === undefined || cap <= 0) continue
+    if (used.costUsd >= cap * config.warnRatio) return true
+  }
+  return false
 }
 
 /** The degradation pair for the current attribution, when configured. */

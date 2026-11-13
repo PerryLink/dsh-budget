@@ -101,6 +101,7 @@ export class BudgetService extends TypertRemoteService {
       model: entry.model,
       inputTokens: entry.inputTokens + entry.cacheReadTokens + entry.cacheWriteTokens,
       outputTokens: entry.outputTokens,
+      reasoningTokens: entry.reasoningTokensSeen ? entry.reasoningTokens : null,
       costUsd: entry.costUsd,
       carbonKg: entry.carbonKg,
       latency: latencySummary(entry.latencyMs),

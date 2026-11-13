@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import { formatAlertTime, formatMoney, scopePercent, scopeTone } from './present.ts'
+import { thinkingShareText } from '../thinking.ts'
 import type { BudgetStatus } from '../wire.ts'
 
 /** Registration-side injected face: the budget RPCs (RemoteResult already unwrapped). */
@@ -194,7 +195,7 @@ export function BudgetTab({ status, setSettings, unblock, sessionBound, t }: Bud
                 <li key={model.model}>
                   <span className="dbud-model-name">{model.provider}/{model.model}</span>
                   <span className="dbud-model-meta">
-                    {`${model.priced === false ? t('unpriced') : formatMoney(snapshot, model.costUsd)} · ${model.inputTokens} in / ${model.outputTokens} out · ${t('latency')} ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`}`}
+                    {`${model.priced === false ? t('unpriced') : formatMoney(snapshot, model.costUsd)} · ${model.inputTokens} in / ${model.outputTokens} out · ${t('thinking')} ${thinkingShareText(model.reasoningTokens, model.outputTokens)} · ${t('latency')} ${model.latency.p50 === null ? '-' : `${model.latency.p50}ms`}`}
                   </span>
                 </li>
               ))}

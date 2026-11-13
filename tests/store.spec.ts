@@ -13,7 +13,7 @@ function validState() {
       '2026-08-16': {
         total: { inputTokens: 1_000_000, outputTokens: 100_000, cacheReadTokens: 0, cacheWriteTokens: 0, costUsd: 0.38, carbonKg: 0.001 },
         models: {
-          'deepseek-chat': { provider: 'deepseek', model: 'deepseek-chat', inputTokens: 1_000_000, outputTokens: 100_000, cacheReadTokens: 0, cacheWriteTokens: 0, costUsd: 0.38, carbonKg: 0.001 },
+          'deepseek-chat': { provider: 'deepseek', model: 'deepseek-chat', inputTokens: 1_000_000, outputTokens: 100_000, cacheReadTokens: 0, cacheWriteTokens: 0, costUsd: 0.38, carbonKg: 0.001, reasoningTokens: 40_000 },
         },
       },
     },
@@ -21,7 +21,7 @@ function validState() {
       '2026-08': {
         total: { inputTokens: 1_000_000, outputTokens: 100_000, cacheReadTokens: 0, cacheWriteTokens: 0, costUsd: 0.38, carbonKg: 0.001 },
         models: {
-          'deepseek-chat': { provider: 'deepseek', model: 'deepseek-chat', inputTokens: 1_000_000, outputTokens: 100_000, cacheReadTokens: 0, cacheWriteTokens: 0, costUsd: 0.38, carbonKg: 0.001 },
+          'deepseek-chat': { provider: 'deepseek', model: 'deepseek-chat', inputTokens: 1_000_000, outputTokens: 100_000, cacheReadTokens: 0, cacheWriteTokens: 0, costUsd: 0.38, carbonKg: 0.001, reasoningTokens: 40_000 },
         },
       },
     },
@@ -31,6 +31,7 @@ function validState() {
 describe('budgetStateSchema', () => {
   it('accepts a valid persisted state', () => {
     expect(budgetStateSchema.parse(validState()).days['2026-08-16']?.total.inputTokens).toBe(1_000_000)
+    expect(budgetStateSchema.parse(validState()).days['2026-08-16']?.models['deepseek-chat']?.reasoningTokens).toBe(40_000)
   })
 
   it('rejects a malformed state at the durable boundary', () => {

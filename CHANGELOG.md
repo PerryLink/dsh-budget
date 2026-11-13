@@ -54,6 +54,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Soft landing before the hard block.** `degradeThinking` (default `true`) sends DeepSeek requests with `reasoningEffort: 'off'` once a capped scope reaches `warnRatio` and no scope is blocked yet. Frozen loop-built requests are re-dispatched from a shallow copy, a `budget/degrade` audit event records the transition (suppressed on fail-closed host lines like the other budget events), and the hard block keeps its exact `BUDGET_BLOCKED` semantics.
+- **Thinking share.** `/budget` and the Settings tab show `reasoningTokens / outputTokens` per model. When the host omits `reasoningTokens`, the value renders as `n/a` — never a fabricated 0%. The reading survives the durable day/month snapshot.
+
 ## [0.4.15] - 2026-10-05
 
 undefined
