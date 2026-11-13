@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.23] - 2026-11-14
+
+### Changed
+
+- DeepSeek built-in prices now use the official 2026-11-13 peak rates as a conservative upper bound (`deepseek-flash` / its aliases and `deepseek-v4-pro`); off-peak is half and can be overridden via `config.prices`.
+- Documented that the estimate covers tokens only: DeepSeek web search/fetch, file parsing/OCR, TTS and ASR fees are separate and not included.
+
 ## [0.4.22] - 2026-11-05
 
 ### Changed

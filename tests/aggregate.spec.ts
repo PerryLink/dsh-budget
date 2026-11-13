@@ -57,7 +57,7 @@ describe('BudgetAggregator', () => {
     expect(aggregator.sessionUsage('s1').costUsd).toBeCloseTo(1.0)
   })
 
-  it('resolves the alpha.2 catalog ids out of the fallback (two-level assertion lock)', () => {
+  it('resolves the DeepSeek catalog ids out of the fallback (two-level assertion lock)', () => {
     const fallback = resolveConfig({}).defaultPrice
     // Level 1: the core acceptance assertion — the priceFor result must not
     // be the unpriced fallback for a catalog model.
@@ -65,8 +65,8 @@ describe('BudgetAggregator', () => {
     expect(priceFor(mergePrices({}), fallback, 'deepseek-official', 'deepseek-v4-pro')).not.toBe(fallback)
     // Level 2: catalog-alignment fixture — both alpha.2 catalog ids are
     // pinned in the built-in table (red here means the table drifted).
-    expect(BUILTIN_PRICES['deepseek-flash']).toMatchObject({ input: 0.15, output: 0.6, cacheRead: 0.003, cacheWrite: 0.15 })
-    expect(BUILTIN_PRICES['deepseek-v4-pro']).toMatchObject({ input: 0.66, output: 1.98, cacheRead: 0.022, cacheWrite: 0.66 })
+    expect(BUILTIN_PRICES['deepseek-flash']).toMatchObject({ input: 0.28, output: 1.12, cacheRead: 0.0056, cacheWrite: 0.28 })
+    expect(BUILTIN_PRICES['deepseek-v4-pro']).toMatchObject({ input: 1.25, output: 3.75, cacheRead: 0.042, cacheWrite: 1.25 })
   })
 
   it('keys today by the injected clock', () => {

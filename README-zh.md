@@ -224,7 +224,8 @@ usage: /budget [unblock session|daily|monthly | models]
 
 - 聚合为进程本地：harness 重启后用量清零（日/月桶从当前会话日志视图重建）。
 - `block`/`degrade` 依赖 `llm/stream` 瀑布；无此 seam 的构建无法阻断请求（告警仍有效）。
-- 内置价目会漂移；用 `config.prices` 覆盖条目。
+- 内置 DeepSeek token 价目采用官方 2026-11-13 的**峰值**价作为保守上界；空闲时段为峰值的一半，按空闲计费时可用 `config.prices` 覆盖。
+- 估算只覆盖 token。DeepSeek 的工具调用（联网搜索/抓取、文件解析/OCR、TTS、ASR）单独计费，不在估算内。
 - 宿主不提供 `reasoningTokens` 时，思考占比显示 `n/a`，不会伪造为 0%。
 
 ## 开发

@@ -226,7 +226,8 @@ All tunables are Schemastery `Config` fields (changeable from cordis.yml). `cord
 
 - Aggregation is process-local: usage resets when the harness restarts (per-day/per-month buckets rebuild from the current session log view).
 - `block`/`degrade` rely on the `llm/stream` waterfall; harness builds without that seam cannot block requests (alerts still work).
-- Built-in prices drift; override entries via `config.prices`.
+- Built-in DeepSeek token prices use the official 2026-11-13 **peak** rates as a conservative upper bound; off-peak is half. Override entries via `config.prices` if you bill off-peak.
+- The estimate covers tokens only. DeepSeek tool calls (web search/fetch, file parsing/OCR, TTS, ASR) are billed separately and are not included.
 - Hosts that do not report `reasoningTokens` show the thinking share as `n/a` rather than a fabricated 0%.
 
 ## Development

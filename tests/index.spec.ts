@@ -39,10 +39,10 @@ async function mount(
 /** Config whose session cap is 10 USD with the default 0.8 warn ratio. */
 const WARN_CONFIG = { budgets: { session: 10, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 }
 
-/** Record 9.00 USD of deepseek-flash usage: above the warn ratio, below the hard cap. */
+/** Record 8.12 USD of deepseek-flash usage: above the warn ratio (8.00), below the hard cap (10.00). */
 function reachWarn(session: Session): void {
   session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
-  appendMessage(session, { inputTokens: 60_000_000, outputTokens: 0 })
+  appendMessage(session, { inputTokens: 29_000_000, outputTokens: 0 })
 }
 
 /** One assistant/message payload with the required surface intent. */
@@ -67,12 +67,12 @@ describe('dsh-budget assembly', () => {
     appendMessage(session, { inputTokens: 1_000_000, outputTokens: 100_000 })
     const status = service.status()
     const sessionScope = status.scopes.find(scope => scope.scope === 'session')
-    expect(sessionScope?.usedUsd).toBeCloseTo(0.15 + 0.06)
+    expect(sessionScope?.usedUsd).toBeCloseTo(0.28 + 0.112)
     expect(status.models[0]?.model).toBe('deepseek-flash')
     expect(status.warnRatio).toBe(0.8)
     expect(status.refreshIntervalMs).toBe(5_000)
     expect(status.days).toHaveLength(30)
-    expect(status.days[status.days.length - 1]?.costUsd).toBeCloseTo(0.15 + 0.06)
+    expect(status.days[status.days.length - 1]?.costUsd).toBeCloseTo(0.28 + 0.112)
   })
 
   it('registers the /budget command', async () => {
@@ -83,7 +83,7 @@ describe('dsh-budget assembly', () => {
   it('blocks the llm stream once a cap is crossed (hard block wins over the thinking rewrite)', async () => {
     const { ctx, session } = await mount({ budgets: { session: 0.1, daily: 100, monthly: 1000 }, overLimit: 'block', warnRatio: 0.8 })
     session.append('request/header', { header: { config: { provider: 'deepseek', model: 'deepseek-flash' } }, reason: 'initial' })
-    appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 }) // 0.15 USD > 0.1 cap
+    appendMessage(session, { inputTokens: 1_000_000, outputTokens: 0 }) // 0.28 USD > 0.1 cap
     const options = { provider: 'deepseek-official', model: 'deepseek-flash', reasoningEffort: 'high' }
     const chunks: StreamChunk[] = []
     for await (const chunk of ctx.waterfall('llm/stream', options as never, () => (async function* (): AsyncGenerator<StreamChunk> {
