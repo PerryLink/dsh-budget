@@ -2,7 +2,7 @@
 
 ## [0.4.24] - 2026-11-14
 
-> 0.4.23 was not published: npm reported a previously staged version, so this release uses 0.4.24. The code is unchanged from the price update below.
+> 0.4.23 and 0.4.24 are both published. npm's staged publish flow returned 409 to the CLI while finalizing, so the first attempts looked failed; both versions are live and 0.4.24 is the latest. The code is unchanged from the price update below.
 
 ### Changed
 
