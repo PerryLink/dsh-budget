@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.25] - 2026-11-14
+
+### Fixed
+
+- Republished the 2026-11-13 price update so the npm changelog no longer carries the staged-publish note. 0.4.23 and 0.4.24 are both published; 0.4.25 has no code change from 0.4.24.
+
 ## [0.4.24] - 2026-11-14
 
 > 0.4.23 and 0.4.24 are both published. npm's staged publish flow returned 409 to the CLI while finalizing, so the first attempts looked failed; both versions are live and 0.4.24 is the latest. The code is unchanged from the price update below.
