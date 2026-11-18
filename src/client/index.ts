@@ -1,7 +1,7 @@
 /**
  * `dsh-budget`, browser half: mounts the `budget` Remote contribution, then
  * registers the budget tab into the Plugins settings section
- * (`settings.plugins.tab`, id `budget`). All data arrives through the
+ * (`plugins.tab`, id `budget`). All data arrives through the
  * `remote.budget` namespace — the tab issues no other RPC and holds no state
  * of its own beyond the edit form and the last loaded snapshot.
  *
@@ -11,15 +11,16 @@
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-// Type-only: pulls the 'settings.plugins.tab' SlotMap declaration into this
+// Type-only: pulls the 'plugins.tab' SlotMap declaration into this
 // program so the tab registration typechecks against the real declaration.
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
 
 // The slots service face is read structurally: the published rc.2 client
 // faces type Context.slots, the current checkout does not (the deleted
 // dsh-client-runtime face used to carry that merge).
 interface BudgetSlotsService {
-  inject(slot: 'settings.plugins.tab', factory: () => void): void
+  inject(slot: 'plugins.tab', factory: () => void): void
   register(entry: object, component: unknown): void
 }
 import { BudgetTab, type BudgetTabInjected } from './BudgetTab.tsx'
@@ -84,8 +85,8 @@ export async function apply(ctx: ClientContext): Promise<void> {
     const sessionBound: BudgetTabInjected['sessionBound'] = () =>
       currentSessionId(scope.get('sessions')) !== undefined
     const slots = scope.get('slots') as unknown as BudgetSlotsService
-    slots.inject('settings.plugins.tab', () => slots.register({
-      name: 'settings.plugins.tab',
+    slots.inject('plugins.tab', () => slots.register({
+      name: 'plugins.tab',
       id: 'budget',
       order: 40,
       label: () => t('tab'),

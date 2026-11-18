@@ -20,7 +20,7 @@ export interface BudgetTabInjected {
 
 /** Full component props assembled by the Settings slot renderer. */
 export type BudgetTabProps =
-  PropsRuntime<'settings.plugins.tab'>
+  PropsRuntime<'plugins.tab'>
   & PropsLocale<'settings.budget'>
   & InjectFace<BudgetTabInjected>
 
