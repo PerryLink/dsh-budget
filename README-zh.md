@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-budget-hero-zh-dark.webp">
+  <img src="docs/assets/dsh-budget-hero-zh-light.webp" width="100%" alt="dsh-budget：从同一条事件流计量成本、碳足迹与延迟，含三种预算范围与一次调用前的拦截">
+</picture>
+
 # 💰 dsh-budget
 - **1024 商店渠道**：先 `npm i -g dsh1024`，再 `dsh1024 plugin --profile web add dsh-budget`（计入 [deepseek1024.com](https://deepseek1024.com) 安装排行）。
 

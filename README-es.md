@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-budget-hero-en-dark.webp">
+  <img src="docs/assets/dsh-budget-hero-en-light.webp" width="100%" alt="dsh-budget: costo, carbono y latencia medidos desde un mismo flujo de eventos, con tres ámbitos de presupuesto y un corte previo a la llamada">
+</picture>
+
 # 💰 dsh-budget
 - **Canal 1024 store**: `npm i -g dsh1024` una vez, luego `dsh1024 plugin --profile web add dsh-budget` (cuenta para el ranking de instalaciones de [deepseek1024.com](https://deepseek1024.com)).
 

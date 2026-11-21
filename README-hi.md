@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-budget-hero-en-dark.webp">
+  <img src="docs/assets/dsh-budget-hero-en-light.webp" width="100%" alt="dsh-budget: एक ही इवेंट स्ट्रीम से लागत, कार्बन और लेटेंसी का मापन, तीन बजट स्कोप और कॉल से पहले एक रोक">
+</picture>
+
 # 💰 dsh-budget
 - **1024 स्टोर चैनल**: एक बार `npm i -g dsh1024`, फिर `dsh1024 plugin --profile web add dsh-budget` ([deepseek1024.com](https://deepseek1024.com) इंस्टॉल रैंकिंग में गिना जाता है)।
 
