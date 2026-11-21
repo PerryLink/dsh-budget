@@ -37,6 +37,10 @@ dsh plugin --profile <name> add dsh-budget
 
 ## Instalación y desinstalación
 
+![dsh-budget: ejecución real de terminal](docs/assets/dsh-budget-demo.gif)
+
+*Repetición animada de una ejecución real registrada en este repositorio.*
+
 - **Canal git** (último `main`): `dsh plugin --profile web add github:PerryLink/dsh-budget` — el script `prepare` compila solo con dependencias de producción.
 - **Canal npm** (versiones publicadas): `dsh plugin --profile web add dsh-budget`.
 - **Canal tarball**: `pnpm pack` en este repositorio y luego `dsh plugin --profile web add ./dsh-budget-<version>.tgz`.

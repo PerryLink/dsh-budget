@@ -101,6 +101,10 @@ measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly do
 
 ## 快速开始
 
+![dsh-budget 真实终端运行](docs/assets/dsh-budget-demo.gif)
+
+*本仓库一次真实运行的动图回放。*
+
 ```sh
 dsh plugin --profile web add github:PerryLink/dsh-budget
 ```

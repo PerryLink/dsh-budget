@@ -112,6 +112,10 @@ measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly do
 
 ## Quick start
 
+![dsh-budget: real terminal run](docs/assets/dsh-budget-demo.gif)
+
+*Animated replay of a real run recorded in this repository.*
+
 ```sh
 dsh plugin --profile web add github:PerryLink/dsh-budget
 ```

@@ -37,6 +37,10 @@ dsh plugin --profile <name> add dsh-budget
 
 ## इंस्टॉल और अनइंस्टॉल
 
+![dsh-budget का असली टर्मिनल रन](docs/assets/dsh-budget-demo.gif)
+
+*इस रिपॉज़िटरी में दर्ज असली रन का एनिमेटेड रीप्ले।*
+
 - **git चैनल** (नवीनतम `main`): `dsh plugin --profile web add github:PerryLink/dsh-budget` — `prepare` स्क्रिप्ट केवल प्रोडक्शन निर्भरताओं से बिल्ड करती है।
 - **npm चैनल** (प्रकाशित रिलीज़): `dsh plugin --profile web add dsh-budget`।
 - **tarball चैनल**: इस रेपो में `pnpm pack`, फिर `dsh plugin --profile web add ./dsh-budget-<version>.tgz`।
