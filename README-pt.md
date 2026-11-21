@@ -99,9 +99,9 @@ measured 2026-10-05 · from the README's FROZEN maintenance table (npm weekly do
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness `dsh-v0.2.2-rc.4` (GitHub tag, adaptado em 2026-11-18; faixa de peer `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0 || >=0.1.6-0 <0.2.0 || >=0.1.7-0 <0.2.0 || >=0.2.2-0 <0.3.0`): os preços do catálogo alpha.2 estão embutidos na tabela e modelos sem preço aparecem como "sem preço" em vez de uma estimativa inventada; a porta de auditoria continua suprimindo os appends `budget/alert`/`budget/block` (vocabulário de eventos de sessão fail-closed). Verificado em 2026-11-18 pela cadeia typecheck de duas réguas e pela porta local completa; os itens do painel no navegador ficam 人工·未测即未完成 (checklist manual do mantenedor). |
-
-| Eventos de auditoria | Gravados em harness anteriores a `0.1.2-rc.1`; suprimidos com uma razão de degradação registrada em `0.1.2-rc.1` e posteriores (vocabulário de eventos de sessão fail-closed, sem superfície de registro externa) || Node | `^22.19.0 \|\| >=24.0.0` |
+| Harness | DeepSeek Harness `dsh-v0.2.2-rc.4` (GitHub tag, adaptado em 2026-11-18; faixa de peer `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0 \|\| >=0.2.2-0 <0.3.0`): os preços do catálogo alpha.2 estão embutidos na tabela e modelos sem preço aparecem como "sem preço" em vez de uma estimativa inventada; a porta de auditoria continua suprimindo os appends `budget/alert`/`budget/block` (vocabulário de eventos de sessão fail-closed). Verificado em 2026-11-18 pela cadeia typecheck de duas réguas e pela porta local completa; os itens do painel no navegador ficam 人工·未测即未完成 (checklist manual do mantenedor). |
+| Eventos de auditoria | Gravados em harness anteriores a `0.1.2-rc.1`; suprimidos com uma razão de degradação registrada em `0.1.2-rc.1` e posteriores (vocabulário de eventos de sessão fail-closed, sem superfície de registro externa) |
+| Node | `^22.19.0 \|\| >=24.0.0` |
 | Superfícies | Host + cliente Web (aba Budget em Settings); comando `/budget` |
 
 ## O que você ganha
