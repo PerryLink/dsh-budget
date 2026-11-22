@@ -12,6 +12,8 @@
 
 *Conoce cuánto cuesta cada sesión — antes de que te cueste a ti.*
 
+Última verificación: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Gitee](https://img.shields.io/badge/Gitee-mirror-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-budget)
 [![DSH plugin](https://img.shields.io/badge/dsh--plugin-✅-green)](https://github.com/topics/dsh-plugin)
@@ -30,11 +32,9 @@
 dsh plugin --profile <name> add dsh-budget
 ```
 
-
 </div>
 
 ---
-
 
 **📖 Base de conocimiento del ecosistema** — datos medidos, no marketing: [guía de desarrollo · datos de selección · criterios de mantenimiento](https://perrylink.github.io/dsh-plugin-guide/).
 
@@ -62,7 +62,6 @@ Conoce cuánto cuesta cada sesión — antes de que te cueste a ti.
 ![Diagrama de flujo de dsh-budget: solicitud → política/revisión → veredicto.](docs/assets/dsh-budget-flow.svg)
 
 *Resumen del flujo: solicitud → política/revisión → veredicto. Los ejemplos siguientes usan la superficie de comandos real.*
-
 
 *La misma ejecución, animada.*
 

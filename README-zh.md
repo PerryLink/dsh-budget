@@ -14,6 +14,8 @@
 
 > **官方仓库。** 本仓库是 dsh-budget 的唯一官方仓库，由 PerryLink 维护。其他账号下的同名仓库与本项目无关。
 
+最近一次核验：DeepSeek Harness `dsh-v0.2.3-alpha.1`（2026-11-22）。
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Gitee](https://img.shields.io/badge/Gitee-mirror-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-budget)
 [![DSH plugin](https://img.shields.io/badge/dsh--plugin-✅-green)](https://github.com/topics/dsh-plugin)
@@ -32,11 +34,9 @@
 dsh plugin --profile <name> add dsh-budget
 ```
 
-
 </div>
 
 ---
-
 
 **📖 生态实测知识库**（实测数据，不是营销）：[插件开发指南 · 选型实测数据 · 维护取舍判据](https://perrylink.github.io/dsh-plugin-guide/)。
 
@@ -51,7 +51,6 @@ DeepSeek Harness 的成本治理：预算、碳足迹与延迟，一个面板全
 ![dsh-budget 工作流图：请求 → 策略/复核 → 判定。](docs/assets/dsh-budget-flow.svg)
 
 *工作流概览：请求 → 策略/复核 → 判定。下面的示例使用实际命令面。*
-
 
 *同一次运行，动图版。*
 

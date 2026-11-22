@@ -11,6 +11,8 @@
 
 Know what every session costs — before it costs you.
 
+最近一次核验：DeepSeek Harness `dsh-v0.2.3-alpha.1`（2026-11-22）。
+
 [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -49,7 +51,6 @@ dsh plugin --profile <name> add dsh-budget
 
 *English:* part of a 99 plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
 
-
 ## What is dsh-budget?
 
 Cost governance for DeepSeek Harness: budgets, carbon, and latency in one panel.
@@ -62,8 +63,6 @@ Know what every session costs — before it costs you.
 </picture>
 
 *Structure: usage arrives after the fact on `session/event`; `checkBudgets` walks session → daily → monthly; the over-limit disposal ends on the `llm/stream` seam, where a blocked scope short-circuits the next call — a passed call returns as the next usage sample. The examples below use the real command surface.*
-
-
 
 ## Maintenance status: 🧊 FROZEN
 
